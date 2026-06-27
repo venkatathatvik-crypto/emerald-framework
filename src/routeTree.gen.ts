@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as LoginRouteImport } from './routes/login'
@@ -26,8 +27,16 @@ import { Route as RegisterPartnerRouteImport } from './routes/register.partner'
 import { Route as RegisterCustomerRouteImport } from './routes/register.customer'
 import { Route as PortalPartnerRouteImport } from './routes/portal.partner'
 import { Route as PortalCustomerRouteImport } from './routes/portal.customer'
+import { Route as DashboardPartnerRouteImport } from './routes/dashboard.partner'
 import { Route as DashboardCustomerRouteImport } from './routes/dashboard.customer'
+import { Route as DashboardBranchRouteImport } from './routes/dashboard.branch'
+import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -113,9 +122,24 @@ const PortalCustomerRoute = PortalCustomerRouteImport.update({
   path: '/portal/customer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardPartnerRoute = DashboardPartnerRouteImport.update({
+  id: '/dashboard/partner',
+  path: '/dashboard/partner',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardCustomerRoute = DashboardCustomerRouteImport.update({
   id: '/dashboard/customer',
   path: '/dashboard/customer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardBranchRoute = DashboardBranchRouteImport.update({
+  id: '/dashboard/branch',
+  path: '/dashboard/branch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardAdminRoute = DashboardAdminRouteImport.update({
+  id: '/dashboard/admin',
+  path: '/dashboard/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -133,7 +157,11 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/branch': typeof DashboardBranchRoute
   '/dashboard/customer': typeof DashboardCustomerRoute
+  '/dashboard/partner': typeof DashboardPartnerRoute
   '/portal/customer': typeof PortalCustomerRoute
   '/portal/partner': typeof PortalPartnerRoute
   '/register/customer': typeof RegisterCustomerRoute
@@ -153,7 +181,11 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/branch': typeof DashboardBranchRoute
   '/dashboard/customer': typeof DashboardCustomerRoute
+  '/dashboard/partner': typeof DashboardPartnerRoute
   '/portal/customer': typeof PortalCustomerRoute
   '/portal/partner': typeof PortalPartnerRoute
   '/register/customer': typeof RegisterCustomerRoute
@@ -174,7 +206,11 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/branch': typeof DashboardBranchRoute
   '/dashboard/customer': typeof DashboardCustomerRoute
+  '/dashboard/partner': typeof DashboardPartnerRoute
   '/portal/customer': typeof PortalCustomerRoute
   '/portal/partner': typeof PortalPartnerRoute
   '/register/customer': typeof RegisterCustomerRoute
@@ -196,7 +232,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/products'
     | '/reset-password'
+    | '/sitemap.xml'
+    | '/dashboard/admin'
+    | '/dashboard/branch'
     | '/dashboard/customer'
+    | '/dashboard/partner'
     | '/portal/customer'
     | '/portal/partner'
     | '/register/customer'
@@ -216,7 +256,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/products'
     | '/reset-password'
+    | '/sitemap.xml'
+    | '/dashboard/admin'
+    | '/dashboard/branch'
     | '/dashboard/customer'
+    | '/dashboard/partner'
     | '/portal/customer'
     | '/portal/partner'
     | '/register/customer'
@@ -236,7 +280,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/products'
     | '/reset-password'
+    | '/sitemap.xml'
+    | '/dashboard/admin'
+    | '/dashboard/branch'
     | '/dashboard/customer'
+    | '/dashboard/partner'
     | '/portal/customer'
     | '/portal/partner'
     | '/register/customer'
@@ -257,7 +305,11 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   ProductsRoute: typeof ProductsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  DashboardAdminRoute: typeof DashboardAdminRoute
+  DashboardBranchRoute: typeof DashboardBranchRoute
   DashboardCustomerRoute: typeof DashboardCustomerRoute
+  DashboardPartnerRoute: typeof DashboardPartnerRoute
   PortalCustomerRoute: typeof PortalCustomerRoute
   PortalPartnerRoute: typeof PortalPartnerRoute
   RegisterCustomerRoute: typeof RegisterCustomerRoute
@@ -266,6 +318,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -385,11 +444,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalCustomerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/partner': {
+      id: '/dashboard/partner'
+      path: '/dashboard/partner'
+      fullPath: '/dashboard/partner'
+      preLoaderRoute: typeof DashboardPartnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/customer': {
       id: '/dashboard/customer'
       path: '/dashboard/customer'
       fullPath: '/dashboard/customer'
       preLoaderRoute: typeof DashboardCustomerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/branch': {
+      id: '/dashboard/branch'
+      path: '/dashboard/branch'
+      fullPath: '/dashboard/branch'
+      preLoaderRoute: typeof DashboardBranchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/admin': {
+      id: '/dashboard/admin'
+      path: '/dashboard/admin'
+      fullPath: '/dashboard/admin'
+      preLoaderRoute: typeof DashboardAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -409,7 +489,11 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   ProductsRoute: ProductsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  DashboardAdminRoute: DashboardAdminRoute,
+  DashboardBranchRoute: DashboardBranchRoute,
   DashboardCustomerRoute: DashboardCustomerRoute,
+  DashboardPartnerRoute: DashboardPartnerRoute,
   PortalCustomerRoute: PortalCustomerRoute,
   PortalPartnerRoute: PortalPartnerRoute,
   RegisterCustomerRoute: RegisterCustomerRoute,
@@ -418,3 +502,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
