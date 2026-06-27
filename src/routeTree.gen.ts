@@ -9,38 +9,347 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ProductsRouteImport } from './routes/products'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as LeadershipRouteImport } from './routes/leadership'
+import { Route as HassleFreeEmiRouteImport } from './routes/hassle-free-emi'
+import { Route as GoldEmiRouteImport } from './routes/gold-emi'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CareersRouteImport } from './routes/careers'
+import { Route as BusinessModelRouteImport } from './routes/business-model'
+import { Route as BrandsRouteImport } from './routes/brands'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RegisterPartnerRouteImport } from './routes/register.partner'
+import { Route as RegisterCustomerRouteImport } from './routes/register.customer'
+import { Route as PortalPartnerRouteImport } from './routes/portal.partner'
+import { Route as PortalCustomerRouteImport } from './routes/portal.customer'
+import { Route as DashboardCustomerRouteImport } from './routes/dashboard.customer'
 
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsRoute = ProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeadershipRoute = LeadershipRouteImport.update({
+  id: '/leadership',
+  path: '/leadership',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HassleFreeEmiRoute = HassleFreeEmiRouteImport.update({
+  id: '/hassle-free-emi',
+  path: '/hassle-free-emi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GoldEmiRoute = GoldEmiRouteImport.update({
+  id: '/gold-emi',
+  path: '/gold-emi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersRoute = CareersRouteImport.update({
+  id: '/careers',
+  path: '/careers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessModelRoute = BusinessModelRouteImport.update({
+  id: '/business-model',
+  path: '/business-model',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrandsRoute = BrandsRouteImport.update({
+  id: '/brands',
+  path: '/brands',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegisterPartnerRoute = RegisterPartnerRouteImport.update({
+  id: '/register/partner',
+  path: '/register/partner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterCustomerRoute = RegisterCustomerRouteImport.update({
+  id: '/register/customer',
+  path: '/register/customer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalPartnerRoute = PortalPartnerRouteImport.update({
+  id: '/portal/partner',
+  path: '/portal/partner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalCustomerRoute = PortalCustomerRouteImport.update({
+  id: '/portal/customer',
+  path: '/portal/customer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardCustomerRoute = DashboardCustomerRouteImport.update({
+  id: '/dashboard/customer',
+  path: '/dashboard/customer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/brands': typeof BrandsRoute
+  '/business-model': typeof BusinessModelRoute
+  '/careers': typeof CareersRoute
+  '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/gold-emi': typeof GoldEmiRoute
+  '/hassle-free-emi': typeof HassleFreeEmiRoute
+  '/leadership': typeof LeadershipRoute
+  '/login': typeof LoginRoute
+  '/products': typeof ProductsRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/dashboard/customer': typeof DashboardCustomerRoute
+  '/portal/customer': typeof PortalCustomerRoute
+  '/portal/partner': typeof PortalPartnerRoute
+  '/register/customer': typeof RegisterCustomerRoute
+  '/register/partner': typeof RegisterPartnerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/brands': typeof BrandsRoute
+  '/business-model': typeof BusinessModelRoute
+  '/careers': typeof CareersRoute
+  '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/gold-emi': typeof GoldEmiRoute
+  '/hassle-free-emi': typeof HassleFreeEmiRoute
+  '/leadership': typeof LeadershipRoute
+  '/login': typeof LoginRoute
+  '/products': typeof ProductsRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/dashboard/customer': typeof DashboardCustomerRoute
+  '/portal/customer': typeof PortalCustomerRoute
+  '/portal/partner': typeof PortalPartnerRoute
+  '/register/customer': typeof RegisterCustomerRoute
+  '/register/partner': typeof RegisterPartnerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/brands': typeof BrandsRoute
+  '/business-model': typeof BusinessModelRoute
+  '/careers': typeof CareersRoute
+  '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/gold-emi': typeof GoldEmiRoute
+  '/hassle-free-emi': typeof HassleFreeEmiRoute
+  '/leadership': typeof LeadershipRoute
+  '/login': typeof LoginRoute
+  '/products': typeof ProductsRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/dashboard/customer': typeof DashboardCustomerRoute
+  '/portal/customer': typeof PortalCustomerRoute
+  '/portal/partner': typeof PortalPartnerRoute
+  '/register/customer': typeof RegisterCustomerRoute
+  '/register/partner': typeof RegisterPartnerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/brands'
+    | '/business-model'
+    | '/careers'
+    | '/contact'
+    | '/forgot-password'
+    | '/gold-emi'
+    | '/hassle-free-emi'
+    | '/leadership'
+    | '/login'
+    | '/products'
+    | '/reset-password'
+    | '/dashboard/customer'
+    | '/portal/customer'
+    | '/portal/partner'
+    | '/register/customer'
+    | '/register/partner'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/brands'
+    | '/business-model'
+    | '/careers'
+    | '/contact'
+    | '/forgot-password'
+    | '/gold-emi'
+    | '/hassle-free-emi'
+    | '/leadership'
+    | '/login'
+    | '/products'
+    | '/reset-password'
+    | '/dashboard/customer'
+    | '/portal/customer'
+    | '/portal/partner'
+    | '/register/customer'
+    | '/register/partner'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/brands'
+    | '/business-model'
+    | '/careers'
+    | '/contact'
+    | '/forgot-password'
+    | '/gold-emi'
+    | '/hassle-free-emi'
+    | '/leadership'
+    | '/login'
+    | '/products'
+    | '/reset-password'
+    | '/dashboard/customer'
+    | '/portal/customer'
+    | '/portal/partner'
+    | '/register/customer'
+    | '/register/partner'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  BrandsRoute: typeof BrandsRoute
+  BusinessModelRoute: typeof BusinessModelRoute
+  CareersRoute: typeof CareersRoute
+  ContactRoute: typeof ContactRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  GoldEmiRoute: typeof GoldEmiRoute
+  HassleFreeEmiRoute: typeof HassleFreeEmiRoute
+  LeadershipRoute: typeof LeadershipRoute
+  LoginRoute: typeof LoginRoute
+  ProductsRoute: typeof ProductsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  DashboardCustomerRoute: typeof DashboardCustomerRoute
+  PortalCustomerRoute: typeof PortalCustomerRoute
+  PortalPartnerRoute: typeof PortalPartnerRoute
+  RegisterCustomerRoute: typeof RegisterCustomerRoute
+  RegisterPartnerRoute: typeof RegisterPartnerRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products': {
+      id: '/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof ProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leadership': {
+      id: '/leadership'
+      path: '/leadership'
+      fullPath: '/leadership'
+      preLoaderRoute: typeof LeadershipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hassle-free-emi': {
+      id: '/hassle-free-emi'
+      path: '/hassle-free-emi'
+      fullPath: '/hassle-free-emi'
+      preLoaderRoute: typeof HassleFreeEmiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gold-emi': {
+      id: '/gold-emi'
+      path: '/gold-emi'
+      fullPath: '/gold-emi'
+      preLoaderRoute: typeof GoldEmiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers': {
+      id: '/careers'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof CareersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business-model': {
+      id: '/business-model'
+      path: '/business-model'
+      fullPath: '/business-model'
+      preLoaderRoute: typeof BusinessModelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/brands': {
+      id: '/brands'
+      path: '/brands'
+      fullPath: '/brands'
+      preLoaderRoute: typeof BrandsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +357,64 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/register/partner': {
+      id: '/register/partner'
+      path: '/register/partner'
+      fullPath: '/register/partner'
+      preLoaderRoute: typeof RegisterPartnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register/customer': {
+      id: '/register/customer'
+      path: '/register/customer'
+      fullPath: '/register/customer'
+      preLoaderRoute: typeof RegisterCustomerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/partner': {
+      id: '/portal/partner'
+      path: '/portal/partner'
+      fullPath: '/portal/partner'
+      preLoaderRoute: typeof PortalPartnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/customer': {
+      id: '/portal/customer'
+      path: '/portal/customer'
+      fullPath: '/portal/customer'
+      preLoaderRoute: typeof PortalCustomerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/customer': {
+      id: '/dashboard/customer'
+      path: '/dashboard/customer'
+      fullPath: '/dashboard/customer'
+      preLoaderRoute: typeof DashboardCustomerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  BrandsRoute: BrandsRoute,
+  BusinessModelRoute: BusinessModelRoute,
+  CareersRoute: CareersRoute,
+  ContactRoute: ContactRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  GoldEmiRoute: GoldEmiRoute,
+  HassleFreeEmiRoute: HassleFreeEmiRoute,
+  LeadershipRoute: LeadershipRoute,
+  LoginRoute: LoginRoute,
+  ProductsRoute: ProductsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  DashboardCustomerRoute: DashboardCustomerRoute,
+  PortalCustomerRoute: PortalCustomerRoute,
+  PortalPartnerRoute: PortalPartnerRoute,
+  RegisterCustomerRoute: RegisterCustomerRoute,
+  RegisterPartnerRoute: RegisterPartnerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
