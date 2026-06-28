@@ -56,6 +56,19 @@ function Page() {
               www.2plusfortunealliances.com <ArrowUpRight className="h-3 w-3" />
             </a>
           </div>
+          {/* Support Team Portrait Card */}
+          <div 
+            data-reveal="rise" 
+            style={{ animationDelay: "240ms" }}
+            className="relative rounded-2xl overflow-hidden shadow-xl border border-line aspect-[4/3] group bg-stone mt-8"
+          >
+            <img 
+              src="/images/support_team.png" 
+              alt="2+FAPL Premium Customer Support Team collaborating" 
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-emerald-deep/20 via-transparent to-transparent pointer-events-none" />
+          </div>
         </div>
 
         {/* Form */}

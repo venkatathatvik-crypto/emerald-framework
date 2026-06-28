@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell, PageHero } from "@/components/PageShell";
-import { ArrowUpRight } from "lucide-react";
+import { Breadcrumb } from "@/components/Breadcrumb";
+import { ArrowUpRight, GraduationCap, HeartHandshake, TreeDeciduous, Star } from "lucide-react";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -14,14 +15,34 @@ export const Route = createFileRoute("/about")({
   component: About,
 });
 
+const MILESTONES = [
+  { year: "FY 2022-23", event: "Company incorporated 30 June 2022. First NBFC partnership established. Revenue: ₹1.03 Cr." },
+  { year: "FY 2023-24", event: "Expanded to 5 states. 8 partner MFIs onboarded. Revenue: ₹2.79 Cr. CSR: Sponsored education for 12 students." },
+  { year: "FY 2024-25", event: "18 partner MFIs. Operations in 12+ states. 1,00,000+ households impacted. Revenue: ₹5.31 Cr." },
+  { year: "FY 2025-26", event: "State warehouse network expansion. Digital platform launch. Target: ₹10.15 Cr." },
+  { year: "FY 2026-27", event: "Multi-category expansion. Corporate B2B channel activation. Target: ₹20.66 Cr." },
+  { year: "FY 2029-30", event: "Pan-India distribution footprint. Wholesale & retail franchise channels. Target: ₹110 Cr." },
+];
+
+const CSR_ITEMS = [
+  { icon: <GraduationCap className="h-5 w-5 text-emerald-deep" />, title: "Education Support", desc: "Sponsored education for underprivileged students through partner NGO networks." },
+  { icon: <HeartHandshake className="h-5 w-5 text-emerald-deep" />, title: "Medical Aid", desc: "Medical assistance and health camps organised in rural partner districts." },
+  { icon: <TreeDeciduous className="h-5 w-5 text-emerald-deep" />, title: "Food Drives", desc: "Regular food distribution drives for vulnerable communities in operational areas." },
+  { icon: <Star className="h-5 w-5 text-gold" />, title: "Partner Milestone Trips", desc: "Rewarding top-performing partners — Kashmir, Bali, South India — as recognition of shared success." },
+];
+
 function About() {
   return (
     <PageShell>
+      <div className="container-edge pt-8">
+        <Breadcrumb crumbs={[{ label: "Company", to: "/about" }, { label: "About Us" }]} />
+      </div>
       <PageHero
         eyebrow="About — 2+FAPL"
         title={<>A strategic alliance between <em className="text-emerald-deep">two fortunate</em> enterprises.</>}
         lede="Founded on 30 June 2022 and headquartered in Hyderabad, 2 Plus Fortune Alliances Pvt Ltd is built on the philosophy of mutual growth and shared success — fostering partnerships that drive value for every stakeholder."
       />
+
 
       {/* Vision / Mission / Objective — editorial triptych */}
       <section className="container-edge section-y border-t border-line">
@@ -95,6 +116,78 @@ function About() {
         </div>
       </section>
 
+      {/* Milestones timeline */}
+      <section className="container-edge section-y border-t border-line" id="milestones">
+        <div className="grid lg:grid-cols-[1fr_1.5fr] gap-16 lg:gap-28">
+          <div className="lg:sticky lg:top-32">
+            <p className="eyebrow mb-6" data-reveal="rise-soft">Growth Milestones</p>
+            <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl text-ink leading-[0.97]">
+              Three years.<br /><em className="text-emerald-deep">A decade</em><br />of ambition.
+            </h2>
+          </div>
+          <ol className="space-y-0">
+            {MILESTONES.map((m, i) => (
+              <li
+                key={m.year}
+                data-reveal="rise-soft"
+                style={{ animationDelay: `${i * 80}ms` }}
+                className="flex gap-6 border-l-2 border-line pl-8 pb-10 relative hover:border-l-emerald-deep transition-colors duration-500 group"
+              >
+                <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 border-line bg-paper group-hover:border-gold group-hover:bg-gold transition-all duration-500" />
+                <div>
+                  <p className="eyebrow text-gold mb-2">{m.year}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{m.event}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* CSR */}
+      <section className="bg-stone border-t border-line" id="csr">
+        <div className="container-edge section-y">
+          <div className="mb-14">
+            <p className="eyebrow mb-5" data-reveal="rise-soft">CSR & Community Impact</p>
+            <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl text-ink leading-[0.97] max-w-2xl">
+              Building communities,<br />not just <em className="text-emerald-deep">distribution routes.</em>
+            </h2>
+          </div>
+          <div className="grid lg:grid-cols-[1.3fr_1fr] gap-12 items-center">
+            <div className="grid sm:grid-cols-2 gap-4">
+              {CSR_ITEMS.map((c, i) => (
+                <div
+                  key={c.title}
+                  data-reveal="rise"
+                  style={{ animationDelay: `${i * 80}ms` }}
+                  className="card-premium p-8 group"
+                >
+                  <div className="flex gap-4 items-start">
+                    <div className="p-3 bg-stone rounded-xl border border-line group-hover:border-gold-soft transition-colors shrink-0">{c.icon}</div>
+                    <div>
+                      <h3 className="font-display text-2xl text-ink mb-2">{c.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div 
+              data-reveal="rise" 
+              className="relative rounded-3xl overflow-hidden shadow-2xl border border-line aspect-[4/3] group bg-stone"
+            >
+              <img 
+                src="/images/csr_impact.png" 
+                alt="2+FAPL community impact, children and solar-powered schools" 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-deep/20 via-transparent to-transparent pointer-events-none" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <ClosingCTA />
     </PageShell>
   );
@@ -113,3 +206,4 @@ function ClosingCTA() {
     </section>
   );
 }
+

@@ -55,6 +55,43 @@ function Page() {
         ))}
       </section>
 
+      {/* Interactive Network Map Visual Section */}
+      <section className="container-edge section-y border-t border-line" id="branches">
+        <div className="grid lg:grid-cols-[1.2fr_1fr] gap-12 xl:gap-20 items-center">
+          <div 
+            data-reveal="rise"
+            className="relative rounded-3xl overflow-hidden shadow-2xl border border-line bg-stone aspect-[4/3] group"
+          >
+            <img 
+              src="/images/network_map.png" 
+              alt="2+FAPL Pan-India Distribution Network Map" 
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            {/* Ambient gold glow */}
+            <div className="absolute inset-0 bg-gradient-to-t from-emerald-deep/20 via-transparent to-transparent pointer-events-none" />
+          </div>
+          <div>
+            <p className="eyebrow mb-6" data-reveal="rise-soft">Branch Network</p>
+            <h2 data-reveal="rise" className="font-display text-4xl md:text-5xl text-ink leading-[1.0] mb-6">
+              Empowering India's growth <em className="text-emerald-deep">across 12+ states.</em>
+            </h2>
+            <p data-reveal="rise-soft" className="text-muted-foreground text-sm leading-relaxed mb-8">
+              Through strategic hubs, robust transport channels, and localized branch networks, we connect urban manufacturing centers directly to rural distribution points, enabling credit access and delivery transparency for over 1,00,000 households.
+            </p>
+            <div className="grid grid-cols-2 gap-6 border-t border-line pt-8" data-reveal="rise-soft">
+              <div>
+                <h4 className="font-display text-3xl text-gold">100K+</h4>
+                <p className="text-xs text-muted-foreground">Active Households Connected</p>
+              </div>
+              <div>
+                <h4 className="font-display text-3xl text-emerald-deep">12+</h4>
+                <p className="text-xs text-muted-foreground">States Operational Footprint</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Financial partners grid */}
       <section className="bg-ink text-paper">
         <div className="container-edge section-y">
@@ -64,13 +101,32 @@ function Page() {
               The institutions that <em className="text-gold">deliver the last mile.</em>
             </h2>
           </div>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-px bg-paper/10">
-            {PARTNERS.map((p, i) => (
-              <div key={p} data-reveal="rise-soft" style={{ animationDelay: `${i * 30}ms` }} className="bg-ink p-8 min-h-[10rem] flex flex-col justify-between">
-                <span className="text-gold/70 text-xs">{String(i + 1).padStart(2, "0")}</span>
-                <p className="font-display text-2xl leading-tight">{p}</p>
+          
+          <div className="grid lg:grid-cols-[1.8fr_1fr] gap-12 xl:gap-20 items-stretch mb-16">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-px bg-paper/10">
+              {PARTNERS.map((p, i) => (
+                <div key={p} data-reveal="rise-soft" style={{ animationDelay: `${i * 20}ms` }} className="bg-ink p-6 min-h-[9rem] flex flex-col justify-between">
+                  <span className="text-gold/70 text-xs">{String(i + 1).padStart(2, "0")}</span>
+                  <p className="font-display text-xl leading-tight">{p}</p>
+                </div>
+              ))}
+            </div>
+             {/* Collaborating partners image banner */}
+            <div 
+              data-reveal="rise" 
+              className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/10 min-h-[300px] lg:min-h-auto group"
+            >
+              <img 
+                src="/images/partners_collaborating.png" 
+                alt="Strategic financial alliance professionals collaborating around reports and products" 
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6">
+                <span className="eyebrow text-gold mb-2 block">Collaborative Impact</span>
+                <p className="font-display text-xl leading-tight">Decades of combined experience bridging gaps.</p>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>

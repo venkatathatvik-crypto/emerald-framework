@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -126,9 +127,158 @@ function RootComponent() {
     return () => { io.disconnect(); mo.disconnect(); };
   }, []);
 
+  // Motion Framework: Cursor, Parallax, Magnetic hover, Card Glow effects
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Create Custom Cursor divs
+    const cursor = document.createElement("div");
+    cursor.className = "custom-cursor hidden md:block";
+    const cursorRing = document.createElement("div");
+    cursorRing.className = "custom-cursor-ring hidden md:block";
+    document.body.appendChild(cursor);
+    document.body.appendChild(cursorRing);
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let ringX = 0;
+    let ringY = 0;
+
+    const onMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursor.style.left = `${mouseX}px`;
+      cursor.style.top = `${mouseY}px`;
+
+      // Mouse Parallax updates
+      const pxElements = document.querySelectorAll<HTMLElement>(".mouse-parallax");
+      pxElements.forEach((el) => {
+        const factor = parseFloat(el.getAttribute("data-parallax-factor") || "0.03");
+        const x = (e.clientX - window.innerWidth / 2) * factor;
+        const y = (e.clientY - window.innerHeight / 2) * factor;
+        el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      });
+
+      // Tech Card Glow mouse coordinate variable tracker
+      const glowCards = document.querySelectorAll<HTMLElement>(".tech-card-glow");
+      glowCards.forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+      });
+    };
+
+    // Smooth follow loop for cursor ring
+    const renderCursorRing = () => {
+      ringX += (mouseX - ringX) * 0.15;
+      ringY += (mouseY - ringY) * 0.15;
+      cursorRing.style.left = `${ringX}px`;
+      cursorRing.style.top = `${ringY}px`;
+      requestAnimationFrame(renderCursorRing);
+    };
+    const animId = requestAnimationFrame(renderCursorRing);
+
+    // Scaling the cursor when hovering clickable links
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const interactive = target.closest("a, button, .btn-primary, .btn-ghost, .btn-gold, .magnetic-wrap, [role='button']");
+      if (interactive) {
+        cursor.style.width = "20px";
+        cursor.style.height = "20px";
+        cursor.style.backgroundColor = "var(--emerald-deep)";
+        cursorRing.style.width = "56px";
+        cursorRing.style.height = "56px";
+        cursorRing.style.borderColor = "var(--emerald-soft)";
+      } else {
+        cursor.style.width = "8px";
+        cursor.style.height = "8px";
+        cursor.style.backgroundColor = "var(--gold)";
+        cursorRing.style.width = "40px";
+        cursorRing.style.height = "40px";
+        cursorRing.style.borderColor = "var(--gold-soft)";
+      }
+    };
+
+    // Magnetic Wrap calculations
+    const onWrapMove = (e: MouseEvent) => {
+      const wrap = e.currentTarget as HTMLElement;
+      const rect = wrap.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      const btn = wrap.querySelector<HTMLElement>(".magnetic-btn");
+      if (btn) {
+        btn.style.transform = `translate3d(${x * 0.4}px, ${y * 0.4}px, 0)`;
+      }
+      wrap.style.transform = `translate3d(${x * 0.2}px, ${y * 0.2}px, 0)`;
+    };
+
+    const onWrapLeave = (e: MouseEvent) => {
+      const wrap = e.currentTarget as HTMLElement;
+      const btn = wrap.querySelector<HTMLElement>(".magnetic-btn");
+      if (btn) btn.style.transform = "translate3d(0, 0, 0)";
+      wrap.style.transform = "translate3d(0, 0, 0)";
+    };
+
+    // Register active magnetic button listeners
+    const scanMagnetic = () => {
+      document.querySelectorAll<HTMLElement>(".magnetic-wrap").forEach((wrap) => {
+        if (wrap.dataset.magneticActive === "true") return;
+        wrap.addEventListener("mousemove", onWrapMove);
+        wrap.addEventListener("mouseleave", onWrapLeave);
+        wrap.dataset.magneticActive = "true";
+      });
+    };
+    scanMagnetic();
+    const mo = new MutationObserver(scanMagnetic);
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    // Scroll progress drawing logic
+    const onScroll = () => {
+      const scrollY = window.scrollY;
+      document.querySelectorAll<HTMLElement>(".parallax-bg").forEach((el) => {
+        const speed = parseFloat(el.getAttribute("data-scroll-speed") || "0.15");
+        el.style.setProperty("--scroll-offset", `${scrollY * speed}px`);
+      });
+
+      document.querySelectorAll<HTMLElement>(".svg-draw-container").forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        const path = el.querySelector<SVGPathElement>(".svg-draw-path");
+        if (path && rect.top < window.innerHeight && rect.bottom > 0) {
+          const visiblePct = Math.min(1, Math.max(0, (window.innerHeight - rect.top) / (window.innerHeight + rect.height)));
+          const length = path.getTotalLength();
+          path.style.strokeDashoffset = `${length * (1 - visiblePct)}`;
+        }
+      });
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseover", handleMouseOver);
+    window.addEventListener("scroll", onScroll);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseover", handleMouseOver);
+      window.removeEventListener("scroll", onScroll);
+      mo.disconnect();
+      document.body.removeChild(cursor);
+      document.body.removeChild(cursorRing);
+      document.querySelectorAll<HTMLElement>(".magnetic-wrap").forEach((wrap) => {
+        wrap.removeEventListener("mousemove", onWrapMove);
+        wrap.removeEventListener("mouseleave", onWrapLeave);
+      });
+    };
+  }, []);
+
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <div key={pathname} className="page-transition-wrap">
+        <Outlet />
+      </div>
     </QueryClientProvider>
   );
 }

@@ -27,12 +27,14 @@ const TEAM = [
     name: "Sharada Manisha",
     role: "Independent Director",
     bio: "Independent director bringing governance perspective and ecosystem oversight to the board.",
+    photo: "/images/shradha_manisha.jpg",
   },
   {
     initials: "PA",
     name: "Prasad Andrews",
     role: "Operations Head",
     bio: "Heads day-to-day distribution operations across state warehouses, branch coordination and supply-chain SLAs.",
+    photo: "/images/prasad_andrews.png",
   },
 ];
 
@@ -46,15 +48,20 @@ function Page() {
       />
 
       {/* Featured founder */}
-      <section className="bg-emerald-deep text-paper">
-        <div className="container-edge section-y grid lg:grid-cols-[1fr_1.3fr] gap-12 lg:gap-24 items-end">
-          <div data-reveal="rise" className="aspect-[3/4] w-full bg-paper/10 border border-paper/15 relative overflow-hidden">
-            <div className="absolute inset-0 grid place-items-center">
-              <span className="font-display text-[18rem] leading-none text-paper/15">SP</span>
-            </div>
-            <div className="absolute bottom-0 inset-x-0 p-6">
+      <section className="bg-emerald-deep text-paper overflow-hidden">
+        <div className="container-edge section-y grid lg:grid-cols-[1fr_1.3fr] gap-12 lg:gap-24 items-center">
+          <div 
+            className="aspect-[3/4] w-full bg-paper/5 border border-paper/10 relative overflow-hidden rounded-3xl shadow-2xl founder-glide-in"
+          >
+            <img 
+              src="/images/srikanth_pagolu.png" 
+              alt="Srikanth Pagolu — Founder & Director" 
+              className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-emerald-deep via-transparent to-transparent pointer-events-none" />
+            <div className="absolute bottom-0 inset-x-0 p-8 z-10">
               <p className="eyebrow text-gold">Founder & Director</p>
-              <p className="font-display text-3xl mt-2">Srikanth Pagolu</p>
+              <p className="font-display text-4xl mt-2">Srikanth Pagolu</p>
             </div>
           </div>
           <div>
@@ -72,6 +79,7 @@ function Page() {
         </div>
       </section>
 
+
       {/* Other leaders */}
       <section className="container-edge section-y">
         <p className="eyebrow mb-6" data-reveal="rise-soft">Senior management</p>
@@ -80,9 +88,21 @@ function Page() {
         </h2>
         <div className="grid md:grid-cols-2 gap-px bg-line">
           {TEAM.filter((t) => !t.featured).map((m, i) => (
-            <article key={m.name} data-reveal="rise" style={{ animationDelay: `${i * 80}ms` }} className="bg-paper p-10 md:p-12 min-h-[24rem] flex flex-col justify-between">
-              <div className="aspect-square w-24 rounded-full bg-stone grid place-items-center">
-                <span className="font-display text-3xl text-emerald-deep">{m.initials}</span>
+            <article key={m.name} data-reveal="rise" style={{ animationDelay: `${i * 80}ms` }} className="bg-paper p-10 md:p-12 min-h-[28rem] flex flex-col justify-between">
+              {/* Portrait */}
+              <div className="aspect-[3/4] w-full max-w-[220px] mb-8 rounded-2xl overflow-hidden shadow-lg founder-glide-in relative">
+                {m.photo ? (
+                  <img
+                    src={m.photo}
+                    alt={`${m.name} — ${m.role}`}
+                    className="w-full h-full object-cover object-top transition-transform duration-700 hover:scale-105"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-stone grid place-items-center">
+                    <span className="font-display text-5xl text-emerald-deep">{m.initials}</span>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none rounded-2xl" />
               </div>
               <div>
                 <p className="eyebrow mb-2">{m.role}</p>

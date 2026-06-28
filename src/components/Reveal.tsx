@@ -1,6 +1,6 @@
 import { useEffect, useRef, type ReactNode, type CSSProperties, type ElementType } from "react";
 
-type Variant = "rise" | "rise-soft" | "fade" | "mask";
+type Variant = "rise" | "rise-soft" | "fade" | "mask" | "slide-left" | "slide-right";
 
 interface RevealProps {
   children: ReactNode;

@@ -74,7 +74,41 @@ function Page() {
         </div>
       </section>
 
+      {/* Aggregator Network Diagram Section */}
+      <section className="container-edge section-y border-t border-line">
+        <div className="grid lg:grid-cols-[1fr_1.2fr] gap-12 xl:gap-24 items-center">
+          <div>
+            <p className="eyebrow mb-6" data-reveal="rise-soft">Aggregator Fabric</p>
+            <h2 data-reveal="rise" className="font-display text-4xl md:text-5xl text-ink leading-[1.0] mb-6">
+              The central node of <em className="text-emerald-deep">rural commerce.</em>
+            </h2>
+            <p data-reveal="rise-soft" className="text-muted-foreground text-sm leading-relaxed mb-6">
+              As a unified aggregator, 2+FAPL consolidates demand and orchestrates supply. We bridge manufacturers directly with rural customers by partnering with trusted financial institutions, managing local staging warehouses, and leveraging MFI branch footprints to handle last-mile deliveries with guaranteed SLA accountability.
+            </p>
+            <div className="flex flex-wrap gap-2" data-reveal="rise-soft">
+              {["Manufacturers", "Aggregators", "Financial Institutions", "Partners", "Branches", "Customers"].map((tag) => (
+                <span key={tag} className="px-3 py-1.5 rounded-lg border border-line bg-stone text-xs font-medium text-ink">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+          
+          <div 
+            data-reveal="rise"
+            className="relative rounded-3xl overflow-hidden shadow-2xl border border-line bg-glow-emerald aspect-[4/3] group p-4 flex items-center justify-center bg-stone"
+          >
+            <img 
+              src="/images/journey_isometric.png" 
+              alt="2+FAPL Aggregator Journey: Manufacturer to Rural Customer" 
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* Flow */}
+
       <section className="container-edge section-y">
         <p className="eyebrow mb-6" data-reveal="rise-soft">End-to-end flow</p>
         <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl mb-16 max-w-4xl leading-[1.02]">
