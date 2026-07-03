@@ -18,7 +18,7 @@ export const Route = createFileRoute("/about")({
 const MILESTONES = [
   { year: "FY 2022-23", event: "Company incorporated 30 June 2022. First NBFC partnership established. Revenue: ₹1.03 Cr." },
   { year: "FY 2023-24", event: "Expanded to 5 states. 8 partner MFIs onboarded. Revenue: ₹2.79 Cr. CSR: Sponsored education for 12 students." },
-  { year: "FY 2024-25", event: "18 partner MFIs. Operations in 12+ states. 1,00,000+ households impacted. Revenue: ₹5.31 Cr." },
+  { year: "FY 2024-25", event: "18 partner MFIs. Operations in 20+ states. 1,00,000+ households impacted. Turnover: ₹5.31 Cr." },
   { year: "FY 2025-26", event: "State warehouse network expansion. Digital platform launch. Target: ₹10.15 Cr." },
   { year: "FY 2026-27", event: "Multi-category expansion. Corporate B2B channel activation. Target: ₹20.66 Cr." },
   { year: "FY 2029-30", event: "Pan-India distribution footprint. Wholesale & retail franchise channels. Target: ₹110 Cr." },

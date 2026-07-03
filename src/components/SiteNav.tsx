@@ -26,7 +26,7 @@ const NAV_GROUPS = [
     label: "Network",
     items: [
       { label: "Brands & Partners", to: "/brands", desc: "18 MFI partners, 24+ premium brands" },
-      { label: "Branch Network", to: "/brands#branches", desc: "12+ states, growing footprint" },
+      { label: "Branch Network", to: "/brands#branches", desc: "20+ states, growing footprint" },
     ],
   },
   {

@@ -33,7 +33,7 @@ const PARTNER_BRANDS = [
 const CATEGORIES = [
   "Kitchenware", "Home Appliances", "Home Furnishing", "Household Furniture",
   "Electricals", "Electronics", "White Goods", "Water Purifiers",
-  "Portable Solar", "Mobiles & Accessories", "Health & Hygiene",
+  "Portable Solar", "Mobiles & Accessories", "Health & Hygiene", "FMCG / Commodities",
 ];
 
 const PILLARS = [
@@ -61,8 +61,8 @@ const PILLARS = [
   {
     icon: <Globe className="h-6 w-6" />,
     num: "04",
-    title: "12+ States, 18 Partners",
-    body: "A growing network of NBFC and MFI alliances spanning 12+ states and 1,00,000+ households.",
+    title: "20+ States, 18 Partners",
+    body: "A growing network of NBFC and MFI alliances spanning 20+ states and 1,00,000+ households.",
     link: "/brands",
   },
 ];
@@ -192,7 +192,7 @@ function Home() {
               {/* Paragraph */}
               <p className="hero-enter text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg mb-10"
                 style={{ animationDelay: "700ms" }}>
-                2+FAPL connects 18 NBFC & MFI partners, 24+ premium brands, and 1,00,000+ households across 12+ Indian states — on structured EMI with zero interest, zero processing fee, and zero insurance cost.
+                2+FAPL connects 18 NBFC & MFI partners, 30+ premium brands, and 1,00,000+ households across 20+ Indian states — on structured EMI with zero interest, zero processing fee, and zero insurance cost.
               </p>
 
               {/* CTAs */}
@@ -213,8 +213,8 @@ function Home() {
               <div className="hero-enter grid grid-cols-2 sm:grid-cols-4 gap-5 border-t border-line pt-8"
                 style={{ animationDelay: "1100ms" }}>
                 {[
-                  { value: 3,   suffix: "+",  label: "Years" },
-                  { value: 24,  suffix: "+",  label: "Brands" },
+                  { value: 4,   suffix: "",   label: "Years" },
+                  { value: 30,  suffix: "+",  label: "Brands" },
                   { value: 18,  suffix: "",   label: "Partners" },
                   { value: 100, suffix: "K+", label: "Households" },
                 ].map((s) => (
@@ -235,8 +235,8 @@ function Home() {
 
               <div className="hero-image-wrap relative w-full max-w-xl aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl shadow-ink/10 border border-white/80 mouse-parallax" data-parallax-factor="0.015">
                 <img
-                  src="/images/gold_brick.jpg"
-                  alt="Premium consumer products bridging to rural India — 2+FAPL"
+                  src="/images/hero_bridge.png"
+                  alt="2+FAPL distribution network bridging premium brands to rural India"
                   className="hero-ken-burns w-full h-full object-cover object-center"
                   loading="eager"
                 />
@@ -263,7 +263,7 @@ function Home() {
                 <div className="absolute top-5 right-5 hero-float-badge" style={{ animationDelay: "0.8s" }}>
                   <div className="bg-white/90 backdrop-blur-xl rounded-full px-4 py-2 shadow border border-white/60 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
-                    <span className="text-xs font-medium text-ink">12+ States</span>
+                    <span className="text-xs font-medium text-ink">20+ States</span>
                   </div>
                 </div>
               </div>
@@ -355,8 +355,8 @@ function Home() {
               {/* Key figures */}
               <div data-reveal="rise" style={{ animationDelay: "300ms" }} className="grid grid-cols-3 gap-6 border-t border-line pt-10">
                 {[
-                  { v: "₹5.31 Cr", l: "FY 2024-25 Revenue" },
-                  { v: "12+", l: "States" },
+                  { v: "₹5.31 Cr", l: "FY 2024-25 Turnover" },
+                  { v: "20+", l: "States" },
                   { v: "100K+", l: "Households impacted" },
                 ].map((s) => (
                   <div key={s.l}>
@@ -505,13 +505,13 @@ function Home() {
         <div className="container-edge mt-10">
           <p className="eyebrow mb-5" data-reveal="rise-soft">Associated Brands</p>
           <div data-reveal="rise-soft" className="flex flex-wrap gap-2.5">
-            {["United Metalik","Prestige","Pigeon","Bajaj Electricals","Samsung","Realme","Vivo","d.light","Luminous","Havells","Kent","Eureka Forbes","Butterfly","Wonderchef"].map((b) => (
+            {["Third Wave Power (JUGNU)","Orient","Whirlpool","Haier","Crompton","Tharun Sha","United Metallik","Prestige","Pigeon","Bajaj","Luminous","Samsung","D.light","Vivo"].map((b) => (
               <span key={b} className="px-4 py-2 rounded-xl bg-paper border border-line text-sm text-ink hover:border-gold hover:text-gold-soft transition-all duration-300">
                 {b}
               </span>
             ))}
             <Link to="/brands" className="px-4 py-2 rounded-xl bg-emerald-deep text-paper text-sm font-medium hover:bg-ink transition-colors duration-300 flex items-center gap-1.5">
-              +10 more <ArrowUpRight className="h-3 w-3" />
+              + Others <ArrowUpRight className="h-3 w-3" />
             </Link>
           </div>
         </div>

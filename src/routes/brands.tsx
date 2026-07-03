@@ -24,9 +24,10 @@ const PARTNERS = [
 ];
 
 const BRAND_CATEGORIES = [
-  { eyebrow: "Home & Kitchen", title: "Partnering for quality. Delivering trust.", tags: ["Trusted Partners", "Quality Assured", "Stronger Together"] },
-  { eyebrow: "Electronics & Appliances", title: "Innovation. Trust. Excellence.", tags: ["Innovative Solutions", "Reliable Performance", "Brands You Can Trust"] },
-  { eyebrow: "Lifestyle, Mobility & Other", title: "One network. Many possibilities.", tags: ["Wide Range", "Endless Possibilities", "Sustainable Future"] },
+  { eyebrow: "Home & Kitchen", title: "Partnering for quality. Delivering trust.", tags: ["Prestige", "Pigeon", "Butterfly", "Wonderchef", "Bajaj", "Crompton", "Luminous"] },
+  { eyebrow: "Electronics & Appliances", title: "Innovation. Trust. Excellence.", tags: ["Samsung", "Whirlpool", "Haier", "Orient", "Vivo", "D.light", "Third Wave Power (JUGNU)"] },
+  { eyebrow: "Lifestyle, Mobility & Other", title: "One network. Many possibilities.", tags: ["United Metallik", "Tharun Sha", "Luminous", "Others"] },
+  { eyebrow: "FMCG / Commodities", title: "Everyday essentials. Wider reach.", tags: ["Pulses & Grains", "Spices & Masalas", "Packaged Foods", "Personal Care", "Household Care"] },
 ];
 
 function Page() {
@@ -73,7 +74,7 @@ function Page() {
           <div>
             <p className="eyebrow mb-6" data-reveal="rise-soft">Branch Network</p>
             <h2 data-reveal="rise" className="font-display text-4xl md:text-5xl text-ink leading-[1.0] mb-6">
-              Empowering India's growth <em className="text-emerald-deep">across 12+ states.</em>
+              Empowering India's growth <em className="text-emerald-deep">across 20+ states.</em>
             </h2>
             <p data-reveal="rise-soft" className="text-muted-foreground text-sm leading-relaxed mb-8">
               Through strategic hubs, robust transport channels, and localized branch networks, we connect urban manufacturing centers directly to rural distribution points, enabling credit access and delivery transparency for over 1,00,000 households.
@@ -84,7 +85,7 @@ function Page() {
                 <p className="text-xs text-muted-foreground">Active Households Connected</p>
               </div>
               <div>
-                <h4 className="font-display text-3xl text-emerald-deep">12+</h4>
+                <h4 className="font-display text-3xl text-emerald-deep">20+</h4>
                 <p className="text-xs text-muted-foreground">States Operational Footprint</p>
               </div>
             </div>

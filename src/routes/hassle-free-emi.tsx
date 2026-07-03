@@ -86,7 +86,7 @@ function Page() {
               "Damage / defect swap at delivery",
               "Repayment via your existing MFI / NBFC schedule",
               "AMC enablement for white goods & water purifiers",
-              "Doorstep service across 12+ states",
+              "Doorstep service across 20+ states",
             ].map((x, i) => (
               <li key={x} data-reveal="rise-soft" style={{ animationDelay: `${i * 50}ms` }} className="flex gap-3 items-start border-b border-line pb-4">
                 <Check className="h-5 w-5 text-emerald-deep shrink-0 mt-0.5" />
