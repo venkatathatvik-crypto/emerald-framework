@@ -3,7 +3,7 @@ import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 export const Route = createFileRoute("/dashboard/branch")({
-  head: () => ({ meta: [{ title: "Branch Dashboard — 2+FAPL" }] }),
+  head: () => ({ meta: [{ title: "Branch Dashboard — 2+ Fortune Alliances" }] }),
   component: Page,
 });
 

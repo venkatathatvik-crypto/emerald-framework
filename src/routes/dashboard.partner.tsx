@@ -3,7 +3,7 @@ import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
 
 export const Route = createFileRoute("/dashboard/partner")({
-  head: () => ({ meta: [{ title: "Partner Dashboard — 2+FAPL" }] }),
+  head: () => ({ meta: [{ title: "Partner Dashboard — 2+ Fortune Alliances" }] }),
   component: Page,
 });
 

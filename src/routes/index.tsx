@@ -3,17 +3,16 @@ import { ArrowUpRight, ArrowRight, Package, Zap, ShieldCheck, Globe, Linkedin, T
 import { PageShell } from "@/components/PageShell";
 import { Marquee } from "@/components/Marquee";
 import { Counter } from "@/components/Counter";
-import { HeroBanner } from "@/components/HeroBanner";
 import { TrendingUp } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "2+FAPL — From Everyday Essentials to Timeless Treasures" },
+      { title: "2+ Fortune Alliances — From Everyday Essentials to Timeless Treasures" },
       {
         name: "description",
         content:
-          "2 Plus Fortune Alliances Pvt Ltd: a Hyderabad-headquartered aggregator bridging premium brands and India's rural markets through trust, reach and reliability.",
+          "2 Plus Fortune Alliances Pvt Ltd: a Hyderabad-headquartered aggregator bridging premium brands and India's rural & semi-urban markets through trust, reach and reliability.",
       },
     ],
   }),
@@ -40,7 +39,7 @@ const PILLARS = [
   {
     icon: <Package className="h-6 w-6" />,
     num: "01",
-    title: "11 Consumer Categories",
+    title: "12 Consumer Categories",
     body: "From kitchenware to portable solar — every SKU curated for quality, affordability and rural relevance.",
     link: "/products",
   },
@@ -48,8 +47,8 @@ const PILLARS = [
     icon: <Zap className="h-6 w-6" />,
     num: "02",
     title: "Zero-Cost EMI",
-    body: "No interest, no processing fee, no insurance cost. Consumer finance that genuinely serves the customer.",
-    link: "/hassle-free-emi",
+    body: "",
+    link: "/gold-emi",
   },
   {
     icon: <ShieldCheck className="h-6 w-6" />,
@@ -73,21 +72,21 @@ const LEADERSHIP = [
     color: "bg-emerald-deep",
     name: "Srikanth Pagolu",
     title: "Founder & Director",
-    note: "25+ years · Banking, MFI, Distribution",
+    note: "Banking, MFI, Distribution",
   },
   {
     initials: "SM",
-    color: "bg-gold",
+    color: "bg-emerald-deep",
     name: "Sharada Manisha",
     title: "Independent Director",
     note: "MFI regulatory expertise",
   },
   {
     initials: "PA",
-    color: "bg-stone-2",
+    color: "bg-emerald-deep",
     name: "Prasad Andrews",
     title: "Head of Operations",
-    note: "End-to-end supply chain",
+    note: "Distribution and fulfillment operations",
   },
 ];
 
@@ -192,7 +191,7 @@ function Home() {
               {/* Paragraph */}
               <p className="hero-enter text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg mb-10"
                 style={{ animationDelay: "700ms" }}>
-                2+FAPL connects 18 NBFC & MFI partners, 30+ premium brands, and 1,00,000+ households across 20+ Indian states — on structured EMI with zero interest, zero processing fee, and zero insurance cost.
+                2+ Fortune Alliances connects 18 NBFC & MFI partners, 30+ premium brands, and 1,00,000+ households across 20+ Indian states.
               </p>
 
               {/* CTAs */}
@@ -203,7 +202,7 @@ function Home() {
                   </Link>
                 </div>
                 <div className="magnetic-wrap">
-                  <Link to="/contact" className="btn-ghost btn-premium-lift magnetic-btn" aria-label="Become a 2+FAPL partner">
+                  <Link to="/contact" className="btn-ghost btn-premium-lift magnetic-btn" aria-label="Become a partner">
                     Become a Partner <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
                 </div>
@@ -235,8 +234,8 @@ function Home() {
 
               <div className="hero-image-wrap relative w-full max-w-xl aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl shadow-ink/10 border border-white/80 mouse-parallax" data-parallax-factor="0.015">
                 <img
-                  src="/images/hero_bridge.png"
-                  alt="2+FAPL distribution network bridging premium brands to rural India"
+                  src="/images/hero_rural_bridge.png"
+                  alt="2+ Fortune Alliances distribution network bridging premium brands to rural & semi-urban India"
                   className="hero-ken-burns w-full h-full object-cover object-center"
                   loading="eager"
                 />
@@ -249,8 +248,8 @@ function Home() {
                       <TrendingUp className="h-5 w-5 text-paper" />
                     </div>
                     <div>
-                      <p className="font-display text-xl text-ink leading-none mb-0.5">₹110 Cr</p>
-                      <p className="text-xs text-muted-foreground">FY 2029-30 Revenue Target</p>
+                      <p className="font-display text-xl text-ink leading-none mb-0.5">₹100 Cr</p>
+                      <p className="text-xs text-muted-foreground">FY 2029-30 Turnover Target</p>
                     </div>
                     <div className="ml-auto flex flex-col items-end gap-0.5">
                       <span className="text-xs font-semibold text-emerald-deep">↑ 65% CAGR</span>
@@ -284,8 +283,8 @@ function Home() {
         {/* Trust strip */}
         <div className="border-t border-line bg-stone/40 backdrop-blur-sm relative z-10">
           <div className="container-edge py-4 flex items-center gap-6 text-xs text-muted-foreground overflow-x-auto">
-            <span className="eyebrow text-ink shrink-0">Trusted across</span>
-            {["Telangana","Andhra Pradesh","Karnataka","Tamil Nadu","Maharashtra","Rajasthan","Odisha","Jharkhand","Bihar","Assam"].map(s => (
+            <span className="eyebrow text-ink shrink-0">Operational presence</span>
+            {["Ranchi", "Patna", "Punjab", "Chandigarh", "Cochin", "Visakhapatnam", "Varanasi", "Bhubaneswar"].map(s => (
               <span key={s} className="shrink-0 whitespace-nowrap">· {s}</span>
             ))}
           </div>
@@ -335,14 +334,13 @@ function Home() {
               </div>
               <div data-reveal="rise-soft" style={{ animationDelay: "100ms" }}>
                 <p className="text-base text-muted-foreground leading-relaxed">
-                  Our aggregator model bridges the gap between manufacturers and the last mile — enabling NBFC and MFI partners to offer aspirational products on structured, zero-cost EMI directly to households that traditional retail never reached.
+                  Our aggregator model bridges the gap between manufacturers and the last mile — enabling NBFC and MFI partners to offer aspirational products directly to households that traditional retail never reached.
                 </p>
               </div>
 
-
               {/* Categories */}
               <div data-reveal="rise-soft" style={{ animationDelay: "200ms" }}>
-                <p className="eyebrow mb-5">11 Consumer Categories</p>
+                <p className="eyebrow mb-5">12 Consumer Categories</p>
                 <div className="flex flex-wrap gap-2.5">
                   {CATEGORIES.map((c) => (
                     <span key={c} className="px-4 py-2 rounded-full border border-line bg-paper text-sm hover:border-emerald-deep hover:text-emerald-deep transition-all duration-300 cursor-default">
@@ -355,7 +353,7 @@ function Home() {
               {/* Key figures */}
               <div data-reveal="rise" style={{ animationDelay: "300ms" }} className="grid grid-cols-3 gap-6 border-t border-line pt-10">
                 {[
-                  { v: "₹5.31 Cr", l: "FY 2024-25 Turnover" },
+                  { v: "₹5.24 Cr", l: "FY 2024-25 Turnover" },
                   { v: "20+", l: "States" },
                   { v: "100K+", l: "Households impacted" },
                 ].map((s) => (
@@ -371,117 +369,15 @@ function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════ */}
-      {/* 03 · THE SOLUTION — Business Model                        */}
-      {/* ══════════════════════════════════════════════════════════ */}
-      <section className="bg-ink text-paper relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-deep/15 via-transparent to-gold/5 pointer-events-none" />
-
-        <div className="container-edge section-y relative z-10">
-          <div className="grid lg:grid-cols-[1fr_2fr] gap-16 lg:gap-28 mb-20">
-            <div>
-              <p className="eyebrow text-gold mb-6" data-reveal="rise-soft">03 — Our Solution</p>
-              <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl text-paper leading-[0.97]">
-                A ₹2,000 Cr<br /><em className="text-gold">opportunity.</em><br />One network.
-              </h2>
-            </div>
-            <div className="lg:pt-10">
-              <p data-reveal="rise-soft" className="text-base text-paper/70 leading-relaxed max-w-xl mb-8">
-                India's rural distribution market is fragmented, underserved, and massive. 2+FAPL solves this by aggregating premium brands and routing them through a verified NBFC partner network — making structured finance available at the last mile.
-              </p>
-              <div data-reveal="rise-soft" style={{ animationDelay: "100ms" }}>
-                <Link to="/business-model" className="link-underline text-paper/80 hover:text-paper text-sm">
-                  Explore our business model <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* 3 channel cards */}
-          <div className="grid md:grid-cols-3 gap-5 stagger-children" data-reveal="rise">
-            {[
-              {
-                label: "Retail — NBFC / MFI",
-                market: "₹1,200+ Cr",
-                desc: "The core channel. Partner branches reach rural households through trusted, on-ground relationships and structured EMI products.",
-                accent: "border-t-gold",
-              },
-              {
-                label: "Institutional — B2B / Government",
-                market: "₹400+ Cr",
-                desc: "Bulk procurement for government schemes, corporate gifting, and institutional supply at volume pricing.",
-                accent: "border-t-emerald-soft",
-              },
-              {
-                label: "Digital — E-Commerce",
-                market: "₹400+ Cr",
-                desc: "Aggregator-to-consumer platform enabled by digital payment rails, WhatsApp Commerce, and mobile-first ordering.",
-                accent: "border-t-paper/30",
-              },
-            ].map((ch) => (
-              <div key={ch.label} className={`bg-paper/5 border border-paper/10 rounded-2xl p-8 hover:bg-paper/10 hover:border-gold/30 transition-all duration-500 border-t-2 ${ch.accent}`}>
-                <p className="font-display text-3xl text-gold mb-2">{ch.market}</p>
-                <h3 className="font-sans text-sm font-semibold text-paper mb-4 uppercase tracking-wider">{ch.label}</h3>
-                <p className="text-sm text-paper/60 leading-relaxed">{ch.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════ */}
-      {/* 04 · WHY US — Four Pillars                               */}
-      {/* ══════════════════════════════════════════════════════════ */}
-      <section className="section-y border-t border-line bg-gradient-subtle">
-        <div className="container-edge">
-          <div className="grid lg:grid-cols-[1fr_2.2fr] gap-16 lg:gap-28 mb-20">
-            <div>
-              <p className="eyebrow mb-6" data-reveal="rise-soft">04 — Why 2+FAPL</p>
-              <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl text-ink leading-[0.97]">
-                Four pillars.<br /><em className="text-emerald-deep">One promise.</em>
-              </h2>
-            </div>
-            <p data-reveal="rise-soft" className="text-lg text-muted-foreground leading-relaxed lg:mt-14 max-w-xl">
-              A wide product range, affordability without compromise, an accountable supply chain, and decades of industry expertise — woven into every distribution we make.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            {PILLARS.map((p, i) => (
-              <Link
-                key={p.num}
-                to={p.link}
-                data-reveal="rise"
-                style={{ animationDelay: `${i * 80}ms` }}
-                className="card-premium p-10 md:p-14 group block"
-                aria-label={`Learn more about ${p.title}`}
-              >
-                <div className="flex items-start justify-between mb-10">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl border border-line text-emerald-deep group-hover:bg-emerald-deep group-hover:text-paper group-hover:border-emerald-deep transition-all duration-500" aria-hidden="true">
-                      {p.icon}
-                    </div>
-                    <span className="font-display text-4xl text-emerald-deep/20 group-hover:text-emerald-deep/40 transition-colors duration-500" aria-hidden="true">{p.num}</span>
-                  </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-emerald-deep group-hover:-translate-y-1 group-hover:translate-x-1 transition-all duration-500" aria-hidden="true" />
-                </div>
-                <h3 className="font-display text-3xl md:text-4xl text-ink mb-4 leading-tight group-hover:text-emerald-deep transition-colors duration-500">{p.title}</h3>
-                <p className="text-muted-foreground leading-relaxed text-sm max-w-sm">{p.body}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════ */}
-      {/* 05 · TRUST — Brands + Partners marquee                    */}
+      {/* 03 · TRUST — Brands + Partners marquee                    */}
       {/* ══════════════════════════════════════════════════════════ */}
       <section className="bg-stone section-y-sm border-t border-line overflow-hidden">
         <div className="container-edge mb-12">
           <div className="flex items-end justify-between gap-6 flex-wrap">
             <div>
-              <p className="eyebrow mb-5" data-reveal="rise-soft">05 — Trusted Network</p>
+              <p className="eyebrow mb-5" data-reveal="rise-soft">03 — Trusted Network</p>
               <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl text-ink leading-[1.0] max-w-2xl">
-                18 NBFC & MFI partners.<br /><em className="text-emerald-deep">One unified network.</em>
+                NBFC's, MFI's, Cooperatives,<br />Sec-8 Co's, Trust's, NGO's & B2C.<br /><em className="text-emerald-deep">One unified network.</em>
               </h2>
             </div>
             <Link to="/brands" className="link-underline text-sm shrink-0" data-reveal="fade">
@@ -505,7 +401,7 @@ function Home() {
         <div className="container-edge mt-10">
           <p className="eyebrow mb-5" data-reveal="rise-soft">Associated Brands</p>
           <div data-reveal="rise-soft" className="flex flex-wrap gap-2.5">
-            {["Third Wave Power (JUGNU)","Orient","Whirlpool","Haier","Crompton","Tharun Sha","United Metallik","Prestige","Pigeon","Bajaj","Luminous","Samsung","D.light","Vivo"].map((b) => (
+            {["Third Wave Power (JUGNU)", "Orient", "Whirlpool", "Haier", "Crompton", "Tharun Sha", "United", "Prestige", "Pigeon", "Bajaj", "Luminous", "Samsung", "D.light", "Vivo"].map((b) => (
               <span key={b} className="px-4 py-2 rounded-xl bg-paper border border-line text-sm text-ink hover:border-gold hover:text-gold-soft transition-all duration-300">
                 {b}
               </span>
@@ -518,7 +414,7 @@ function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════ */}
-      {/* 06 · LEADERSHIP + FINAL CTA                               */}
+      {/* 04 · LEADERSHIP + FINAL CTA                               */}
       {/* ══════════════════════════════════════════════════════════ */}
       <section className="section-y border-t border-line bg-glow-emerald">
         <div className="container-edge">
@@ -527,13 +423,13 @@ function Home() {
           <div className="mb-24">
             <div className="grid lg:grid-cols-[1fr_2fr] gap-12 lg:gap-28 mb-14">
               <div>
-                <p className="eyebrow mb-5" data-reveal="rise-soft">06 — Leadership</p>
+                <p className="eyebrow mb-5" data-reveal="rise-soft">04 — Leadership</p>
                 <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl text-ink leading-[0.97]">
                   Led by experience.
                 </h2>
               </div>
               <p data-reveal="rise-soft" className="text-base text-muted-foreground leading-relaxed lg:mt-12 max-w-lg">
-                Our team brings 25+ years of banking, MFI, and consumer-finance expertise — translating deep market knowledge into a partner-first distribution strategy.
+                Our team brings banking, MFI, and consumer-finance expertise — translating deep market knowledge into a partner-first distribution strategy.
               </p>
             </div>
 
@@ -563,7 +459,7 @@ function Home() {
               <div>
                 <p className="eyebrow text-gold mb-6">Let's build together</p>
                 <h2 className="font-display text-4xl md:text-6xl text-paper leading-[0.97] mb-6">
-                  Ready to become<br />a <em className="text-gold">2+FAPL partner?</em>
+                  Ready to become<br />a <em className="text-gold">2+ Fortune Alliances partner?</em>
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-6 text-sm text-paper/60">
                   <div>
@@ -579,12 +475,12 @@ function Home() {
               </div>
               <div className="flex flex-col gap-3 shrink-0">
                 <div className="magnetic-wrap">
-                  <Link to="/contact" className="btn-gold btn-premium-lift magnetic-btn shadow-lg shadow-gold/20 whitespace-nowrap" aria-label="Partner with 2+FAPL">
+                  <Link to="/contact" className="btn-gold btn-premium-lift magnetic-btn shadow-lg shadow-gold/20 whitespace-nowrap" aria-label="Partner with 2+ Fortune Alliances">
                     Partner With Us <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
                 </div>
                 <div className="magnetic-wrap">
-                  <Link to="/business-model" className="btn-ghost btn-premium-lift magnetic-btn border-paper/20 text-paper hover:bg-paper/10 whitespace-nowrap" aria-label="Learn how 2+FAPL works">
+                  <Link to="/business-model" className="btn-ghost btn-premium-lift magnetic-btn border-paper/20 text-paper hover:bg-paper/10 whitespace-nowrap" aria-label="Learn how 2+ Fortune Alliances works">
                     Learn How It Works
                   </Link>
                 </div>
@@ -595,7 +491,7 @@ function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════ */}
-      {/* 07 · FOOTER — Social, Links, Company Info                  */}
+      {/* 05 · FOOTER — Social, Links, Company Info                  */}
       {/* ══════════════════════════════════════════════════════════ */}
       <footer className="border-t border-line bg-stone/50" role="contentinfo">
         <div className="container-edge py-16">
@@ -658,12 +554,12 @@ function Home() {
               <div className="flex gap-3 mb-4">
                 {SOCIAL_LINKS.map((social) => (
                   <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={social.label}
-                    className="w-10 h-10 rounded-full border border-line bg-paper flex items-center justify-center text-muted-foreground hover:bg-emerald-deep hover:text-paper hover:border-emerald-deep transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-deep focus:ring-offset-2"
+                     key={social.label}
+                     href={social.href}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     aria-label={social.label}
+                     className="w-10 h-10 rounded-full border border-line bg-paper flex items-center justify-center text-muted-foreground hover:bg-emerald-deep hover:text-paper hover:border-emerald-deep transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-deep focus:ring-offset-2"
                   >
                     {social.icon}
                   </a>

@@ -5,9 +5,9 @@ import { ArrowUpRight } from "lucide-react";
 export const Route = createFileRoute("/leadership")({
   head: () => ({
     meta: [
-      { title: "Leadership — 2+FAPL" },
-      { name: "description", content: "Meet the leadership of 2 Plus Fortune Alliances Pvt Ltd — driving rural distribution at the intersection of finance, technology and trust." },
-      { property: "og:title", content: "Leadership — 2+FAPL" },
+      { title: "Leadership — 2+ Fortune Alliances" },
+      { name: "description", content: "Meet the leadership of 2 Plus Fortune Alliances — driving rural distribution at the intersection of finance, technology and trust." },
+      { property: "og:title", content: "Leadership — 2+ Fortune Alliances" },
       { property: "og:description", content: "Founder & Director Srikanth Pagolu and the senior management team." },
     ],
   }),
@@ -32,8 +32,8 @@ const TEAM = [
   {
     initials: "PA",
     name: "Prasad Andrews",
-    role: "Operations Head",
-    bio: "Heads day-to-day distribution operations across state warehouses, branch coordination and supply-chain SLAs.",
+    role: "Distribution and fulfillment operations",
+    bio: "Heads day-to-day distribution and fulfillment operations across state warehouses, branch coordination and supply-chain SLAs.",
     photo: "/images/prasad_andrews.png",
   },
 ];
@@ -44,7 +44,7 @@ function Page() {
       <PageHero
         eyebrow="Leadership"
         title={<>The people behind <em className="text-emerald-deep">the bridge.</em></>}
-        lede="2+FAPL is led by operators who've spent decades inside banking, MFI, consumer-product distribution and channel sales — translating that experience into a partnership model built for rural India."
+        lede="2+ Fortune Alliances is led by operators who've spent decades inside banking, MFI, consumer-product distribution and channel sales — translating that experience into a partnership model built for rural India."
       />
 
       {/* Featured founder */}
@@ -79,7 +79,6 @@ function Page() {
         </div>
       </section>
 
-
       {/* Other leaders */}
       <section className="container-edge section-y">
         <p className="eyebrow mb-6" data-reveal="rise-soft">Senior management</p>
@@ -98,8 +97,8 @@ function Page() {
                     className="w-full h-full object-cover object-top transition-transform duration-700 hover:scale-105"
                   />
                 ) : (
-                  <div className="w-full h-full bg-stone grid place-items-center">
-                    <span className="font-display text-5xl text-emerald-deep">{m.initials}</span>
+                  <div className="w-full h-full bg-emerald-deep grid place-items-center">
+                    <span className="font-display text-5xl text-paper">{m.initials}</span>
                   </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none rounded-2xl" />

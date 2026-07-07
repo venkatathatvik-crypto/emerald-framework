@@ -5,9 +5,9 @@ import { ArrowUpRight } from "lucide-react";
 export const Route = createFileRoute("/careers")({
   head: () => ({
     meta: [
-      { title: "Careers — Build with 2+FAPL" },
+      { title: "Careers — Build with 2+ Fortune Alliances" },
       { name: "description", content: "Help us build sustainable market ecosystems for rural India. Open roles across distribution, operations, technology and finance." },
-      { property: "og:title", content: "Careers — 2+FAPL" },
+      { property: "og:title", content: "Careers — 2+ Fortune Alliances" },
       { property: "og:description", content: "Onwards & upwards — together." },
     ],
   }),
@@ -15,19 +15,15 @@ export const Route = createFileRoute("/careers")({
 });
 
 const ROLES = [
-  { team: "Distribution", title: "Regional Distribution Manager", location: "Hyderabad / Bengaluru", type: "Full-time" },
-  { team: "Operations", title: "State Warehouse Lead", location: "Chennai", type: "Full-time" },
-  { team: "Operations", title: "Last-Mile Coordinator", location: "Jaipur", type: "Full-time" },
-  { team: "Technology", title: "Product Engineer (Partner Portal)", location: "Hyderabad / Remote", type: "Full-time" },
-  { team: "Technology", title: "Senior Frontend Engineer", location: "Remote — India", type: "Full-time" },
-  { team: "Finance", title: "Credit Risk Analyst — Gold EMI", location: "Hyderabad", type: "Full-time" },
-  { team: "Partnerships", title: "MFI / NBFC Alliance Manager", location: "Mumbai", type: "Full-time" },
-  { team: "People", title: "Branch Trainer (Rural)", location: "Multi-state", type: "Contract" },
+  { team: "Operations", title: "Back End Operation Manager", location: "Hyderabad", type: "Full-time" },
+  { team: "Operations", title: "Front Operation Manager", location: "Regional / Multi-state", type: "Full-time" },
+  { team: "Partnerships", title: "Front End Business Alliance Manager", location: "Hyderabad / Mumbai", type: "Full-time" },
+  { team: "Partnerships", title: "Key Account Manager (KAM)", location: "Bengaluru / Chennai", type: "Full-time" },
 ];
 
 const VALUES = [
   ["Onwards", "We optimise for compounding, not heroics. Small wins, daily."],
-  ["Upwards", "We level up — partners, customers, colleagues. Every quarter."],
+  ["Upwards", "We level up — partners, customers, and colleagues."],
   ["Together", "We do nothing alone. Mutual growth is the operating system."],
 ];
 
@@ -37,7 +33,7 @@ function Page() {
       <PageHero
         eyebrow="Careers"
         title={<>Build the bridge. <em className="text-emerald-deep">Onwards & upwards.</em></>}
-        lede="We're hiring operators, engineers, alliance managers and field leaders who want to put consumer goods within reach of the next 600 million Indians."
+        lede="We're hiring operation managers, business alliance professionals, and key account managers who want to put consumer goods within reach of the next 600 million Indians."
       />
 
       {/* Values */}

@@ -1,15 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell, PageHero } from "@/components/PageShell";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
-import { Counter } from "@/components/Counter";
 
 export const Route = createFileRoute("/business-model")({
   head: () => ({
     meta: [
-      { title: "Business Model — 2+FAPL as a rural aggregator" },
-      { name: "description", content: "Inside the 2+FAPL aggregator model: connecting OEMs with rural India via MFIs, NBFCs, cooperatives and Section 8 partners." },
-      { property: "og:title", content: "The 2+FAPL aggregator model" },
-      { property: "og:description", content: "How we bridge ₹1,000 Cr of urban manufacturing capacity with India's ₹2,000+ Cr rural opportunity." },
+      { title: "Business Model — 2+ Fortune Alliances as a rural aggregator" },
+      { name: "description", content: "Inside our aggregator model: connecting OEMs with rural India via MFIs, NBFCs, cooperatives and Section 8 partners." },
+      { property: "og:title", content: "The 2+ Fortune Alliances aggregator model" },
+      { property: "og:description", content: "Connecting urban manufacturing capacity with India's rural opportunity." },
     ],
   }),
   component: Page,
@@ -17,7 +16,7 @@ export const Route = createFileRoute("/business-model")({
 
 const FLOW = [
   ["Manufacturer / OEM", "Production, packaging, brand assurance."],
-  ["2+FAPL aggregator", "Indent consolidation, partner enablement, supply orchestration."],
+  ["2+ Fortune Alliances aggregator", "Indent consolidation, partner enablement, supply orchestration."],
   ["State warehousing", "Quality check, batching, regional staging."],
   ["NBFC / MFI partner branches", "Rural distribution arm, last-mile fulfilment."],
   ["End consumer", "Affordable, structured-price access to premium brands."],
@@ -29,24 +28,8 @@ function Page() {
       <PageHero
         eyebrow="Business Model"
         title={<>An aggregator built for <em className="text-emerald-deep">rural India.</em></>}
-        lede="A ₹2,000+ Cr rural consumer-goods opportunity, split evenly between manufacturers and aggregators. We sit in the middle — making the bridge accountable."
+        lede="To penetrate into the rural population for their upliftment & enable seamless access to any product which is aspirational."
       />
-
-      {/* Market split */}
-      <section className="container-edge section-y border-t border-line">
-        <div className="grid lg:grid-cols-2 gap-px bg-line">
-          {[
-            { tag: "₹1,000 Cr", title: "Manufacturers", body: "OEMs producing, branding and supplying consumer goods — typically operating B2B2C or institutional models." },
-            { tag: "₹1,000 Cr", title: "Aggregators", body: "Intermediaries bridging brands and rural markets — optimising logistics, warehousing and last-mile through MFIs, NBFCs, cooperatives, Sec. 8 companies and trusts." },
-          ].map((c, i) => (
-            <div key={c.title} data-reveal="rise" style={{ animationDelay: `${i * 100}ms` }} className="bg-paper p-10 md:p-14 min-h-[24rem]">
-              <p className="font-display text-6xl md:text-7xl text-gold mb-8">{c.tag}</p>
-              <h3 className="font-display text-3xl md:text-4xl mb-4">{c.title}</h3>
-              <p className="text-muted-foreground max-w-md leading-relaxed">{c.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* Our role */}
       <section className="bg-ink text-paper">
@@ -83,7 +66,7 @@ function Page() {
               The central node of <em className="text-emerald-deep">rural commerce.</em>
             </h2>
             <p data-reveal="rise-soft" className="text-muted-foreground text-sm leading-relaxed mb-6">
-              As a unified aggregator, 2+FAPL consolidates demand and orchestrates supply. We bridge manufacturers directly with rural customers by partnering with trusted financial institutions, managing local staging warehouses, and leveraging MFI branch footprints to handle last-mile deliveries with guaranteed SLA accountability.
+              As a unified aggregator, 2+ Fortune Alliances consolidates demand and orchestrates supply. We bridge manufacturers directly with rural customers by partnering with trusted financial institutions, managing local staging warehouses, and leveraging partner branch footprints to handle last-mile deliveries with guaranteed SLA accountability.
             </p>
             <div className="flex flex-wrap gap-2" data-reveal="rise-soft">
               {["Manufacturers", "Aggregators", "Financial Institutions", "Partners", "Branches", "Customers"].map((tag) => (
@@ -100,7 +83,7 @@ function Page() {
           >
             <img 
               src="/images/journey_isometric.png" 
-              alt="2+FAPL Aggregator Journey: Manufacturer to Rural Customer" 
+              alt="Aggregator Journey: Manufacturer to Rural Customer" 
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
           </div>
@@ -108,7 +91,6 @@ function Page() {
       </section>
 
       {/* Flow */}
-
       <section className="container-edge section-y">
         <p className="eyebrow mb-6" data-reveal="rise-soft">End-to-end flow</p>
         <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl mb-16 max-w-4xl leading-[1.02]">
@@ -142,7 +124,7 @@ function Page() {
           </h2>
           <div className="grid md:grid-cols-2 gap-px bg-line">
             {[
-              ["Financial institutions (Rural)", "Partnering with rural financial institutions to ensure trust, accessibility and financial inclusion."],
+              ["Digital Marketing", "Leveraging digital channels, social commerce, and modern marketing strategies to penetrate rural populations for their upliftment."],
               ["Wholesale & bulk promotion", "Volume-driven channels for partners targeting institutional and trade scale."],
               ["Corporate B2B (Urban)", "Value-driven solutions for urban corporate procurement and employee programmes."],
               ["Retail franchise (Rural)", "Empowering rural entrepreneurs through a franchise model for sustainable, local growth."],
@@ -156,21 +138,8 @@ function Page() {
         </div>
       </section>
 
-      {/* Projection */}
-      <section className="container-edge section-y">
-        <div className="grid lg:grid-cols-[1fr_1.4fr] gap-12 items-end">
-          <div>
-            <p className="eyebrow mb-6">By FY 2029-30</p>
-            <p className="font-display text-[18vw] md:text-[10vw] xl:text-[10rem] leading-[0.9] text-ink">
-              ₹<Counter to={110} /> Cr
-            </p>
-          </div>
-          <p className="text-lg text-muted-foreground max-w-xl">
-            Projected revenue under the aggregator model — driven by network expansion, deeper partnerships
-            and rising rural penetration across categories.
-          </p>
-        </div>
-        <div className="mt-16 flex gap-3 flex-wrap">
+      <section className="container-edge section-y border-t border-line">
+        <div className="mt-8 flex gap-3 flex-wrap">
           <Link to="/products" className="btn-primary">Explore the catalogue <ArrowUpRight className="h-4 w-4" /></Link>
           <Link to="/contact" className="btn-ghost">Discuss a partnership</Link>
         </div>

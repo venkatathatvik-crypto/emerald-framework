@@ -3,14 +3,14 @@ import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 export const Route = createFileRoute("/dashboard/admin")({
-  head: () => ({ meta: [{ title: "Admin Dashboard — 2+FAPL" }] }),
+  head: () => ({ meta: [{ title: "Admin Dashboard — 2+ Fortune Alliances" }] }),
   component: Page,
 });
 
 const YOY = [
-  { y: "FY23", r: 0.17 }, { y: "FY24", r: 5.30 }, { y: "FY25", r: 5.31 },
-  { y: "FY26", r: 5.25 }, { y: "FY27", r: 20.66 }, { y: "FY28", r: 50 },
-  { y: "FY29", r: 80 }, { y: "FY30", r: 110 },
+  { y: "FY23", r: 1.03 }, { y: "FY24", r: 2.79 }, { y: "FY25", r: 5.24 },
+  { y: "FY26", r: 10.15 }, { y: "FY27", r: 20.66 }, { y: "FY28", r: 50 },
+  { y: "FY29", r: 80 }, { y: "FY30", r: 100 },
 ];
 
 const BRANDS = [

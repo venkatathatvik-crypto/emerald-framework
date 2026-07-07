@@ -6,9 +6,9 @@ import { ArrowUpRight, GraduationCap, HeartHandshake, TreeDeciduous, Star } from
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About 2+FAPL — A strategic alliance for rural India" },
+      { title: "About 2+ Fortune Alliances — A strategic alliance for rural India" },
       { name: "description", content: "Founded 30 June 2022, 2 Plus Fortune Alliances Pvt Ltd is a Hyderabad-headquartered distribution house built on mutual growth and shared success." },
-      { property: "og:title", content: "About 2+FAPL" },
+      { property: "og:title", content: "About 2+ Fortune Alliances" },
       { property: "og:description", content: "A strategic alliance between two fortunate enterprises — bridging brands and rural India." },
     ],
   }),
@@ -18,10 +18,10 @@ export const Route = createFileRoute("/about")({
 const MILESTONES = [
   { year: "FY 2022-23", event: "Company incorporated 30 June 2022. First NBFC partnership established. Revenue: ₹1.03 Cr." },
   { year: "FY 2023-24", event: "Expanded to 5 states. 8 partner MFIs onboarded. Revenue: ₹2.79 Cr. CSR: Sponsored education for 12 students." },
-  { year: "FY 2024-25", event: "18 partner MFIs. Operations in 20+ states. 1,00,000+ households impacted. Turnover: ₹5.31 Cr." },
+  { year: "FY 2024-25", event: "18 partner MFIs. Operations in 20+ states. 1,00,000+ households impacted. Turnover: ₹5.24 Cr." },
   { year: "FY 2025-26", event: "State warehouse network expansion. Digital platform launch. Target: ₹10.15 Cr." },
   { year: "FY 2026-27", event: "Multi-category expansion. Corporate B2B channel activation. Target: ₹20.66 Cr." },
-  { year: "FY 2029-30", event: "Pan-India distribution footprint. Wholesale & retail franchise channels. Target: ₹110 Cr." },
+  { year: "FY 2029-30", event: "Pan-India distribution footprint. Wholesale & retail franchise channels. Target: ₹100 Cr." },
 ];
 
 const CSR_ITEMS = [
@@ -38,11 +38,10 @@ function About() {
         <Breadcrumb crumbs={[{ label: "Company", to: "/about" }, { label: "About Us" }]} />
       </div>
       <PageHero
-        eyebrow="About — 2+FAPL"
+        eyebrow="About — 2+ Fortune Alliances"
         title={<>A strategic alliance between <em className="text-emerald-deep">two fortunate</em> enterprises.</>}
         lede="Founded on 30 June 2022 and headquartered in Hyderabad, 2 Plus Fortune Alliances Pvt Ltd is built on the philosophy of mutual growth and shared success — fostering partnerships that drive value for every stakeholder."
       />
-
 
       {/* Vision / Mission / Objective — editorial triptych */}
       <section className="container-edge section-y border-t border-line">
@@ -70,10 +69,10 @@ function About() {
         <div className="container-edge section-y">
           <p className="eyebrow mb-6" data-reveal="rise-soft">Industry</p>
           <h2 data-reveal="rise" className="font-display text-5xl md:text-7xl text-ink max-w-4xl leading-[1.02]">
-            Distribution across <em className="text-emerald-deep">eleven</em> consumer categories.
+            Distribution across <em className="text-emerald-deep">twelve</em> consumer categories.
           </h2>
           <div className="mt-16 flex flex-wrap gap-3 max-w-5xl">
-            {["Kitchenware","Home Appliances","Home Furnishing","Household Furniture","Electricals","Electronics","White Goods","Water Purifiers","Portable Solar","Mobiles & Accessories","Health & Hygiene"].map((c, i) => (
+            {["Kitchenware","Home Appliances","Home Furnishing","Household Furniture","Electricals","Electronics","White Goods","Water Purifiers","Portable Solar","Mobiles & Accessories","Health & Hygiene","FMCG / Commodities"].map((c, i) => (
               <span
                 key={c}
                 data-reveal="rise-soft"
@@ -95,7 +94,7 @@ function About() {
       <section className="container-edge section-y">
         <div className="grid lg:grid-cols-[1fr_1.6fr] gap-12 lg:gap-24">
           <div>
-            <p className="eyebrow mb-6">Why 2+FAPL</p>
+            <p className="eyebrow mb-6">Why 2+ Fortune Alliances</p>
             <Link to="/business-model" className="link-underline text-sm">
               Read the business model <ArrowUpRight className="h-4 w-4" />
             </Link>
@@ -122,7 +121,7 @@ function About() {
           <div className="lg:sticky lg:top-32">
             <p className="eyebrow mb-6" data-reveal="rise-soft">Growth Milestones</p>
             <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl text-ink leading-[0.97]">
-              Three years.<br /><em className="text-emerald-deep">A decade</em><br />of ambition.
+              Four years.<br /><em className="text-emerald-deep">A decade</em><br />of ambition.
             </h2>
           </div>
           <ol className="space-y-0">
@@ -179,7 +178,7 @@ function About() {
             >
               <img 
                 src="/images/csr_impact.png" 
-                alt="2+FAPL community impact, children and solar-powered schools" 
+                alt="Community impact, children and solar-powered schools" 
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-emerald-deep/20 via-transparent to-transparent pointer-events-none" />
@@ -206,4 +205,3 @@ function ClosingCTA() {
     </section>
   );
 }
-

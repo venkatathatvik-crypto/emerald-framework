@@ -62,15 +62,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "2+FAPL — Onwards & Upwards" },
+      { title: "2+ Fortune Alliances — Onwards & Upwards" },
       {
         name: "description",
         content:
           "2 Plus Fortune Alliances Pvt Ltd — India's rural distribution aggregator. Bridging premium brands and rural consumers across kitchenware, electronics, appliances and more.",
       },
       { name: "author", content: "2 Plus Fortune Alliances Pvt Ltd" },
-      { property: "og:title", content: "2+FAPL — Onwards & Upwards" },
+      { property: "og:title", content: "2+ Fortune Alliances — Onwards & Upwards" },
       {
         property: "og:description",
         content:
@@ -78,7 +77,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "2+FAPL — Onwards & Upwards" },
+      { name: "twitter:title", content: "2+ Fortune Alliances — Onwards & Upwards" },
       { name: "description", content: "Emerald Legacy Platform is a premium enterprise website and application platform built from scratch." },
       { property: "og:description", content: "Emerald Legacy Platform is a premium enterprise website and application platform built from scratch." },
       { name: "twitter:description", content: "Emerald Legacy Platform is a premium enterprise website and application platform built from scratch." },

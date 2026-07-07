@@ -89,7 +89,7 @@ function Page() {
         </h2>
         <div className="mt-10 flex gap-3 flex-wrap">
           <Link to="/contact" className="btn-primary">Request catalogue <ArrowUpRight className="h-4 w-4" /></Link>
-          <Link to="/hassle-free-emi" className="btn-ghost">See financing options</Link>
+          <Link to="/gold-emi" className="btn-ghost">See gold financing</Link>
         </div>
       </section>
     </PageShell>

@@ -5,9 +5,9 @@ import { ArrowUpRight } from "lucide-react";
 export const Route = createFileRoute("/brands")({
   head: () => ({
     meta: [
-      { title: "Brands & Partners — 2+FAPL" },
+      { title: "Brands & Partners — 2+ Fortune Alliances" },
       { name: "description", content: "Our network of manufacturing brands and financial partners — eighteen strategic alliances across India." },
-      { property: "og:title", content: "Brands & Partners — 2+FAPL" },
+      { property: "og:title", content: "Brands & Partners — 2+ Fortune Alliances" },
       { property: "og:description", content: "Eighteen strategic alliances. One distribution fabric." },
     ],
   }),
@@ -24,10 +24,22 @@ const PARTNERS = [
 ];
 
 const BRAND_CATEGORIES = [
-  { eyebrow: "Home & Kitchen", title: "Partnering for quality. Delivering trust.", tags: ["Prestige", "Pigeon", "Butterfly", "Wonderchef", "Bajaj", "Crompton", "Luminous"] },
-  { eyebrow: "Electronics & Appliances", title: "Innovation. Trust. Excellence.", tags: ["Samsung", "Whirlpool", "Haier", "Orient", "Vivo", "D.light", "Third Wave Power (JUGNU)"] },
-  { eyebrow: "Lifestyle, Mobility & Other", title: "One network. Many possibilities.", tags: ["United Metallik", "Tharun Sha", "Luminous", "Others"] },
+  { eyebrow: "Home & Kitchen", title: "Partnering for quality. Delivering trust.", tags: ["Prestige", "Pigeon", "Butterfly", "Bajaj", "Crompton", "Borosil", "United"] },
+  { eyebrow: "Electronics & Appliances", title: "Innovation. Trust. Excellence.", tags: ["Samsung", "Whirlpool", "Haier", "Orient", "L.G."] },
+  { eyebrow: "Renewable Energy", title: "Sustainable power. Lasting utility.", tags: ["Third Wave Power (JUGNU)", "Luminous", "D.light"] },
+  { eyebrow: "Lifestyle & Mobility", title: "Connecting aspirations with everyday life.", tags: ["Tharun Sha", "United Metallik", "Vivo", "Others"] },
   { eyebrow: "FMCG / Commodities", title: "Everyday essentials. Wider reach.", tags: ["Pulses & Grains", "Spices & Masalas", "Packaged Foods", "Personal Care", "Household Care"] },
+];
+
+const MAP_CITIES = [
+  { name: "Punjab", top: "25%", left: "30%" },
+  { name: "Chandigarh", top: "22%", left: "38%" },
+  { name: "Benares", top: "45%", left: "54%" },
+  { name: "Patna", top: "44%", left: "64%" },
+  { name: "Ranchi", top: "52%", left: "62%" },
+  { name: "Bhubaneswar", top: "59%", left: "60%" },
+  { name: "Visakhapatnam", top: "68%", left: "54%" },
+  { name: "Cochin", top: "86%", left: "36%" },
 ];
 
 function Page() {
@@ -65,10 +77,21 @@ function Page() {
           >
             <img 
               src="/images/network_map.png" 
-              alt="2+FAPL Pan-India Distribution Network Map" 
+              alt="Pan-India Distribution Network Map" 
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
-            {/* Ambient gold glow */}
+            {/* Interactive City Labels */}
+            {MAP_CITIES.map((c) => (
+              <div 
+                key={c.name} 
+                className="absolute flex items-center gap-1.5 px-2.5 py-1 bg-emerald-deep/90 text-paper text-[10px] md:text-xs font-medium rounded-full shadow-lg border border-white/20 transition-all duration-300 hover:scale-105"
+                style={{ top: c.top, left: c.left, transform: "translate(-50%, -50%)" }}
+              >
+                <span className="w-1.5 h-1.5 bg-gold rounded-full animate-ping" />
+                <span>{c.name}</span>
+              </div>
+            ))}
+            
             <div className="absolute inset-0 bg-gradient-to-t from-emerald-deep/20 via-transparent to-transparent pointer-events-none" />
           </div>
           <div>
@@ -77,7 +100,7 @@ function Page() {
               Empowering India's growth <em className="text-emerald-deep">across 20+ states.</em>
             </h2>
             <p data-reveal="rise-soft" className="text-muted-foreground text-sm leading-relaxed mb-8">
-              Through strategic hubs, robust transport channels, and localized branch networks, we connect urban manufacturing centers directly to rural distribution points, enabling credit access and delivery transparency for over 1,00,000 households.
+              Robust transport with their localized network. We connect urban manufacturing centers directly to rural distribution points, enabling credit access and delivery transparency for over 1,00,000 households.
             </p>
             <div className="grid grid-cols-2 gap-6 border-t border-line pt-8" data-reveal="rise-soft">
               <div>

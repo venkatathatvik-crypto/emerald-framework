@@ -67,7 +67,7 @@ export function SiteFooter() {
       <div className="container-edge pt-28 pb-10 relative z-10">
         <div className="divider-gold mb-16" />
         
-        <div className="grid lg:grid-cols-[1.4fr_1fr_1fr_1fr] gap-12">
+        <div className="grid lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] gap-12">
           <div data-reveal="fade">
             <img
               src="/images/logo.png"
@@ -101,11 +101,21 @@ export function SiteFooter() {
             title="Offerings"
             links={[
               ["Products", "/products"],
-              ["Hassle-Free EMI", "/hassle-free-emi"],
               ["Gold EMI", "/gold-emi"],
               ["Brands & Partners", "/brands"],
             ]}
           />
+          <div>
+            <p className="eyebrow text-gold mb-5">Gold EMI Partner</p>
+            <img 
+              src="/images/augmont_logo.png" 
+              alt="Augmont Gold For All" 
+              className="h-10 object-contain bg-white rounded-lg p-1.5 border border-paper/20 mb-4"
+            />
+            <p className="text-xs text-paper/60 leading-relaxed">
+              Gold EMI services powered by Augmont Gold For All — India's leading digital gold platform.
+            </p>
+          </div>
           <FooterCol
             title="Portals"
             links={[
@@ -133,7 +143,7 @@ export function SiteFooter() {
 
         <div className="mt-12 select-none" aria-hidden>
           <p className="font-display text-paper/[0.04] text-[18vw] leading-[0.85] tracking-tight whitespace-nowrap overflow-hidden">
-            2+FAPL
+            2+ Fortune Alliances
           </p>
         </div>
       </div>

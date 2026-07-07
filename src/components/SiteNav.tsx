@@ -8,7 +8,7 @@ const NAV_GROUPS = [
     label: "Company",
     items: [
       { label: "About Us", to: "/about", desc: "Our story, philosophy & values" },
-      { label: "Leadership", to: "/leadership", desc: "The team behind 2+FAPL" },
+      { label: "Leadership", to: "/leadership", desc: "The team behind 2+ Fortune Alliances" },
       { label: "CSR & Impact", to: "/about#csr", desc: "Community empowerment initiatives" },
       { label: "Careers", to: "/careers", desc: "Grow with us" },
     ],
@@ -17,15 +17,14 @@ const NAV_GROUPS = [
     label: "Solutions",
     items: [
       { label: "Business Model", to: "/business-model", desc: "How our distribution network works" },
-      { label: "Products", to: "/products", desc: "11 consumer categories, 24+ brands" },
-      { label: "Hassle-Free EMI", to: "/hassle-free-emi", desc: "Zero interest, zero processing fee" },
+      { label: "Products", to: "/products", desc: "12 consumer categories, 30+ brands" },
       { label: "Gold EMI", to: "/gold-emi", desc: "Premium gold financing solutions" },
     ],
   },
   {
     label: "Network",
     items: [
-      { label: "Brands & Partners", to: "/brands", desc: "18 MFI partners, 24+ premium brands" },
+      { label: "Brands & Partners", to: "/brands", desc: "18 MFI partners, 30+ premium brands" },
       { label: "Branch Network", to: "/brands#branches", desc: "20+ states, growing footprint" },
     ],
   },
@@ -95,7 +94,7 @@ export function SiteNav() {
         <div className="container-edge flex items-center justify-between h-14 md:h-[4.2rem]">
 
           {/* Logo - Increased size by 20-25% */}
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label="2+FAPL home">
+          <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label="2+ Fortune Alliances home">
             <img
               src="/images/logo.png"
               alt="2+ Fortune Alliances"
@@ -145,21 +144,28 @@ export function SiteNav() {
                   onMouseLeave={handleGroupLeave}
                 >
                   <div className="nav-dropdown-inner">
-                    {group.items.map((item) => (
-                      <Link
-                        key={item.to}
-                        to={item.to}
-                        className={`nav-dropdown-item ${pathname.startsWith(item.to.split("#")[0]) ? "nav-dropdown-item--active" : ""}`}
-                        onClick={() => setActiveGroup(null)}
-                      >
-                        <span className="nav-dropdown-item-accent" />
-                        <div>
-                          <p className="nav-dropdown-item-label">{item.label}</p>
-                          <p className="nav-dropdown-item-desc">{item.desc}</p>
-                        </div>
-                        <ArrowUpRight className="nav-dropdown-item-arrow h-3.5 w-3.5" />
-                      </Link>
-                    ))}
+                    {group.items.map((item) => {
+                      const isHashLink = item.to.includes("#");
+                      const Component = isHashLink ? "a" : Link;
+                      const linkProps = isHashLink 
+                        ? { href: item.to, onClick: () => setActiveGroup(null) }
+                        : { to: item.to, onClick: () => setActiveGroup(null) };
+                      
+                      return (
+                        <Component
+                          key={item.to}
+                          {...linkProps}
+                          className={`nav-dropdown-item ${pathname.startsWith(item.to.split("#")[0]) ? "nav-dropdown-item--active" : ""}`}
+                        >
+                          <span className="nav-dropdown-item-accent" />
+                          <div>
+                            <p className="nav-dropdown-item-label">{item.label}</p>
+                            <p className="nav-dropdown-item-desc">{item.desc}</p>
+                          </div>
+                          {!isHashLink && <ArrowUpRight className="nav-dropdown-item-arrow h-3.5 w-3.5" />}
+                        </Component>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -244,16 +250,24 @@ export function SiteNav() {
               {/* Accordion children */}
               <div className={`mobile-accordion ${mobileGroup === group.label ? "mobile-accordion--open" : ""}`}>
                 <div className="pb-4 pl-4 flex flex-col gap-1">
-                  {group.items.map((item) => (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      className="py-2.5 px-3 rounded-xl text-base text-muted-foreground hover:text-ink hover:bg-stone transition-all duration-200 flex items-center justify-between group"
-                    >
-                      <span>{item.label}</span>
-                      <ArrowUpRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-60 transition-opacity" />
-                    </Link>
-                  ))}
+                  {group.items.map((item) => {
+                    const isHashLink = item.to.includes("#");
+                    const Component = isHashLink ? "a" : Link;
+                    const linkProps = isHashLink 
+                      ? { href: item.to }
+                      : { to: item.to };
+                    
+                    return (
+                      <Component
+                        key={item.to}
+                        {...linkProps}
+                        className="py-2.5 px-3 rounded-xl text-base text-muted-foreground hover:text-ink hover:bg-stone transition-all duration-200 flex items-center justify-between group"
+                      >
+                        <span>{item.label}</span>
+                        {!isHashLink && <ArrowUpRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-60 transition-opacity" />}
+                      </Component>
+                    );
+                  })}
                 </div>
               </div>
             </div>

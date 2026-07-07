@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Check, Clock, Truck } from "lucide-react";
+import { Check, Clock, Truck } from "lucide-react';
 
 export const Route = createFileRoute("/dashboard/customer")({
-  head: () => ({ meta: [{ title: "Customer Dashboard — 2+FAPL" }] }),
+  head: () => ({ meta: [{ title: "Customer Dashboard — 2+ Fortune Alliances & Augmont" }] }),
   component: Page,
 });
 
@@ -24,6 +24,14 @@ const ORDERS = [
 function Page() {
   return (
     <DashboardShell role="customer" title="Welcome back, Srikanth.">
+      <div className="flex items-center gap-3 mb-6">
+        <span className="text-sm text-muted-foreground">Gold EMI powered by</span>
+        <img 
+          src="/images/augmont_logo.png" 
+          alt="Augmont Gold For All" 
+          className="h-8 object-contain bg-white rounded-lg p-1 border border-line" 
+        />
+      </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard label="Active EMIs" value="3" sub="₹4,250 next due Nov 5" />
         <StatCard label="Total spent · YTD" value="₹37.4K" sub="↑ 18% vs FY24" />

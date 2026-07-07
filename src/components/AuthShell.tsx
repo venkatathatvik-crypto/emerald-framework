@@ -23,7 +23,7 @@ export function AuthShell({
         </div>
         <Link to="/" className="relative flex items-center gap-2.5 z-10 w-fit">
           <span className="grid place-items-center h-9 w-9 rounded-full bg-paper text-emerald-deep font-display">2</span>
-          <span className="font-display text-xl"><span className="text-gold">+</span>FAPL</span>
+          <span className="font-display text-xl"><span className="text-gold">+</span> Fortune Alliances</span>
         </Link>
 
         <div className="relative z-10 max-w-md">

@@ -6,9 +6,9 @@ import { useState } from "react";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact 2+FAPL" },
+      { title: "Contact 2+ Fortune Alliances" },
       { name: "description", content: "Reach 2 Plus Fortune Alliances Pvt Ltd — Hyderabad headquarters, partnership and customer enquiries." },
-      { property: "og:title", content: "Contact 2+FAPL" },
+      { property: "og:title", content: "Contact 2+ Fortune Alliances" },
       { property: "og:description", content: "We look forward to working with you." },
     ],
   }),
@@ -64,7 +64,7 @@ function Page() {
           >
             <img 
               src="/images/support_team.png" 
-              alt="2+FAPL Premium Customer Support Team collaborating" 
+              alt="2+ Fortune Alliances Premium Customer Support Team collaborating" 
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-emerald-deep/20 via-transparent to-transparent pointer-events-none" />

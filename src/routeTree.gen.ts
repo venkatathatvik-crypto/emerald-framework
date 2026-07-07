@@ -14,7 +14,6 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LeadershipRouteImport } from './routes/leadership'
-import { Route as HassleFreeEmiRouteImport } from './routes/hassle-free-emi'
 import { Route as GoldEmiRouteImport } from './routes/gold-emi'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -55,11 +54,6 @@ const LoginRoute = LoginRouteImport.update({
 const LeadershipRoute = LeadershipRouteImport.update({
   id: '/leadership',
   path: '/leadership',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HassleFreeEmiRoute = HassleFreeEmiRouteImport.update({
-  id: '/hassle-free-emi',
-  path: '/hassle-free-emi',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GoldEmiRoute = GoldEmiRouteImport.update({
@@ -152,7 +146,6 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/gold-emi': typeof GoldEmiRoute
-  '/hassle-free-emi': typeof HassleFreeEmiRoute
   '/leadership': typeof LeadershipRoute
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
@@ -176,7 +169,6 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/gold-emi': typeof GoldEmiRoute
-  '/hassle-free-emi': typeof HassleFreeEmiRoute
   '/leadership': typeof LeadershipRoute
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
@@ -201,7 +193,6 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/gold-emi': typeof GoldEmiRoute
-  '/hassle-free-emi': typeof HassleFreeEmiRoute
   '/leadership': typeof LeadershipRoute
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
@@ -227,7 +218,6 @@ export interface FileRouteTypes {
     | '/contact'
     | '/forgot-password'
     | '/gold-emi'
-    | '/hassle-free-emi'
     | '/leadership'
     | '/login'
     | '/products'
@@ -251,7 +241,6 @@ export interface FileRouteTypes {
     | '/contact'
     | '/forgot-password'
     | '/gold-emi'
-    | '/hassle-free-emi'
     | '/leadership'
     | '/login'
     | '/products'
@@ -275,7 +264,6 @@ export interface FileRouteTypes {
     | '/contact'
     | '/forgot-password'
     | '/gold-emi'
-    | '/hassle-free-emi'
     | '/leadership'
     | '/login'
     | '/products'
@@ -300,7 +288,6 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GoldEmiRoute: typeof GoldEmiRoute
-  HassleFreeEmiRoute: typeof HassleFreeEmiRoute
   LeadershipRoute: typeof LeadershipRoute
   LoginRoute: typeof LoginRoute
   ProductsRoute: typeof ProductsRoute
@@ -351,13 +338,6 @@ declare module '@tanstack/react-router' {
       path: '/leadership'
       fullPath: '/leadership'
       preLoaderRoute: typeof LeadershipRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hassle-free-emi': {
-      id: '/hassle-free-emi'
-      path: '/hassle-free-emi'
-      fullPath: '/hassle-free-emi'
-      preLoaderRoute: typeof HassleFreeEmiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gold-emi': {
@@ -484,7 +464,6 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   GoldEmiRoute: GoldEmiRoute,
-  HassleFreeEmiRoute: HassleFreeEmiRoute,
   LeadershipRoute: LeadershipRoute,
   LoginRoute: LoginRoute,
   ProductsRoute: ProductsRoute,
