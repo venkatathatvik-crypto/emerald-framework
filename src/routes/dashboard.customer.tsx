@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Check, Clock, Truck } from "lucide-react';
+import { Check, Clock, Truck } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/customer")({
   head: () => ({ meta: [{ title: "Customer Dashboard — 2+ Fortune Alliances & Augmont" }] }),
