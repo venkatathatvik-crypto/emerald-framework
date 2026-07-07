@@ -18,6 +18,7 @@ import { Route as GoldEmiRouteImport } from './routes/gold-emi'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CareersRouteImport } from './routes/careers'
+import { Route as BuyGoldRouteImport } from './routes/buy-gold'
 import { Route as BusinessModelRouteImport } from './routes/business-model'
 import { Route as BrandsRouteImport } from './routes/brands'
 import { Route as AboutRouteImport } from './routes/about'
@@ -74,6 +75,11 @@ const ContactRoute = ContactRouteImport.update({
 const CareersRoute = CareersRouteImport.update({
   id: '/careers',
   path: '/careers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyGoldRoute = BuyGoldRouteImport.update({
+  id: '/buy-gold',
+  path: '/buy-gold',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BusinessModelRoute = BusinessModelRouteImport.update({
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/brands': typeof BrandsRoute
   '/business-model': typeof BusinessModelRoute
+  '/buy-gold': typeof BuyGoldRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/brands': typeof BrandsRoute
   '/business-model': typeof BusinessModelRoute
+  '/buy-gold': typeof BuyGoldRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -189,6 +197,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/brands': typeof BrandsRoute
   '/business-model': typeof BusinessModelRoute
+  '/buy-gold': typeof BuyGoldRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -214,6 +223,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/brands'
     | '/business-model'
+    | '/buy-gold'
     | '/careers'
     | '/contact'
     | '/forgot-password'
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/brands'
     | '/business-model'
+    | '/buy-gold'
     | '/careers'
     | '/contact'
     | '/forgot-password'
@@ -260,6 +271,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/brands'
     | '/business-model'
+    | '/buy-gold'
     | '/careers'
     | '/contact'
     | '/forgot-password'
@@ -284,6 +296,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   BrandsRoute: typeof BrandsRoute
   BusinessModelRoute: typeof BusinessModelRoute
+  BuyGoldRoute: typeof BuyGoldRoute
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
@@ -366,6 +379,13 @@ declare module '@tanstack/react-router' {
       path: '/careers'
       fullPath: '/careers'
       preLoaderRoute: typeof CareersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buy-gold': {
+      id: '/buy-gold'
+      path: '/buy-gold'
+      fullPath: '/buy-gold'
+      preLoaderRoute: typeof BuyGoldRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/business-model': {
@@ -460,6 +480,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   BrandsRoute: BrandsRoute,
   BusinessModelRoute: BusinessModelRoute,
+  BuyGoldRoute: BuyGoldRoute,
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,

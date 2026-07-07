@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Check, Clock, Truck } from "lucide-react";
+import { Check, Clock, Truck, ArrowUpRight, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/customer")({
   head: () => ({ meta: [{ title: "Customer Dashboard — 2+ Fortune Alliances & Augmont" }] }),
@@ -37,6 +37,26 @@ function Page() {
         <StatCard label="Total spent · YTD" value="₹37.4K" sub="↑ 18% vs FY24" />
         <StatCard label="Gold EMI vault" value="₹1.2L" sub="Reclaimable Jan 2027" accent />
         <StatCard label="Reward points" value="2,840" sub="Redeem from Dec 1" />
+      </div>
+
+      {/* Gold Investment CTA */}
+      <div className="mb-6 bg-gradient-to-r from-gold-soft/30 to-gold/10 rounded-2xl p-6 border border-gold/30">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <img 
+              src="/images/augmont_logo.png" 
+              alt="Augmont Gold For All" 
+              className="h-12 object-contain bg-white rounded-lg p-2 border border-gold/20" 
+            />
+            <div>
+              <h3 className="font-display text-xl text-ink mb-1">Buy Digital Gold</h3>
+              <p className="text-sm text-muted-foreground">Start investing from ₹1 with Augmont</p>
+            </div>
+          </div>
+          <Link to="/buy-gold" className="btn-gold text-sm">
+            Buy Now <Sparkles className="h-4 w-4" />
+          </Link>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-[1.6fr_1fr] gap-4 mb-6">

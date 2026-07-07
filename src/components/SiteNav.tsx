@@ -18,6 +18,7 @@ const NAV_GROUPS = [
     items: [
       { label: "Business Model", to: "/business-model", desc: "How our distribution network works" },
       { label: "Products", to: "/products", desc: "12 consumer categories, 30+ brands" },
+      { label: "Buy Digital Gold", to: "/buy-gold", desc: "Invest in 24K gold starting from ₹1" },
       { label: "Gold EMI", to: "/gold-emi", desc: "Premium gold financing solutions" },
     ],
   },
