@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 
-export const Route = createFileRoute("/admin/catalog")({
+export const Route = createFileRoute("/admin/catalog/")({
   head: () => ({ meta: [{ title: "Catalogue — Admin" }] }),
   component: Page,
 });

@@ -33,7 +33,7 @@ import { Route as DashboardBranchRouteImport } from './routes/dashboard.branch'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as AdminPartnersRouteImport } from './routes/admin.partners'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
-import { Route as AdminCatalogRouteImport } from './routes/admin.catalog'
+import { Route as AdminCatalogIndexRouteImport } from './routes/admin.catalog.index'
 import { Route as AdminCatalogProductIdRouteImport } from './routes/admin.catalog.$productId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -156,15 +156,15 @@ const AdminLeadsRoute = AdminLeadsRouteImport.update({
   path: '/admin/leads',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminCatalogRoute = AdminCatalogRouteImport.update({
-  id: '/admin/catalog',
-  path: '/admin/catalog',
+const AdminCatalogIndexRoute = AdminCatalogIndexRouteImport.update({
+  id: '/admin/catalog/',
+  path: '/admin/catalog/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminCatalogProductIdRoute = AdminCatalogProductIdRouteImport.update({
-  id: '/$productId',
-  path: '/$productId',
-  getParentRoute: () => AdminCatalogRoute,
+  id: '/admin/catalog/$productId',
+  path: '/admin/catalog/$productId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -182,7 +182,6 @@ export interface FileRoutesByFullPath {
   '/products': typeof ProductsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/admin/catalog': typeof AdminCatalogRouteWithChildren
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/dashboard/admin': typeof DashboardAdminRoute
@@ -194,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/register/customer': typeof RegisterCustomerRoute
   '/register/partner': typeof RegisterPartnerRoute
   '/admin/catalog/$productId': typeof AdminCatalogProductIdRoute
+  '/admin/catalog/': typeof AdminCatalogIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -210,7 +210,6 @@ export interface FileRoutesByTo {
   '/products': typeof ProductsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/admin/catalog': typeof AdminCatalogRouteWithChildren
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/dashboard/admin': typeof DashboardAdminRoute
@@ -222,6 +221,7 @@ export interface FileRoutesByTo {
   '/register/customer': typeof RegisterCustomerRoute
   '/register/partner': typeof RegisterPartnerRoute
   '/admin/catalog/$productId': typeof AdminCatalogProductIdRoute
+  '/admin/catalog': typeof AdminCatalogIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -239,7 +239,6 @@ export interface FileRoutesById {
   '/products': typeof ProductsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/admin/catalog': typeof AdminCatalogRouteWithChildren
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/dashboard/admin': typeof DashboardAdminRoute
@@ -251,6 +250,7 @@ export interface FileRoutesById {
   '/register/customer': typeof RegisterCustomerRoute
   '/register/partner': typeof RegisterPartnerRoute
   '/admin/catalog/$productId': typeof AdminCatalogProductIdRoute
+  '/admin/catalog/': typeof AdminCatalogIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -269,7 +269,6 @@ export interface FileRouteTypes {
     | '/products'
     | '/reset-password'
     | '/sitemap.xml'
-    | '/admin/catalog'
     | '/admin/leads'
     | '/admin/partners'
     | '/dashboard/admin'
@@ -281,6 +280,7 @@ export interface FileRouteTypes {
     | '/register/customer'
     | '/register/partner'
     | '/admin/catalog/$productId'
+    | '/admin/catalog/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -297,7 +297,6 @@ export interface FileRouteTypes {
     | '/products'
     | '/reset-password'
     | '/sitemap.xml'
-    | '/admin/catalog'
     | '/admin/leads'
     | '/admin/partners'
     | '/dashboard/admin'
@@ -309,6 +308,7 @@ export interface FileRouteTypes {
     | '/register/customer'
     | '/register/partner'
     | '/admin/catalog/$productId'
+    | '/admin/catalog'
   id:
     | '__root__'
     | '/'
@@ -325,7 +325,6 @@ export interface FileRouteTypes {
     | '/products'
     | '/reset-password'
     | '/sitemap.xml'
-    | '/admin/catalog'
     | '/admin/leads'
     | '/admin/partners'
     | '/dashboard/admin'
@@ -337,6 +336,7 @@ export interface FileRouteTypes {
     | '/register/customer'
     | '/register/partner'
     | '/admin/catalog/$productId'
+    | '/admin/catalog/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -354,7 +354,6 @@ export interface RootRouteChildren {
   ProductsRoute: typeof ProductsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  AdminCatalogRoute: typeof AdminCatalogRouteWithChildren
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminPartnersRoute: typeof AdminPartnersRoute
   DashboardAdminRoute: typeof DashboardAdminRoute
@@ -365,6 +364,8 @@ export interface RootRouteChildren {
   PortalPartnerRoute: typeof PortalPartnerRoute
   RegisterCustomerRoute: typeof RegisterCustomerRoute
   RegisterPartnerRoute: typeof RegisterPartnerRoute
+  AdminCatalogProductIdRoute: typeof AdminCatalogProductIdRoute
+  AdminCatalogIndexRoute: typeof AdminCatalogIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -537,34 +538,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/catalog': {
-      id: '/admin/catalog'
+    '/admin/catalog/': {
+      id: '/admin/catalog/'
       path: '/admin/catalog'
-      fullPath: '/admin/catalog'
-      preLoaderRoute: typeof AdminCatalogRouteImport
+      fullPath: '/admin/catalog/'
+      preLoaderRoute: typeof AdminCatalogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/catalog/$productId': {
       id: '/admin/catalog/$productId'
-      path: '/$productId'
+      path: '/admin/catalog/$productId'
       fullPath: '/admin/catalog/$productId'
       preLoaderRoute: typeof AdminCatalogProductIdRouteImport
-      parentRoute: typeof AdminCatalogRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface AdminCatalogRouteChildren {
-  AdminCatalogProductIdRoute: typeof AdminCatalogProductIdRoute
-}
-
-const AdminCatalogRouteChildren: AdminCatalogRouteChildren = {
-  AdminCatalogProductIdRoute: AdminCatalogProductIdRoute,
-}
-
-const AdminCatalogRouteWithChildren = AdminCatalogRoute._addFileChildren(
-  AdminCatalogRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -581,7 +570,6 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsRoute: ProductsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  AdminCatalogRoute: AdminCatalogRouteWithChildren,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminPartnersRoute: AdminPartnersRoute,
   DashboardAdminRoute: DashboardAdminRoute,
@@ -592,6 +580,8 @@ const rootRouteChildren: RootRouteChildren = {
   PortalPartnerRoute: PortalPartnerRoute,
   RegisterCustomerRoute: RegisterCustomerRoute,
   RegisterPartnerRoute: RegisterPartnerRoute,
+  AdminCatalogProductIdRoute: AdminCatalogProductIdRoute,
+  AdminCatalogIndexRoute: AdminCatalogIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

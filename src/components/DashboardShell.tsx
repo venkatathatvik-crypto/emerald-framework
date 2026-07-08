@@ -44,7 +44,15 @@ export function DashboardShell({ role, title, children }: { role: Role; title: s
   const [open, setOpen] = useState(false);
   const path = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  const displayName = [user?.firstName, user?.lastName].filter(Boolean).join(" ")
+    || user?.email
+    || user?.mobile
+    || "—";
+  const initials = user?.firstName
+    ? (user.firstName[0] + (user.lastName?.[0] ?? "")).toUpperCase()
+    : (displayName[0] ?? "?").toUpperCase();
 
   useEffect(() => setOpen(false), [path]);
 
@@ -122,9 +130,9 @@ export function DashboardShell({ role, title, children }: { role: Role; title: s
             <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-gold" />
           </button>
           <div className="flex items-center gap-2 pl-3 border-l border-line">
-            <div className="h-9 w-9 rounded-full bg-emerald-deep text-paper grid place-items-center text-sm font-display">SP</div>
+            <div className="h-9 w-9 rounded-full bg-emerald-deep text-paper grid place-items-center text-sm font-display">{initials}</div>
             <div className="hidden md:block">
-              <p className="text-xs">Srikanth Pagolu</p>
+              <p className="text-xs">{displayName}</p>
               <p className="text-[10px] text-muted-foreground capitalize">{role}</p>
             </div>
           </div>
