@@ -5,7 +5,7 @@ import { Boxes } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useAuth } from "@/lib/auth-context";
-import { getShopCategories, getProductsBySubCategory, getListItemPriceTier, getListItemThumbnail, formatInr } from "@/lib/api/augmont";
+import { getShopCategories, getProductsBySubCategory, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -104,8 +104,8 @@ function Page() {
         {!isError && !productsLoading && filtered.length > 0 && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filtered.map((product) => {
-              const tier = getListItemPriceTier(product);
-              const thumb = getListItemThumbnail(product);
+              const tier = getProductPriceTier(product);
+              const thumb = getProductThumbnail(product);
               return (
                 <Card
                   key={product.id}

@@ -130,7 +130,12 @@ export interface AugmontProductImage {
   URL?: string;
 }
 
-/** A single EMI/pricing tier as returned nested under a product-list item. */
+/**
+ * A single pricing tier — a flat, top-level `productPrice[0]` on both the
+ * list and detail endpoints (confirmed against a live response; Augmont's
+ * own OpenAPI spec incorrectly describes this as nested under
+ * subCategory.category.metalType on the list endpoint — it is not).
+ */
 export interface AugmontProductPriceTier {
   finalProductPrice?: number | string;
   initialPayment?: number | string;
@@ -142,11 +147,29 @@ export interface AugmontProductPriceTier {
   initialPaymentThree?: number | string;
   initialPaymentSix?: number | string;
   initialPaymentNine?: number | string;
-  productImages?: AugmontProductImage[];
 }
 
-/** GET /api/v1/augmont/products?subCategoryId= — one row of the product grid. */
-export interface AugmontProductListItem {
+interface AugmontSubCategoryRef {
+  id: number;
+  subCategoryName: string;
+  category?: {
+    id: number;
+    categoryName: string;
+    metalType?: {
+      metalType: string;
+      metalFitness: number;
+    };
+  };
+}
+
+/**
+ * Shared fields between the list and detail endpoints. `productImage` is
+ * often the literal string "0" (Augmont's placeholder for "no image set")
+ * rather than a real URL or being absent — always read images via
+ * getListItemThumbnail()/getDetailThumbnail() in api/augmont.ts, which guard
+ * against this, rather than checking `item.productImage` truthiness directly.
+ */
+interface AugmontProductBase {
   id: number;
   subCategoryId: number;
   sku: string;
@@ -154,20 +177,13 @@ export interface AugmontProductListItem {
   weight: number;
   productImage: string | null;
   isEmiAvailable: boolean;
-  subCategory?: {
-    id: number;
-    subCategoryName: string;
-    category?: {
-      id: number;
-      subCategoryName: string;
-      metalType?: {
-        metalType: string;
-        metalFitness: number;
-        productPrice?: AugmontProductPriceTier[];
-      };
-    };
-  };
+  productPrice?: AugmontProductPriceTier[];
+  productImages?: AugmontProductImage[];
+  subCategory?: AugmontSubCategoryRef;
 }
+
+/** GET /api/v1/augmont/products?subCategoryId= — one row of the product grid. */
+export type AugmontProductListItem = AugmontProductBase;
 
 export interface AugmontPaymentTypeOption {
   paymentTypeId: number;
@@ -175,27 +191,6 @@ export interface AugmontPaymentTypeOption {
 }
 
 /** GET /api/v1/augmont/products/{id} — full product detail. */
-export interface AugmontProductDetail {
-  id: number;
-  subCategoryId: number;
-  sku: string;
-  productName: string;
-  weight: number;
-  productImage: string | null;
-  isEmiAvailable: boolean;
-  subCategory?: {
-    id: number;
-    subCategoryName: string;
-    category?: {
-      id: number;
-      subCategoryName: string;
-      metalType?: {
-        metalType: string;
-        metalFitness: number;
-      };
-    };
-  };
-  productPrice?: AugmontProductPriceTier[];
-  productImages?: AugmontProductImage[];
+export interface AugmontProductDetail extends AugmontProductBase {
   paymentData?: AugmontPaymentTypeOption[];
 }

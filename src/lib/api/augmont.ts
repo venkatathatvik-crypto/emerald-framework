@@ -4,6 +4,7 @@ import type {
   AugmontProductListItem,
   AugmontProductDetail,
   AugmontProductPriceTier,
+  AugmontProductImage,
 } from "./types";
 
 /** Augmont wraps its own list responses in {data, count?, message?} — separate from our own ApiResponse envelope. */
@@ -35,9 +36,12 @@ export function getProductDetails(id: number): Promise<AugmontProductDetail> {
 }
 
 // ── Defensive price/image helpers ───────────────────────────────────────────
-// Augmont's numeric price fields arrive as numbers on the list endpoint but as
-// strings on the detail endpoint — always coerce before formatting. Pricing
-// also lives in different nesting depths on each endpoint (see types.ts).
+// Confirmed against a live response: productPrice/productImages are flat,
+// top-level arrays on BOTH the list and detail endpoints (Augmont's own
+// OpenAPI spec incorrectly nests them for the list endpoint — trust this
+// instead). productImage is frequently the literal string "0" (Augmont's
+// "no image set" placeholder), which is truthy in JS, so it must be
+// explicitly excluded rather than relying on a plain truthiness check.
 
 function toNumber(v: number | string | undefined): number | null {
   if (v === undefined || v === null) return null;
@@ -45,15 +49,13 @@ function toNumber(v: number | string | undefined): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-/** The first (current) pricing tier from a product-LIST item's nested location. */
-export function getListItemPriceTier(item: AugmontProductListItem): AugmontProductPriceTier | null {
-  const tiers = item.subCategory?.category?.metalType?.productPrice;
-  return tiers && tiers.length > 0 ? tiers[0] : null;
+function isRealImageUrl(v: string | null | undefined): v is string {
+  return !!v && v.trim() !== "" && v.trim() !== "0";
 }
 
-/** The first (current) pricing tier from a product-DETAIL response's flat location. */
-export function getDetailPriceTier(detail: AugmontProductDetail): AugmontProductPriceTier | null {
-  return detail.productPrice && detail.productPrice.length > 0 ? detail.productPrice[0] : null;
+/** The first (current) pricing tier for either a list item or a detail response. */
+export function getProductPriceTier(product: AugmontProductListItem | AugmontProductDetail): AugmontProductPriceTier | null {
+  return product.productPrice && product.productPrice.length > 0 ? product.productPrice[0] : null;
 }
 
 export function formatInr(value: number | string | undefined): string {
@@ -66,14 +68,14 @@ export function formatInr(value: number | string | undefined): string {
   }).format(n);
 }
 
-export function getListItemThumbnail(item: AugmontProductListItem): string | null {
-  if (item.productImage) return item.productImage;
-  const img = getListItemPriceTier(item)?.productImages?.[0];
-  return img?.url ?? img?.URL ?? null;
+function firstRealImageUrl(images: AugmontProductImage[] | undefined): string | null {
+  const img = images?.find((i) => isRealImageUrl(i.url) || isRealImageUrl(i.URL));
+  if (!img) return null;
+  return isRealImageUrl(img.url) ? img.url : (img.URL as string);
 }
 
-export function getDetailThumbnail(detail: AugmontProductDetail): string | null {
-  if (detail.productImage) return detail.productImage;
-  const img = detail.productImages?.[0] ?? getDetailPriceTier(detail)?.productImages?.[0];
-  return img?.url ?? img?.URL ?? null;
+/** Resolves a real, renderable thumbnail URL for either a list item or a detail response — null if Augmont has no image on file (common; render a fallback icon). */
+export function getProductThumbnail(product: AugmontProductListItem | AugmontProductDetail): string | null {
+  if (isRealImageUrl(product.productImage)) return product.productImage;
+  return firstRealImageUrl(product.productImages);
 }

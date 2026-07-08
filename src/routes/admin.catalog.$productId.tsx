@@ -5,7 +5,7 @@ import { ArrowLeft, Boxes } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useAuth } from "@/lib/auth-context";
-import { getProductDetails, getDetailPriceTier, getDetailThumbnail, formatInr } from "@/lib/api/augmont";
+import { getProductDetails, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
 import { Badge } from "@/components/ui/badge";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -40,8 +40,8 @@ function Page() {
     return null;
   }
 
-  const tier = product ? getDetailPriceTier(product) : null;
-  const thumb = product ? getDetailThumbnail(product) : null;
+  const tier = product ? getProductPriceTier(product) : null;
+  const thumb = product ? getProductThumbnail(product) : null;
   const gallery = product?.productImages?.map((img) => img.url ?? img.URL).filter((u): u is string => !!u) ?? [];
   const displayImage = activeImage ?? thumb;
 
