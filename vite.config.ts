@@ -7,6 +7,13 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  // Served behind Nginx at /gold-emi-app/ — see [[frontend-deploy-nitro-nginx]]
+  // memory: Nitro's static file server ignores this base for public/ assets,
+  // so the Nginx config also needs alias blocks for /gold-emi-app/assets/ and
+  // /gold-emi-app/images/ pointing at .output/public/{assets,images}/.
+  vite: {
+    base: "/gold-emi-app/",
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

@@ -50,7 +50,7 @@ function Page() {
         <div className="container-edge pt-24 md:pt-36 pb-16 md:pb-24">
           <div className="flex items-center gap-4 mb-8" data-reveal="rise-soft">
             <img 
-              src="/images/augmont_logo.png" 
+              src={`${import.meta.env.BASE_URL}images/augmont_logo.png`} 
               alt="Augmont Gold For All" 
               className="h-12 object-contain bg-white rounded-lg p-2 border border-gold/30 shadow-lg" 
             />
@@ -162,7 +162,7 @@ function Page() {
             <div className="bg-gradient-to-br from-gold/20 to-gold/5 rounded-3xl p-8 border border-gold/30" data-reveal="rise">
               <div className="flex items-center gap-3 mb-6">
                 <img 
-                  src="/images/augmont_logo.png" 
+                  src={`${import.meta.env.BASE_URL}images/augmont_logo.png`} 
                   alt="Augmont Gold For All" 
                   className="h-10 object-contain bg-white rounded-lg p-1.5 border border-gold/20" 
                 />
@@ -231,7 +231,7 @@ function Page() {
         <div className="container-edge section-y text-center">
           <div className="flex justify-center mb-8">
             <img 
-              src="/images/augmont_logo.png" 
+              src={`${import.meta.env.BASE_URL}images/augmont_logo.png`} 
               alt="Augmont Gold For All" 
               className="h-16 object-contain bg-white rounded-xl p-3 border border-gold/30 shadow-lg" 
             />

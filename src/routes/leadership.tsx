@@ -54,7 +54,7 @@ function Page() {
             className="aspect-[3/4] w-full bg-paper/5 border border-paper/10 relative overflow-hidden rounded-3xl shadow-2xl founder-glide-in"
           >
             <img 
-              src="/images/srikanth_pagolu.png" 
+              src={`${import.meta.env.BASE_URL}images/srikanth_pagolu.png`} 
               alt="Srikanth Pagolu — Founder & Director" 
               className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
             />

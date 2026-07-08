@@ -82,7 +82,7 @@ function Page() {
             className="relative rounded-3xl overflow-hidden shadow-2xl border border-line bg-glow-emerald aspect-[4/3] group p-4 flex items-center justify-center bg-stone"
           >
             <img 
-              src="/images/journey_isometric.png" 
+              src={`${import.meta.env.BASE_URL}images/journey_isometric.png`} 
               alt="Aggregator Journey: Manufacturer to Rural Customer" 
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />

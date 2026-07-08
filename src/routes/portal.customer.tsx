@@ -27,7 +27,7 @@ function Page() {
                 <span className="font-display text-xl font-bold">2+ Fortune Alliances</span>
                 <HeartHandshake className="h-6 w-6 text-gold animate-pulse" />
                 <img 
-                  src="/images/augmont_logo.png" 
+                  src={`${import.meta.env.BASE_URL}images/augmont_logo.png`} 
                   alt="Augmont Gold For All" 
                   className="h-10 object-contain bg-white rounded-lg p-1.5" 
                 />

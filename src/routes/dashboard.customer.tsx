@@ -27,7 +27,7 @@ function Page() {
       <div className="flex items-center gap-3 mb-6">
         <span className="text-sm text-muted-foreground">Gold EMI powered by</span>
         <img 
-          src="/images/augmont_logo.png" 
+          src={`${import.meta.env.BASE_URL}images/augmont_logo.png`} 
           alt="Augmont Gold For All" 
           className="h-8 object-contain bg-white rounded-lg p-1 border border-line" 
         />
@@ -44,7 +44,7 @@ function Page() {
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-4">
             <img 
-              src="/images/augmont_logo.png" 
+              src={`${import.meta.env.BASE_URL}images/augmont_logo.png`} 
               alt="Augmont Gold For All" 
               className="h-12 object-contain bg-white rounded-lg p-2 border border-gold/20" 
             />

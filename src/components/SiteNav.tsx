@@ -97,7 +97,7 @@ export function SiteNav() {
           {/* Logo - Increased size by 20-25% */}
           <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label="2+ Fortune Alliances home">
             <img
-              src="/images/logo.png"
+              src={`${import.meta.env.BASE_URL}images/logo.png`}
               alt="2+ Fortune Alliances"
               className="h-11 md:h-[3.35rem] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
             />
@@ -216,7 +216,7 @@ export function SiteNav() {
       <div className={`mobile-menu ${mobileOpen ? "mobile-menu--open" : ""}`} aria-hidden={!mobileOpen}>
         {/* Mobile header */}
         <div className="container-edge flex items-center justify-between h-16">
-          <img src="/images/logo.png" alt="2+ Fortune Alliances" className="h-9 w-auto object-contain" />
+          <img src={`${import.meta.env.BASE_URL}images/logo.png`} alt="2+ Fortune Alliances" className="h-9 w-auto object-contain" />
           <button
             onClick={() => setMobileOpen(false)}
             aria-label="Close menu"

@@ -24,7 +24,7 @@ function Page() {
           <div className="flex items-center gap-4 mb-8" data-reveal="rise-soft">
             <span className="font-display text-xl text-ink">Powered by</span>
             <img 
-              src="/images/augmont_logo.png" 
+              src={`${import.meta.env.BASE_URL}images/augmont_logo.png`} 
               alt="Augmont Gold For All" 
               className="h-10 object-contain bg-white rounded-lg p-1.5 border border-line" 
             />

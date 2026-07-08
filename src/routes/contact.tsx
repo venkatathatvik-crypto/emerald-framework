@@ -63,7 +63,7 @@ function Page() {
             className="relative rounded-2xl overflow-hidden shadow-xl border border-line aspect-[4/3] group bg-stone mt-8"
           >
             <img 
-              src="/images/support_team.png" 
+              src={`${import.meta.env.BASE_URL}images/support_team.png`} 
               alt="2+ Fortune Alliances Premium Customer Support Team collaborating" 
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />

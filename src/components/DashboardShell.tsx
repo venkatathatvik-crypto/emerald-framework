@@ -1,10 +1,14 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard, Receipt, Truck, BadgePercent, Users, Boxes, BarChart3, Building2,
   Settings, Bell, Search, ChevronRight, LogOut, Sparkles,
 } from "lucide-react";
+
+import { useAuth } from "@/lib/auth-context";
+import { getNewLeadCount } from "@/lib/api/admin";
 
 export type Role = "customer" | "partner" | "branch" | "admin";
 
@@ -29,8 +33,9 @@ const NAV: Record<Role, { to: string; label: string; Icon: typeof LayoutDashboar
   ],
   admin: [
     { to: "/dashboard/admin", label: "Overview", Icon: LayoutDashboard },
-    { to: "/dashboard/admin", label: "Partners", Icon: Building2 },
-    { to: "/dashboard/admin", label: "Catalogue", Icon: Boxes },
+    { to: "/admin/leads", label: "Leads", Icon: Users },
+    { to: "/admin/partners", label: "Partners", Icon: Building2 },
+    { to: "/admin/catalog", label: "Catalogue", Icon: Boxes },
     { to: "/dashboard/admin", label: "Analytics", Icon: BarChart3 },
   ],
 };
@@ -38,8 +43,22 @@ const NAV: Record<Role, { to: string; label: string; Icon: typeof LayoutDashboar
 export function DashboardShell({ role, title, children }: { role: Role; title: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   useEffect(() => setOpen(false), [path]);
+
+  const { data: newLeadCount } = useQuery({
+    queryKey: ["admin", "leads", "new-count"],
+    queryFn: getNewLeadCount,
+    enabled: role === "admin",
+    refetchInterval: 60_000,
+  });
+
+  async function handleSignOut() {
+    await logout();
+    navigate({ to: "/login" });
+  }
 
   return (
     <div className="min-h-screen bg-stone flex">
@@ -62,6 +81,9 @@ export function DashboardShell({ role, title, children }: { role: Role; title: s
               <n.Icon className="h-4 w-4" />
               {n.label}
               {i === 0 && <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-gold/20 text-gold">Live</span>}
+              {n.label === "Leads" && !!newLeadCount && (
+                <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-gold/20 text-gold">{newLeadCount}</span>
+              )}
             </Link>
           ))}
         </nav>
@@ -69,9 +91,12 @@ export function DashboardShell({ role, title, children }: { role: Role; title: s
           <Link to="/login" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper">
             <Settings className="h-4 w-4" /> Settings
           </Link>
-          <Link to="/login" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper">
+          <button
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper"
+          >
             <LogOut className="h-4 w-4" /> Sign out
-          </Link>
+          </button>
         </div>
       </aside>
 

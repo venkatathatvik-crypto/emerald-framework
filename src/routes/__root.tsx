@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { AuthProvider } from "../lib/auth-context";
 
 function NotFoundComponent() {
   return (
@@ -281,9 +282,11 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div key={pathname} className="page-transition-wrap">
-        <Outlet />
-      </div>
+      <AuthProvider>
+        <div key={pathname} className="page-transition-wrap">
+          <Outlet />
+        </div>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

@@ -234,7 +234,7 @@ function Home() {
 
               <div className="hero-image-wrap relative w-full max-w-xl aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl shadow-ink/10 border border-white/80 mouse-parallax" data-parallax-factor="0.015">
                 <img
-                  src="/images/hero_rural_bridge.png"
+                  src={`${import.meta.env.BASE_URL}images/hero_rural_bridge.png`}
                   alt="2+ Fortune Alliances distribution network bridging premium brands to rural & semi-urban India"
                   className="hero-ken-burns w-full h-full object-cover object-center"
                   loading="eager"
@@ -309,7 +309,7 @@ function Home() {
                 className="relative rounded-2xl overflow-hidden shadow-xl border border-line aspect-[4/3] group bg-stone mb-10"
               >
                 <img
-                  src="/images/financial_inclusion.png"
+                  src={`${import.meta.env.BASE_URL}images/financial_inclusion.png`}
                   alt="Rural women entrepreneur accessing digital financial services"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"

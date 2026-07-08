@@ -67,12 +67,14 @@ export function AuthField({
   name,
   required = false,
   placeholder,
+  error,
 }: {
   label: string;
   type?: string;
   name: string;
   required?: boolean;
   placeholder?: string;
+  error?: string;
 }) {
   return (
     <div>
@@ -83,8 +85,12 @@ export function AuthField({
         type={type}
         required={required}
         placeholder={placeholder}
-        className="w-full bg-paper border border-line px-4 py-3 rounded-sm focus:outline-none focus:border-emerald-deep transition-colors"
+        aria-invalid={!!error}
+        className={`w-full bg-paper border px-4 py-3 rounded-sm focus:outline-none transition-colors ${
+          error ? "border-destructive focus:border-destructive" : "border-line focus:border-emerald-deep"
+        }`}
       />
+      {error && <p className="mt-1.5 text-xs text-destructive" role="alert">{error}</p>}
     </div>
   );
 }

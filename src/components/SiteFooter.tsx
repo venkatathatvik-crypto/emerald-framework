@@ -70,7 +70,7 @@ export function SiteFooter() {
         <div className="grid lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] gap-12">
           <div data-reveal="fade">
             <img
-              src="/images/logo.png"
+              src={`${import.meta.env.BASE_URL}images/logo.png`}
               alt="2+ Fortune Alliances Logo"
               className="h-16 w-auto object-contain rounded-lg border border-paper/10 bg-paper/5 mb-6 shadow-md"
             />
@@ -108,7 +108,7 @@ export function SiteFooter() {
           <div>
             <p className="eyebrow text-gold mb-5">Gold EMI Partner</p>
             <img 
-              src="/images/augmont_logo.png" 
+              src={`${import.meta.env.BASE_URL}images/augmont_logo.png`} 
               alt="Augmont Gold For All" 
               className="h-10 object-contain bg-white rounded-lg p-1.5 border border-paper/20 mb-4"
             />
@@ -135,7 +135,7 @@ export function SiteFooter() {
             © {new Date().getFullYear()} 2 Plus Fortune Alliances Pvt. Ltd. — CIN withheld. Hyderabad, India.
           </p>
           <img
-            src="/images/logo.png"
+            src={`${import.meta.env.BASE_URL}images/logo.png`}
             alt="2+ Fortune Alliances Logo"
             className="h-8 w-auto object-contain opacity-70"
           />

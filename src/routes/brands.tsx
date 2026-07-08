@@ -76,7 +76,7 @@ function Page() {
             className="relative rounded-3xl overflow-hidden shadow-2xl border border-line bg-stone aspect-[4/3] group"
           >
             <img 
-              src="/images/network_map.png" 
+              src={`${import.meta.env.BASE_URL}images/network_map.png`} 
               alt="Pan-India Distribution Network Map" 
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
@@ -141,7 +141,7 @@ function Page() {
               className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/10 min-h-[300px] lg:min-h-auto group"
             >
               <img 
-                src="/images/partners_collaborating.png" 
+                src={`${import.meta.env.BASE_URL}images/partners_collaborating.png`} 
                 alt="Strategic financial alliance professionals collaborating around reports and products" 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
