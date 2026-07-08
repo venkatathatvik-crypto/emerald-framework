@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useAuth } from "@/lib/auth-context";
+import { listPartners } from "@/lib/api/admin";
 
 export const Route = createFileRoute("/dashboard/admin")({
   head: () => ({ meta: [{ title: "Admin Dashboard — 2+ Fortune Alliances" }] }),
@@ -19,11 +22,23 @@ const BRANDS = [
 ];
 
 function Page() {
+  const { user } = useAuth();
+
+  const { data: activePartners, isLoading: partnersLoading } = useQuery({
+    queryKey: ["admin", "partners", "count", "active"],
+    queryFn: () => listPartners({ active: true, size: 1 }),
+    enabled: user?.role === "ROLE_ADMIN",
+  });
+
   return (
     <DashboardShell role="admin" title="Company Overview · FY 2026-27">
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard label="Revenue · YTD" value="₹14.2 Cr" sub="68% of FY27 target" />
-        <StatCard label="Active partners" value="18" sub="2 in onboarding" />
+        <StatCard
+          label="Active partners"
+          value={partnersLoading ? "—" : String(activePartners?.totalItems ?? 0)}
+          sub="Live partner accounts"
+        />
         <StatCard label="Branches live" value="312" sub="Across 12 states" />
         <StatCard label="Households impacted" value="100K+" sub="Cumulative since 2022" accent />
       </div>

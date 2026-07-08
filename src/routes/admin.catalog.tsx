@@ -71,7 +71,7 @@ function Page() {
               className="w-64"
             />
             <Select
-              value={categoryId != null ? String(categoryId) : undefined}
+              value={categoryId != null ? String(categoryId) : ""}
               onValueChange={(v) => setCategoryId(Number(v))}
               disabled={categoriesLoading || !categories?.length}
             >
