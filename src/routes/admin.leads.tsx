@@ -1,9 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
-import { useAuth } from "@/lib/auth-context";
+import { useRequireRole } from "@/hooks/use-require-role";
 import { listLeads, deleteLead } from "@/lib/api/admin";
 import type { LeadStatus, PartnerLead } from "@/lib/api/types";
 import { Input } from "@/components/ui/input";
@@ -45,9 +45,8 @@ const STATUS_VARIANT: Record<LeadStatus, "default" | "secondary" | "outline" | "
 const PAGE_SIZE = 20;
 
 function Page() {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user, isLoading: authLoading } = useAuth();
+  const { ready } = useRequireRole("ROLE_ADMIN");
 
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<LeadStatus | "ALL">("ALL");
@@ -55,12 +54,6 @@ function Page() {
   const [convertingLead, setConvertingLead] = useState<PartnerLead | null>(null);
   const [deletingLead, setDeletingLead] = useState<PartnerLead | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    if (!authLoading && (!user || user.role !== "ROLE_ADMIN")) {
-      navigate({ to: "/login" });
-    }
-  }, [authLoading, user, navigate]);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["admin", "leads", { search, status, page }],
@@ -71,10 +64,10 @@ function Page() {
         page,
         size: PAGE_SIZE,
       }),
-    enabled: !authLoading && user?.role === "ROLE_ADMIN",
+    enabled: ready,
   });
 
-  if (authLoading || !user || user.role !== "ROLE_ADMIN") {
+  if (!ready) {
     return null;
   }
 
@@ -180,11 +173,11 @@ function Page() {
                   </TableCell>
                   <TableCell className="text-right space-x-2">
                     {(lead.status === "NEW" || lead.status === "CONTACTED") && (
-                      <Button size="sm" variant="outline" onClick={() => setConvertingLead(lead)}>
+                      <Button size="sm" variant="pill" onClick={() => setConvertingLead(lead)}>
                         Convert
                       </Button>
                     )}
-                    <Button size="sm" variant="destructive" onClick={() => setDeletingLead(lead)}>
+                    <Button size="sm" variant="pillDestructive" onClick={() => setDeletingLead(lead)}>
                       Delete
                     </Button>
                   </TableCell>
@@ -201,7 +194,7 @@ function Page() {
             </span>
             <div className="flex gap-2">
               <Button
-                variant="outline"
+                variant="pillOutline"
                 size="sm"
                 disabled={data.page === 0}
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
@@ -209,7 +202,7 @@ function Page() {
                 Previous
               </Button>
               <Button
-                variant="outline"
+                variant="pillOutline"
                 size="sm"
                 disabled={data.last}
                 onClick={() => setPage((p) => p + 1)}

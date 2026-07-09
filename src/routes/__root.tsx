@@ -279,13 +279,22 @@ function RootComponent() {
   }, []);
 
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // Authenticated app-shell routes (sidebar + topbar) render their own persistent
+  // chrome per page — the marketing site's fade/slide page-transition would replay
+  // on every navigation (including the sidebar itself), which reads as flicker.
+  // Only the public/marketing pages get the transition treatment.
+  const isAppShell = /^\/(dashboard|admin|partner)(\/|$)/.test(pathname);
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <div key={pathname} className="page-transition-wrap">
+        {isAppShell ? (
           <Outlet />
-        </div>
+        ) : (
+          <div key={pathname} className="page-transition-wrap">
+            <Outlet />
+          </div>
+        )}
       </AuthProvider>
     </QueryClientProvider>
   );

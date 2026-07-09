@@ -12,6 +12,22 @@ export function me(): Promise<BackendUser> {
   return apiFetch<BackendUser>("/api/v1/auth/me");
 }
 
+/** Sends a 6-digit OTP to the identifier's email for the given purpose (default LOGIN). */
+export function sendOtp(identifier: string, purpose: "LOGIN" | "EMAIL_VERIFY" | "PASSWORD_RESET" = "LOGIN"): Promise<void> {
+  return apiFetch<void>("/api/v1/auth/otp/send", {
+    method: "POST",
+    body: { identifier, purpose },
+  });
+}
+
+/** Verifies a LOGIN-purpose OTP and, on success, establishes the session (same cookies as password login). */
+export function verifyOtpLogin(identifier: string, otp: string): Promise<BackendUser> {
+  return apiFetch<BackendUser>("/api/v1/auth/otp/verify-login", {
+    method: "POST",
+    body: { identifier, otp },
+  });
+}
+
 export function logout(): Promise<void> {
   return apiFetch<void>("/api/v1/auth/logout", { method: "POST" });
 }

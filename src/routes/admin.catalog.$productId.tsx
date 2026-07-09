@@ -1,10 +1,10 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ArrowLeft, Boxes } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
-import { useAuth } from "@/lib/auth-context";
+import { useRequireRole } from "@/hooks/use-require-role";
 import { getProductDetails, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -18,25 +18,18 @@ export const Route = createFileRoute("/admin/catalog/$productId")({
 
 function Page() {
   const { productId } = Route.useParams();
-  const navigate = useNavigate();
-  const { user, isLoading: authLoading } = useAuth();
+  const { ready } = useRequireRole("ROLE_ADMIN");
 
   const id = Number(productId);
   const [activeImage, setActiveImage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!authLoading && (!user || user.role !== "ROLE_ADMIN")) {
-      navigate({ to: "/login" });
-    }
-  }, [authLoading, user, navigate]);
-
   const { data: product, isLoading, isError } = useQuery({
     queryKey: ["augmont", "product", id],
     queryFn: () => getProductDetails(id),
-    enabled: !authLoading && user?.role === "ROLE_ADMIN" && Number.isFinite(id),
+    enabled: ready && Number.isFinite(id),
   });
 
-  if (authLoading || !user || user.role !== "ROLE_ADMIN") {
+  if (!ready) {
     return null;
   }
 

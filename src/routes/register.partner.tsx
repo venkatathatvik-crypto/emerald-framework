@@ -1,7 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AuthShell, AuthField } from "@/components/AuthShell";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import { submitPartnerLead } from "@/lib/api/public";
 import { ApiError } from "@/lib/api/types";
+import { useStates, useCities } from "@/hooks/use-location-data";
 import { ArrowUpRight, CheckCircle2 } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
@@ -48,9 +52,9 @@ function validate(values: PartnerLeadFormValues): FieldErrors {
   if (!phone) errors.phone = "Mobile number is required";
   else if (!MOBILE_RE.test(phone)) errors.phone = "Enter a valid 10-digit Indian mobile number";
 
-  if (values.gst.length > 15) errors.gst = "GST must be at most 15 characters";
-  if (values.city.length > 100) errors.city = "City must be at most 100 characters";
-  if (values.state.length > 100) errors.state = "State must be at most 100 characters";
+  const gst = values.gst.trim();
+  if (gst.length > 15) errors.gst = "GST must be at most 15 characters";
+  else if (gst && !/^[0-9A-Za-z]*$/.test(gst)) errors.gst = "GST must be alphanumeric";
 
   return errors;
 }
@@ -60,6 +64,16 @@ function Page() {
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+
+  const { data: states } = useStates();
+  const { data: cities } = useCities(state);
+
+  function handleStateChange(v: string) {
+    setState(v);
+    setCity("");
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -73,8 +87,8 @@ function Page() {
       email: String(formData.get("email") ?? ""),
       phone: String(formData.get("phone") ?? ""),
       gst: String(formData.get("gst") ?? ""),
-      city: String(formData.get("city") ?? ""),
-      state: String(formData.get("state") ?? ""),
+      city,
+      state,
     };
 
     const errors = validate(values);
@@ -136,11 +150,31 @@ function Page() {
             <AuthField label="Authorised contact name" name="contactPerson" required error={fieldErrors.contactPerson} />
             <div className="grid sm:grid-cols-2 gap-4">
               <AuthField label="Email" type="email" name="email" required error={fieldErrors.email} />
-              <AuthField label="Mobile" name="phone" placeholder="10-digit mobile number" required error={fieldErrors.phone} />
+              <AuthField label="Mobile" name="phone" placeholder="10-digit mobile number" required error={fieldErrors.phone} inputMode="numeric" maxLength={10} />
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
-              <AuthField label="City" name="city" error={fieldErrors.city} />
-              <AuthField label="State" name="state" error={fieldErrors.state} />
+              <div>
+                <label className="eyebrow block mb-2 text-[0.65rem]">State</label>
+                <Select value={state} onValueChange={handleStateChange}>
+                  <SelectTrigger className="w-full"><SelectValue placeholder="Select state" /></SelectTrigger>
+                  <SelectContent>
+                    {states?.map((s) => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+                {fieldErrors.state && <p className="mt-1.5 text-xs text-destructive" role="alert">{fieldErrors.state}</p>}
+              </div>
+              <div>
+                <label className="eyebrow block mb-2 text-[0.65rem]">City</label>
+                <Select value={city} onValueChange={setCity} disabled={!state}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={state ? "Select city" : "Select a state first"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cities?.map((c) => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+                {fieldErrors.city && <p className="mt-1.5 text-xs text-destructive" role="alert">{fieldErrors.city}</p>}
+              </div>
             </div>
             <AuthField label="GST number (optional)" name="gst" error={fieldErrors.gst} />
             {generalError && (

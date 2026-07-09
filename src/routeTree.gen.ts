@@ -33,7 +33,9 @@ import { Route as DashboardBranchRouteImport } from './routes/dashboard.branch'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as AdminPartnersRouteImport } from './routes/admin.partners'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
+import { Route as PartnerBranchesIndexRouteImport } from './routes/partner.branches.index'
 import { Route as AdminCatalogIndexRouteImport } from './routes/admin.catalog.index'
+import { Route as PartnerBranchesBranchIdRouteImport } from './routes/partner.branches.$branchId'
 import { Route as AdminCatalogProductIdRouteImport } from './routes/admin.catalog.$productId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -156,9 +158,19 @@ const AdminLeadsRoute = AdminLeadsRouteImport.update({
   path: '/admin/leads',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PartnerBranchesIndexRoute = PartnerBranchesIndexRouteImport.update({
+  id: '/partner/branches/',
+  path: '/partner/branches/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminCatalogIndexRoute = AdminCatalogIndexRouteImport.update({
   id: '/admin/catalog/',
   path: '/admin/catalog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnerBranchesBranchIdRoute = PartnerBranchesBranchIdRouteImport.update({
+  id: '/partner/branches/$branchId',
+  path: '/partner/branches/$branchId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminCatalogProductIdRoute = AdminCatalogProductIdRouteImport.update({
@@ -193,7 +205,9 @@ export interface FileRoutesByFullPath {
   '/register/customer': typeof RegisterCustomerRoute
   '/register/partner': typeof RegisterPartnerRoute
   '/admin/catalog/$productId': typeof AdminCatalogProductIdRoute
+  '/partner/branches/$branchId': typeof PartnerBranchesBranchIdRoute
   '/admin/catalog/': typeof AdminCatalogIndexRoute
+  '/partner/branches/': typeof PartnerBranchesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -221,7 +235,9 @@ export interface FileRoutesByTo {
   '/register/customer': typeof RegisterCustomerRoute
   '/register/partner': typeof RegisterPartnerRoute
   '/admin/catalog/$productId': typeof AdminCatalogProductIdRoute
+  '/partner/branches/$branchId': typeof PartnerBranchesBranchIdRoute
   '/admin/catalog': typeof AdminCatalogIndexRoute
+  '/partner/branches': typeof PartnerBranchesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -250,7 +266,9 @@ export interface FileRoutesById {
   '/register/customer': typeof RegisterCustomerRoute
   '/register/partner': typeof RegisterPartnerRoute
   '/admin/catalog/$productId': typeof AdminCatalogProductIdRoute
+  '/partner/branches/$branchId': typeof PartnerBranchesBranchIdRoute
   '/admin/catalog/': typeof AdminCatalogIndexRoute
+  '/partner/branches/': typeof PartnerBranchesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -280,7 +298,9 @@ export interface FileRouteTypes {
     | '/register/customer'
     | '/register/partner'
     | '/admin/catalog/$productId'
+    | '/partner/branches/$branchId'
     | '/admin/catalog/'
+    | '/partner/branches/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -308,7 +328,9 @@ export interface FileRouteTypes {
     | '/register/customer'
     | '/register/partner'
     | '/admin/catalog/$productId'
+    | '/partner/branches/$branchId'
     | '/admin/catalog'
+    | '/partner/branches'
   id:
     | '__root__'
     | '/'
@@ -336,7 +358,9 @@ export interface FileRouteTypes {
     | '/register/customer'
     | '/register/partner'
     | '/admin/catalog/$productId'
+    | '/partner/branches/$branchId'
     | '/admin/catalog/'
+    | '/partner/branches/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -365,7 +389,9 @@ export interface RootRouteChildren {
   RegisterCustomerRoute: typeof RegisterCustomerRoute
   RegisterPartnerRoute: typeof RegisterPartnerRoute
   AdminCatalogProductIdRoute: typeof AdminCatalogProductIdRoute
+  PartnerBranchesBranchIdRoute: typeof PartnerBranchesBranchIdRoute
   AdminCatalogIndexRoute: typeof AdminCatalogIndexRoute
+  PartnerBranchesIndexRoute: typeof PartnerBranchesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -538,11 +564,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/partner/branches/': {
+      id: '/partner/branches/'
+      path: '/partner/branches'
+      fullPath: '/partner/branches/'
+      preLoaderRoute: typeof PartnerBranchesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/catalog/': {
       id: '/admin/catalog/'
       path: '/admin/catalog'
       fullPath: '/admin/catalog/'
       preLoaderRoute: typeof AdminCatalogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partner/branches/$branchId': {
+      id: '/partner/branches/$branchId'
+      path: '/partner/branches/$branchId'
+      fullPath: '/partner/branches/$branchId'
+      preLoaderRoute: typeof PartnerBranchesBranchIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/catalog/$productId': {
@@ -581,7 +621,9 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterCustomerRoute: RegisterCustomerRoute,
   RegisterPartnerRoute: RegisterPartnerRoute,
   AdminCatalogProductIdRoute: AdminCatalogProductIdRoute,
+  PartnerBranchesBranchIdRoute: PartnerBranchesBranchIdRoute,
   AdminCatalogIndexRoute: AdminCatalogIndexRoute,
+  PartnerBranchesIndexRoute: PartnerBranchesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

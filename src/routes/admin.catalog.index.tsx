@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Boxes } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
-import { useAuth } from "@/lib/auth-context";
+import { useRequireRole } from "@/hooks/use-require-role";
 import { getShopCategories, getProductsBySubCategory, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -20,21 +20,15 @@ export const Route = createFileRoute("/admin/catalog/")({
 
 function Page() {
   const navigate = useNavigate();
-  const { user, isLoading: authLoading } = useAuth();
+  const { ready } = useRequireRole("ROLE_ADMIN");
 
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    if (!authLoading && (!user || user.role !== "ROLE_ADMIN")) {
-      navigate({ to: "/login" });
-    }
-  }, [authLoading, user, navigate]);
-
   const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: ["augmont", "shop-categories"],
     queryFn: getShopCategories,
-    enabled: !authLoading && user?.role === "ROLE_ADMIN",
+    enabled: ready,
   });
 
   // Auto-select the first category once the list loads.
@@ -50,7 +44,7 @@ function Page() {
     enabled: categoryId !== null,
   });
 
-  if (authLoading || !user || user.role !== "ROLE_ADMIN") {
+  if (!ready) {
     return null;
   }
 

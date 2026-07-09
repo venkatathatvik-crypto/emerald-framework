@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
+import { useRequireRole } from "@/hooks/use-require-role";
 
 export const Route = createFileRoute("/dashboard/partner")({
   head: () => ({ meta: [{ title: "Partner Dashboard — 2+ Fortune Alliances" }] }),
@@ -21,6 +22,9 @@ const CATS = [
 ];
 
 function Page() {
+  const { ready } = useRequireRole("ROLE_ALLIANCE");
+  if (!ready) return null;
+
   return (
     <DashboardShell role="partner" title="Sugmya Finance · Partner Overview">
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

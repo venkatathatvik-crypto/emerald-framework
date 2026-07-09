@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useRequireRole } from "@/hooks/use-require-role";
 
 export const Route = createFileRoute("/dashboard/branch")({
   head: () => ({ meta: [{ title: "Branch Dashboard — 2+ Fortune Alliances" }] }),
@@ -13,6 +14,9 @@ const FLOW = [
 ];
 
 function Page() {
+  const { ready } = useRequireRole("ROLE_BRANCH");
+  if (!ready) return null;
+
   return (
     <DashboardShell role="branch" title="Mysuru Branch · Daily Ops">
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

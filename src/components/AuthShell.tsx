@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 
 export function AuthShell({
   eyebrow,
@@ -15,9 +15,9 @@ export function AuthShell({
   side?: ReactNode;
 }) {
   return (
-    <div className="min-h-screen grid lg:grid-cols-[1.05fr_1fr] bg-paper">
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden grid lg:grid-cols-[1.05fr_1fr] bg-paper">
       {/* Left — brand panel */}
-      <aside className="relative bg-emerald-deep text-paper p-10 lg:p-14 flex flex-col justify-between min-h-[40vh] lg:min-h-screen overflow-hidden">
+      <aside className="relative bg-emerald-deep text-paper p-10 lg:p-14 flex flex-col justify-between min-h-[40vh] lg:h-screen overflow-hidden">
         <div className="absolute inset-0 opacity-[0.08]" aria-hidden>
           <div className="absolute -right-20 -bottom-20 font-display text-[40rem] leading-none">+</div>
         </div>
@@ -45,15 +45,20 @@ export function AuthShell({
         </div>
       </aside>
 
-      {/* Right — form */}
-      <section className="p-8 sm:p-12 lg:p-20 flex flex-col">
-        <div className="flex justify-between items-center mb-12">
+      {/* Right — form. On desktop this pane owns its own scroll (lg:h-screen +
+          lg:overflow-y-auto) inside the capped, non-scrolling outer frame, so the brand
+          panel never moves; `my-auto` centers the form block vertically when it fits, and
+          degrades gracefully (top-anchored, scrollable) instead of clipping when it's
+          taller than the viewport. On mobile the panels just stack and the page scrolls
+          normally. */}
+      <section className="lg:h-screen lg:overflow-y-auto p-6 sm:p-10 lg:p-14 flex flex-col">
+        <div className="flex justify-between items-center shrink-0">
           <Link to="/" className="text-sm text-muted-foreground hover:text-ink">← Back to site</Link>
           <span className="text-xs text-muted-foreground">{eyebrow}</span>
         </div>
-        <div className="max-w-md w-full mx-auto flex-1 flex flex-col justify-center">
-          <h1 className="font-display text-4xl md:text-5xl text-ink leading-[1.05] mb-4">{title}</h1>
-          {subtitle && <p className="text-muted-foreground mb-10">{subtitle}</p>}
+        <div className="max-w-md w-full mx-auto my-auto">
+          <h1 className="font-display text-3xl md:text-4xl text-ink leading-[1.05] mb-3">{title}</h1>
+          {subtitle && <p className="text-muted-foreground mb-6 text-sm">{subtitle}</p>}
           {children}
         </div>
       </section>
@@ -68,6 +73,8 @@ export function AuthField({
   required = false,
   placeholder,
   error,
+  inputMode,
+  maxLength,
 }: {
   label: string;
   type?: string;
@@ -75,6 +82,8 @@ export function AuthField({
   required?: boolean;
   placeholder?: string;
   error?: string;
+  inputMode?: HTMLAttributes<HTMLInputElement>["inputMode"];
+  maxLength?: number;
 }) {
   return (
     <div>
@@ -86,6 +95,8 @@ export function AuthField({
         required={required}
         placeholder={placeholder}
         aria-invalid={!!error}
+        inputMode={inputMode}
+        maxLength={maxLength}
         className={`w-full bg-paper border px-4 py-3 rounded-sm focus:outline-none transition-colors ${
           error ? "border-destructive focus:border-destructive" : "border-line focus:border-emerald-deep"
         }`}

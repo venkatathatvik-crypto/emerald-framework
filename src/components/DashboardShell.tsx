@@ -21,6 +21,7 @@ const NAV: Record<Role, { to: string; label: string; Icon: typeof LayoutDashboar
   ],
   partner: [
     { to: "/dashboard/partner", label: "Overview", Icon: LayoutDashboard },
+    { to: "/partner/branches", label: "Branches", Icon: Building2 },
     { to: "/dashboard/partner", label: "Indents", Icon: Boxes },
     { to: "/dashboard/partner", label: "Members", Icon: Users },
     { to: "/dashboard/partner", label: "Analytics", Icon: BarChart3 },
@@ -69,15 +70,18 @@ export function DashboardShell({ role, title, children }: { role: Role; title: s
   }
 
   return (
-    <div className="min-h-screen bg-stone flex">
-      {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-72 bg-ink text-paper flex flex-col transition-transform duration-300 lg:translate-x-0 lg:static ${open ? "translate-x-0" : "-translate-x-full"}`}>
-        <Link to="/" className="flex items-center gap-2.5 px-6 h-16 border-b border-paper/10">
+    <div className="h-screen overflow-hidden bg-stone flex">
+      {/* Sidebar — a flex child of a viewport-height, non-scrolling outer frame on desktop
+          (lg:static lg:h-full), so it's simply always exactly one viewport tall; no sticky
+          trickery needed since main content scrolls in its own pane below, not the page.
+          Overlay/fixed on mobile as before. */}
+      <aside className={`fixed inset-y-0 left-0 z-40 w-72 bg-ink text-paper flex flex-col transition-transform duration-300 lg:translate-x-0 lg:static lg:h-full ${open ? "translate-x-0" : "-translate-x-full"}`}>
+        <Link to="/" className="flex items-center gap-2.5 px-6 h-16 border-b border-paper/10 shrink-0">
           <span className="grid place-items-center h-8 w-8 rounded-full bg-paper text-emerald-deep font-display">2</span>
           <span className="font-display text-lg"><span className="text-gold">+</span>FAPL</span>
           <span className="ml-auto text-[10px] uppercase tracking-widest text-paper/40">{role}</span>
         </Link>
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {NAV[role].map((n, i) => (
             <Link
               key={i}
@@ -95,7 +99,7 @@ export function DashboardShell({ role, title, children }: { role: Role; title: s
             </Link>
           ))}
         </nav>
-        <div className="border-t border-paper/10 p-4">
+        <div className="border-t border-paper/10 p-4 shrink-0">
           <Link to="/login" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper">
             <Settings className="h-4 w-4" /> Settings
           </Link>
@@ -110,8 +114,9 @@ export function DashboardShell({ role, title, children }: { role: Role; title: s
 
       {open && <div onClick={() => setOpen(false)} className="fixed inset-0 z-30 bg-ink/40 lg:hidden" />}
 
-      {/* Main */}
-      <div className="flex-1 min-w-0 flex flex-col">
+      {/* Main — its own independent scroll container, so tall page content never affects
+          the sidebar or grows the outer (non-scrolling) page frame. */}
+      <div className="flex-1 min-w-0 flex flex-col h-screen overflow-y-auto">
         {/* Topbar */}
         <header className="sticky top-0 z-20 bg-paper/85 backdrop-blur border-b border-line h-16 flex items-center gap-4 px-4 md:px-8">
           <button onClick={() => setOpen(!open)} className="lg:hidden text-sm">☰</button>

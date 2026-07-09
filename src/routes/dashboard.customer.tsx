@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Check, Clock, Truck, ArrowUpRight, Sparkles } from "lucide-react";
+import { useRequireRole } from "@/hooks/use-require-role";
 
 export const Route = createFileRoute("/dashboard/customer")({
   head: () => ({ meta: [{ title: "Customer Dashboard — 2+ Fortune Alliances & Augmont" }] }),
@@ -22,6 +23,9 @@ const ORDERS = [
 ];
 
 function Page() {
+  const { ready } = useRequireRole("ROLE_CUSTOMER");
+  if (!ready) return null;
+
   return (
     <DashboardShell role="customer" title="Welcome back, Srikanth.">
       <div className="flex items-center gap-3 mb-6">

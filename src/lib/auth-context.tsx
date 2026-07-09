@@ -8,6 +8,14 @@ interface AuthContextValue {
   isLoading: boolean;
   login: (identifier: string, password: string) => Promise<BackendUser>;
   logout: () => Promise<void>;
+  /**
+   * Syncs context state after a session is established by a flow other than
+   * `login()` (e.g. OTP verification) — those hit the API directly rather
+   * than going through `login()`, so without this the context's `user`
+   * stays null even though the server-side session cookie was set, and
+   * every role guard bounces the freshly-logged-in user back to /login.
+   */
+  setUser: (user: BackendUser | null) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -43,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );

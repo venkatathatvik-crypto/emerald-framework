@@ -111,6 +111,77 @@ export interface PartnerResponse {
   updatedAt: string;
 }
 
+/** Matches entities/dto/common/MasStateResponse.java. */
+export interface MasState {
+  id: number;
+  name: string;
+}
+
+/** Matches entities/dto/common/MasCityResponse.java. */
+export interface MasCity {
+  id: number;
+  stateId: number;
+  name: string;
+}
+
+/** Matches entities/dto/partner/BranchResponse.java. */
+export interface Branch {
+  id: number;
+  uuid: string;
+  allianceCompanyId: number;
+  name: string;
+  code: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  pincode: string | null;
+  managerId: number | null;
+  commissionRate: number | null;
+  /** JSON key is "active", not "isActive" — Jackson strips the getter's "is" prefix. */
+  active: boolean;
+  augmontStoreId: number | null;
+  augmontStoreUniqueId: string | null;
+  syncedToAugmont: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Request body for POST /api/v1/partner/branches. */
+export interface BranchCreateRequest {
+  name: string;
+  code?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  commissionRate?: number;
+}
+
+/** Matches entities/dto/partner/AgentResponse.java. */
+export interface Agent {
+  id: number;
+  uuid: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
+  mobile: string | null;
+  branchId: number;
+  /** JSON key is "active", not "isActive" — Jackson strips the getter's "is" prefix. */
+  active: boolean;
+  createdAt: string;
+}
+
+/** Request body for POST /api/v1/partner/branches/{branchId}/agents. */
+export interface AgentCreateRequest {
+  name: string;
+  loginEmail: string;
+  loginMobile: string;
+}
+
 // ── Augmont catalog (proxied third-party data — shapes are loosely typed and
 // somewhat inconsistent between Augmont's list vs. detail endpoints; numeric
 // price fields may arrive as either number or string, so read them via the

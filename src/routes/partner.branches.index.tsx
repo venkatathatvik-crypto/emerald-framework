@@ -1,11 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { listPartners, deactivatePartner } from "@/lib/api/admin";
-import type { PartnerResponse } from "@/lib/api/types";
+import { listBranches, deactivateBranch } from "@/lib/api/partner";
+import { CreateBranchDialog } from "@/components/partner/CreateBranchDialog";
+import type { Branch } from "@/lib/api/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,13 +21,13 @@ import {
   AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 
-export const Route = createFileRoute("/admin/partners")({
-  head: () => ({ meta: [{ title: "Partners — Admin" }] }),
+export const Route = createFileRoute("/partner/branches/")({
+  head: () => ({ meta: [{ title: "Branches — Partner" }] }),
   component: Page,
 });
 
 const ACTIVE_OPTIONS: { value: string; label: string }[] = [
-  { value: "ALL", label: "All partners" },
+  { value: "ALL", label: "All branches" },
   { value: "true", label: "Active" },
   { value: "false", label: "Deactivated" },
 ];
@@ -35,18 +36,19 @@ const PAGE_SIZE = 20;
 
 function Page() {
   const queryClient = useQueryClient();
-  const { ready } = useRequireRole("ROLE_ADMIN");
+  const { ready } = useRequireRole("ROLE_ALLIANCE");
 
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [page, setPage] = useState(0);
-  const [deactivatingPartner, setDeactivatingPartner] = useState<PartnerResponse | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [deactivatingBranch, setDeactivatingBranch] = useState<Branch | null>(null);
   const [isDeactivating, setIsDeactivating] = useState(false);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["admin", "partners", { search, activeFilter, page }],
+    queryKey: ["partner", "branches", { search, activeFilter, page }],
     queryFn: () =>
-      listPartners({
+      listBranches({
         q: search || undefined,
         active: activeFilter === "ALL" ? undefined : activeFilter === "true",
         page,
@@ -59,28 +61,28 @@ function Page() {
     return null;
   }
 
-  const partners = data?.items ?? [];
+  const branches = data?.items ?? [];
 
   async function handleDeactivate() {
-    if (!deactivatingPartner) return;
+    if (!deactivatingBranch) return;
     setIsDeactivating(true);
     try {
-      await deactivatePartner(deactivatingPartner.id);
-      queryClient.invalidateQueries({ queryKey: ["admin", "partners"] });
-      setDeactivatingPartner(null);
+      await deactivateBranch(deactivatingBranch.id);
+      queryClient.invalidateQueries({ queryKey: ["partner", "branches"] });
+      setDeactivatingBranch(null);
     } finally {
       setIsDeactivating(false);
     }
   }
 
   return (
-    <DashboardShell role="admin" title="Partners">
+    <DashboardShell role="partner" title="Branches">
       <Panel
-        title="Partners"
+        title="Branches"
         action={
           <div className="flex items-center gap-3">
             <Input
-              placeholder="Search name, contact email…"
+              placeholder="Search name, code…"
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(0); }}
               className="w-64"
@@ -98,11 +100,12 @@ function Page() {
                 ))}
               </SelectContent>
             </Select>
+            <Button variant="pill" onClick={() => setCreateOpen(true)}>Create Branch</Button>
           </div>
         }
       >
         {isError && (
-          <p className="text-sm text-destructive py-6">Failed to load partners. Please try again.</p>
+          <p className="text-sm text-destructive py-6">Failed to load branches. Please try again.</p>
         )}
 
         {!isError && (
@@ -110,7 +113,6 @@ function Page() {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
-                <TableHead>Type</TableHead>
                 <TableHead>Contact</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Commission</TableHead>
@@ -121,45 +123,51 @@ function Page() {
             <TableBody>
               {isLoading && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-10">
-                    Loading partners…
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-10">
+                    Loading branches…
                   </TableCell>
                 </TableRow>
               )}
-              {!isLoading && partners.length === 0 && (
+              {!isLoading && branches.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-10">
-                    No partners found.
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-10">
+                    No branches found.
                   </TableCell>
                 </TableRow>
               )}
-              {partners.map((partner) => (
-                <TableRow key={partner.id}>
+              {branches.map((branch) => (
+                <TableRow key={branch.id}>
                   <TableCell>
-                    <p className="font-medium text-ink">{partner.name}</p>
-                    {partner.registrationNumber && (
-                      <p className="text-xs text-muted-foreground">{partner.registrationNumber}</p>
-                    )}
-                  </TableCell>
-                  <TableCell>{partner.type}</TableCell>
-                  <TableCell>
-                    <p>{partner.contactEmail || "—"}</p>
-                    <p className="text-xs text-muted-foreground">{partner.contactPhone || ""}</p>
+                    <p className="font-medium text-ink">{branch.name}</p>
+                    {branch.code && <p className="text-xs text-muted-foreground">{branch.code}</p>}
                   </TableCell>
                   <TableCell>
-                    {[partner.city, partner.state].filter(Boolean).join(", ") || "—"}
+                    <p>{branch.contactEmail || "—"}</p>
+                    <p className="text-xs text-muted-foreground">{branch.contactPhone || ""}</p>
                   </TableCell>
                   <TableCell>
-                    {partner.commissionRate != null ? `${partner.commissionRate}%` : "—"}
+                    {[branch.city, branch.state].filter(Boolean).join(", ") || "—"}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={partner.active ? "default" : "destructive"}>
-                      {partner.active ? "Active" : "Deactivated"}
+                    {branch.commissionRate != null ? `${branch.commissionRate}%` : "—"}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={branch.active ? "default" : "destructive"}>
+                      {branch.active ? "Active" : "Deactivated"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
-                    {partner.active && (
-                      <Button size="sm" variant="pillDestructive" onClick={() => setDeactivatingPartner(partner)}>
+                  <TableCell className="text-right space-x-2">
+                    <Button size="sm" variant="pill" asChild>
+                      <Link to="/partner/branches/$branchId" params={{ branchId: String(branch.id) }}>
+                        View
+                      </Link>
+                    </Button>
+                    {branch.active && (
+                      <Button
+                        size="sm"
+                        variant="pillDestructive"
+                        onClick={() => setDeactivatingBranch(branch)}
+                      >
                         Deactivate
                       </Button>
                     )}
@@ -197,16 +205,21 @@ function Page() {
         )}
       </Panel>
 
-      <AlertDialog open={!!deactivatingPartner} onOpenChange={(open) => { if (!open) setDeactivatingPartner(null); }}>
+      <CreateBranchDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onCreated={() => queryClient.invalidateQueries({ queryKey: ["partner", "branches"] })}
+      />
+
+      <AlertDialog open={!!deactivatingBranch} onOpenChange={(open) => { if (!open) setDeactivatingBranch(null); }}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Deactivate this partner?</AlertDialogTitle>
+            <AlertDialogTitle>Deactivate this branch?</AlertDialogTitle>
             <AlertDialogDescription>
-              {deactivatingPartner && (
+              {deactivatingBranch && (
                 <>
-                  This deactivates <strong>{deactivatingPartner.name}</strong> and blocks their login immediately.
-                  Nothing is deleted — you can see deactivated partners via the status filter, and this can be
-                  reversed later.
+                  This deactivates <strong>{deactivatingBranch.name}</strong>. Its agents keep their
+                  own status and are not affected. Nothing is deleted — this can be reversed later.
                 </>
               )}
             </AlertDialogDescription>

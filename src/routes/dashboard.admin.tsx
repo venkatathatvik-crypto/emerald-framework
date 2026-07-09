@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { useAuth } from "@/lib/auth-context";
+import { useRequireRole } from "@/hooks/use-require-role";
 import { listPartners } from "@/lib/api/admin";
 
 export const Route = createFileRoute("/dashboard/admin")({
@@ -22,13 +22,15 @@ const BRANDS = [
 ];
 
 function Page() {
-  const { user } = useAuth();
+  const { ready } = useRequireRole("ROLE_ADMIN");
 
   const { data: activePartners, isLoading: partnersLoading } = useQuery({
     queryKey: ["admin", "partners", "count", "active"],
     queryFn: () => listPartners({ active: true, size: 1 }),
-    enabled: user?.role === "ROLE_ADMIN",
+    enabled: ready,
   });
+
+  if (!ready) return null;
 
   return (
     <DashboardShell role="admin" title="Company Overview · FY 2026-27">
