@@ -9,7 +9,7 @@ import { ArrowLeft, Boxes, Lock } from "lucide-react";
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
 import { useStates, useCities } from "@/hooks/use-location-data";
-import { getProductDetails, getSubCategories, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
+import { getProductDetails, getSubCategoryImage, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
 import type { AugmontProductPriceTier } from "@/lib/api/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -70,17 +70,14 @@ function Page() {
     enabled: ready && Number.isFinite(id),
   });
 
-  // Same cache key as the shop grid — free if the customer arrived via a
-  // product card, otherwise one extra request for the category fallback image.
-  const { data: subCategories } = useQuery({
-    queryKey: ["augmont", "sub-categories"],
-    queryFn: getSubCategories,
-    enabled: ready,
+  // Same cache key/shape as the shop grid's lookup — free if the customer
+  // arrived via that product's own category, otherwise one extra request.
+  const { data: categoryImage } = useQuery({
+    queryKey: ["augmont", "sub-category-image", product?.subCategoryId],
+    queryFn: () => getSubCategoryImage(product!.subCategoryId),
+    enabled: ready && !!product,
     staleTime: 5 * 60 * 1000,
   });
-  const categoryImage = product
-    ? subCategories?.find((sc) => sc.id === product.subCategoryId)?.subCategoryImg
-    : undefined;
 
   const form = useForm<BuyFormValues>({
     resolver: zodResolver(buySchema),

@@ -5,7 +5,7 @@ import { Boxes } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { getShopCategories, getSubCategories, getProductsBySubCategory, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
+import { getShopCategories, getSubCategoryImage, getProductsBySubCategory, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -44,15 +44,14 @@ function Page() {
     enabled: categoryId !== null,
   });
 
-  // A separate, richer endpoint — its real value here is subCategoryImg, a
-  // real image URL some categories have that products themselves never do.
-  const { data: subCategories } = useQuery({
-    queryKey: ["augmont", "sub-categories"],
-    queryFn: getSubCategories,
-    enabled: ready,
+  // Looked up per-category (reliable) rather than from the bulk sub-categories
+  // list (unreliable pagination) — see getSubCategoryImage's own comment.
+  const { data: categoryImage } = useQuery({
+    queryKey: ["augmont", "sub-category-image", categoryId],
+    queryFn: () => getSubCategoryImage(categoryId!),
+    enabled: categoryId !== null,
     staleTime: 5 * 60 * 1000,
   });
-  const categoryImage = subCategories?.find((sc) => sc.id === categoryId)?.subCategoryImg;
 
   if (!ready) {
     return null;

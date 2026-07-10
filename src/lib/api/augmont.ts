@@ -21,17 +21,20 @@ export async function getShopCategories(): Promise<AugmontShopCategory[]> {
 }
 
 /**
- * A separate, richer endpoint from shop-categories — mainly useful here for
- * `subCategoryImg`, a real image URL some categories have that products
- * themselves never do (confirmed live). Server-side pagination on this one
- * is unreliable (only ~10 of 47 categories come back, no working page/size
- * params found) — treat the result as "some extra categories with images",
- * not a complete list, and never as a replacement for
- * getProductsBySubCategory (its nested `products` omit pricing entirely).
+ * Looks up one category by id on the separate, richer sub-categories
+ * endpoint — confirmed live that `?id=` reliably returns an exact match,
+ * unlike the bulk list (no query params), whose pagination is unreliable
+ * (only ~10 of 47 categories ever came back, no working page/size param
+ * found). The only thing this is for is `subCategoryImg`, a real image URL
+ * some categories have that products themselves never do — never use this
+ * as a substitute for getProductsBySubCategory (its nested `products` omit
+ * pricing entirely).
  */
-export async function getSubCategories(): Promise<AugmontSubCategoryFull[]> {
-  const res = await apiFetch<AugmontListEnvelope<AugmontSubCategoryFull>>("/api/v1/augmont/sub-categories");
-  return res.data ?? [];
+export async function getSubCategoryImage(subCategoryId: number): Promise<string | undefined> {
+  const res = await apiFetch<AugmontListEnvelope<AugmontSubCategoryFull>>("/api/v1/augmont/sub-categories", {
+    query: { id: subCategoryId },
+  });
+  return res.data?.[0]?.subCategoryImg;
 }
 
 export interface ListProductsParams {
