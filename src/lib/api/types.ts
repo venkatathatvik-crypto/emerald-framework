@@ -197,6 +197,28 @@ export interface AugmontShopCategory {
   count: number;
 }
 
+/**
+ * GET /api/v1/augmont/sub-categories — a richer, separate endpoint from
+ * shop-categories. Its nested `products` are a lightweight summary (no
+ * `productPrice`, so not a substitute for GET /products?subCategoryId=) —
+ * this endpoint's real value is `subCategoryImg`, a real S3 URL some
+ * categories have (confirmed live) that products themselves never do.
+ * Paginated server-side with an unclear/unreliable scheme (only ~10 of 47
+ * returned by default; page/size/limit params didn't behave predictably
+ * against this account) — treat this as "some extra categories", not a
+ * complete list.
+ */
+export interface AugmontSubCategoryFull {
+  id: number;
+  subCategoryName: string;
+  categoryId: number;
+  isActive: boolean;
+  subCategoryImage: string | null;
+  /** Real, renderable S3 URL — present only on some categories. */
+  subCategoryImg?: string;
+  products: AugmontProductListItem[];
+}
+
 export interface AugmontProductImage {
   id?: number;
   url?: string;

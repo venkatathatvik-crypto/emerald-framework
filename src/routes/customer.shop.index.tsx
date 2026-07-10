@@ -5,7 +5,7 @@ import { Boxes } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { getShopCategories, getProductsBySubCategory, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
+import { getShopCategories, getSubCategories, getProductsBySubCategory, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -43,6 +43,16 @@ function Page() {
     queryFn: () => getProductsBySubCategory({ subCategoryId: categoryId! }),
     enabled: categoryId !== null,
   });
+
+  // A separate, richer endpoint — its real value here is subCategoryImg, a
+  // real image URL some categories have that products themselves never do.
+  const { data: subCategories } = useQuery({
+    queryKey: ["augmont", "sub-categories"],
+    queryFn: getSubCategories,
+    enabled: ready,
+    staleTime: 5 * 60 * 1000,
+  });
+  const categoryImage = subCategories?.find((sc) => sc.id === categoryId)?.subCategoryImg;
 
   if (!ready) {
     return null;
@@ -99,7 +109,7 @@ function Page() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filtered.map((product) => {
               const tier = getProductPriceTier(product);
-              const thumb = getProductThumbnail(product);
+              const thumb = getProductThumbnail(product, categoryImage);
               return (
                 <Card
                   key={product.id}

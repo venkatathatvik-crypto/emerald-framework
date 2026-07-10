@@ -9,7 +9,7 @@ import { ArrowLeft, Boxes, Lock } from "lucide-react";
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
 import { useStates, useCities } from "@/hooks/use-location-data";
-import { getProductDetails, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
+import { getProductDetails, getSubCategories, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
 import type { AugmontProductPriceTier } from "@/lib/api/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -70,6 +70,18 @@ function Page() {
     enabled: ready && Number.isFinite(id),
   });
 
+  // Same cache key as the shop grid — free if the customer arrived via a
+  // product card, otherwise one extra request for the category fallback image.
+  const { data: subCategories } = useQuery({
+    queryKey: ["augmont", "sub-categories"],
+    queryFn: getSubCategories,
+    enabled: ready,
+    staleTime: 5 * 60 * 1000,
+  });
+  const categoryImage = product
+    ? subCategories?.find((sc) => sc.id === product.subCategoryId)?.subCategoryImg
+    : undefined;
+
   const form = useForm<BuyFormValues>({
     resolver: zodResolver(buySchema),
     defaultValues: { panCardNumber: "", dateOfBirth: "", addressLine: "", state: "", city: "", pincode: "" },
@@ -83,7 +95,7 @@ function Page() {
   }
 
   const tier = product ? getProductPriceTier(product) : null;
-  const thumb = product ? getProductThumbnail(product) : null;
+  const thumb = product ? getProductThumbnail(product, categoryImage) : null;
   const gallery = product?.productImages?.map((img) => img.url ?? img.URL).filter((u): u is string => !!u) ?? [];
   const displayImage = activeImage ?? thumb;
   const availableTenures = (product?.paymentData ?? []).map((pt) => pt.paymentType);
@@ -99,52 +111,44 @@ function Page() {
       {isError && <p className="text-sm text-destructive py-10 text-center">Failed to load this product.</p>}
 
       {product && (
-        <div className="grid lg:grid-cols-2 gap-6">
-          <div className="space-y-6">
-            <Panel title="Images">
-              <div className="aspect-square bg-stone rounded-md flex items-center justify-center overflow-hidden mb-3">
-                {displayImage ? (
-                  <img src={displayImage} alt={product.productName} className="w-full h-full object-cover" />
-                ) : (
-                  <Boxes className="h-16 w-16 text-muted-foreground" />
-                )}
-              </div>
-              {gallery.length > 1 && (
-                <div className="flex gap-2 flex-wrap">
-                  {gallery.map((url) => (
-                    <button
-                      key={url}
-                      onClick={() => setActiveImage(url)}
-                      className={`h-16 w-16 rounded-md overflow-hidden border-2 ${displayImage === url ? "border-emerald-deep" : "border-line"}`}
-                    >
-                      <img src={url} alt="" className="w-full h-full object-cover" />
-                    </button>
-                  ))}
-                </div>
+        <div className="grid lg:grid-cols-2 gap-6 items-stretch">
+          <Panel title="Product" className="flex flex-col">
+            <div className="h-56 bg-stone rounded-md flex items-center justify-center overflow-hidden mb-4">
+              {displayImage ? (
+                <img src={displayImage} alt={product.productName} className="w-full h-full object-cover" />
+              ) : (
+                <Boxes className="h-14 w-14 text-muted-foreground" />
               )}
-            </Panel>
-
-            <Panel title="Details">
-              <div className="space-y-4">
-                <div>
-                  <h2 className="font-display text-2xl text-ink">{product.productName}</h2>
-                  <p className="text-sm text-muted-foreground mt-1">SKU: {product.sku}</p>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="secondary">{product.weight}g</Badge>
-                  {product.subCategory?.category?.metalType && (
-                    <Badge variant="outline">
-                      {product.subCategory.category.metalType.metalType} · {product.subCategory.category.metalType.metalFitness}
-                    </Badge>
-                  )}
-                  {product.isEmiAvailable && <Badge>EMI Available</Badge>}
-                </div>
+            </div>
+            {gallery.length > 1 && (
+              <div className="flex gap-2 flex-wrap mb-4">
+                {gallery.map((url) => (
+                  <button
+                    key={url}
+                    onClick={() => setActiveImage(url)}
+                    className={`h-14 w-14 rounded-md overflow-hidden border-2 ${displayImage === url ? "border-emerald-deep" : "border-line"}`}
+                  >
+                    <img src={url} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
               </div>
-            </Panel>
-          </div>
+            )}
+            <div>
+              <h2 className="font-display text-2xl text-ink">{product.productName}</h2>
+              <p className="text-sm text-muted-foreground mt-1">SKU: {product.sku}</p>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap mt-3">
+              <Badge variant="secondary">{product.weight}g</Badge>
+              {product.subCategory?.category?.metalType && (
+                <Badge variant="outline">
+                  {product.subCategory.category.metalType.metalType} · {product.subCategory.category.metalType.metalFitness}
+                </Badge>
+              )}
+              {product.isEmiAvailable && <Badge>EMI Available</Badge>}
+            </div>
+          </Panel>
 
-          <div className="space-y-6">
-            <Panel title="Choose how to pay">
+          <Panel title="Choose how to pay">
               {availableTenures.length > 0 ? (
                 <div className="flex gap-2 flex-wrap mb-5">
                   {(["spot", "three", "six", "nine"] as Tenure[])
@@ -183,7 +187,7 @@ function Page() {
               )}
             </Panel>
 
-            <Panel title="Delivery &amp; identity details">
+            <Panel title="Delivery &amp; identity details" className="lg:col-span-2">
               <Form {...form}>
                 <form className="space-y-4">
                   <div className="grid sm:grid-cols-2 gap-4">
@@ -263,7 +267,6 @@ function Page() {
                 </form>
               </Form>
             </Panel>
-          </div>
         </div>
       )}
     </DashboardShell>

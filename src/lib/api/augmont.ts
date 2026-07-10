@@ -1,6 +1,7 @@
 import { apiFetch } from "./client";
 import type {
   AugmontShopCategory,
+  AugmontSubCategoryFull,
   AugmontProductListItem,
   AugmontProductDetail,
   AugmontProductPriceTier,
@@ -16,6 +17,20 @@ interface AugmontListEnvelope<T> {
 
 export async function getShopCategories(): Promise<AugmontShopCategory[]> {
   const res = await apiFetch<AugmontListEnvelope<AugmontShopCategory>>("/api/v1/augmont/shop-categories");
+  return res.data ?? [];
+}
+
+/**
+ * A separate, richer endpoint from shop-categories — mainly useful here for
+ * `subCategoryImg`, a real image URL some categories have that products
+ * themselves never do (confirmed live). Server-side pagination on this one
+ * is unreliable (only ~10 of 47 categories come back, no working page/size
+ * params found) — treat the result as "some extra categories with images",
+ * not a complete list, and never as a replacement for
+ * getProductsBySubCategory (its nested `products` omit pricing entirely).
+ */
+export async function getSubCategories(): Promise<AugmontSubCategoryFull[]> {
+  const res = await apiFetch<AugmontListEnvelope<AugmontSubCategoryFull>>("/api/v1/augmont/sub-categories");
   return res.data ?? [];
 }
 
@@ -74,8 +89,18 @@ function firstRealImageUrl(images: AugmontProductImage[] | undefined): string | 
   return isRealImageUrl(img.url) ? img.url : (img.URL as string);
 }
 
-/** Resolves a real, renderable thumbnail URL for either a list item or a detail response — null if Augmont has no image on file (common; render a fallback icon). */
-export function getProductThumbnail(product: AugmontProductListItem | AugmontProductDetail): string | null {
+/**
+ * Resolves a real, renderable thumbnail URL for either a list item or a
+ * detail response. Falls back to the product's category image
+ * (`AugmontSubCategoryFull.subCategoryImg`, when the caller has one handy)
+ * before giving up — null means render a fallback icon instead.
+ */
+export function getProductThumbnail(
+  product: AugmontProductListItem | AugmontProductDetail,
+  categoryFallback?: string | null,
+): string | null {
   if (isRealImageUrl(product.productImage)) return product.productImage;
-  return firstRealImageUrl(product.productImages);
+  const fromGallery = firstRealImageUrl(product.productImages);
+  if (fromGallery) return fromGallery;
+  return isRealImageUrl(categoryFallback) ? categoryFallback : null;
 }
