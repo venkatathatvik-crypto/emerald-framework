@@ -104,6 +104,7 @@ export interface PartnerResponse {
   state: string | null;
   pincode: string | null;
   commissionRate: number | null;
+  referralCode: string | null;
   /** JSON key is "active", not "isActive" — Jackson strips the getter's "is" prefix. */
   active: boolean;
   onboardedById: number | null;
@@ -139,6 +140,7 @@ export interface Branch {
   pincode: string | null;
   managerId: number | null;
   commissionRate: number | null;
+  referralCode: string | null;
   /** JSON key is "active", not "isActive" — Jackson strips the getter's "is" prefix. */
   active: boolean;
   augmontStoreId: number | null;
@@ -218,6 +220,10 @@ export interface AugmontProductPriceTier {
   initialPaymentThree?: number | string;
   initialPaymentSix?: number | string;
   initialPaymentNine?: number | string;
+  /** Percentage down payment required, e.g. 20 (confirmed against a live response). */
+  productInitialPaymentPer?: number | string;
+  /** GST percentage applied on top, e.g. 3 (confirmed against a live response). */
+  gst?: number | string;
 }
 
 interface AugmontSubCategoryRef {
@@ -264,4 +270,15 @@ export interface AugmontPaymentTypeOption {
 /** GET /api/v1/augmont/products/{id} — full product detail. */
 export interface AugmontProductDetail extends AugmontProductBase {
   paymentData?: AugmontPaymentTypeOption[];
+}
+
+// ── Customer registration (public, two-step: email -> OTP) ─────────────────
+
+/** Request body for POST /api/v1/customer/register/start. */
+export interface CustomerRegisterStartInput {
+  email: string;
+  firstName: string;
+  lastName?: string;
+  mobile?: string;
+  referralCode?: string;
 }

@@ -15,9 +15,9 @@ export type Role = "customer" | "partner" | "branch" | "admin";
 const NAV: Record<Role, { to: string; label: string; Icon: typeof LayoutDashboard }[]> = {
   customer: [
     { to: "/dashboard/customer", label: "Overview", Icon: LayoutDashboard },
+    { to: "/customer/shop", label: "Shop", Icon: BadgePercent },
     { to: "/dashboard/customer", label: "Orders", Icon: Truck },
     { to: "/dashboard/customer", label: "EMI Schedule", Icon: Receipt },
-    { to: "/dashboard/customer", label: "Gold EMI", Icon: BadgePercent },
   ],
   partner: [
     { to: "/dashboard/partner", label: "Overview", Icon: LayoutDashboard },
