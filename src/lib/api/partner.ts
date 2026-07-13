@@ -1,5 +1,5 @@
 import { apiFetch } from "./client";
-import type { Agent, AgentCreateRequest, Branch, BranchCreateRequest, Paged } from "./types";
+import type { Agent, AgentCreateRequest, Branch, BranchCreateRequest, BranchUpdateRequest, Paged } from "./types";
 
 export interface ListBranchesParams {
   q?: string;
@@ -30,9 +30,22 @@ export function createBranch(req: BranchCreateRequest): Promise<Branch> {
   });
 }
 
+/** Updates a branch's details — its manager login is not editable here. */
+export function updateBranch(branchId: number, req: BranchUpdateRequest): Promise<Branch> {
+  return apiFetch<Branch>(`/api/v1/partner/branches/${branchId}`, {
+    method: "PATCH",
+    body: req,
+  });
+}
+
 /** Soft-deactivates a branch. Its agents keep their own status (no cascade). */
 export function deactivateBranch(branchId: number): Promise<void> {
   return apiFetch<void>(`/api/v1/partner/branches/${branchId}`, { method: "DELETE" });
+}
+
+/** Reverses deactivateBranch. */
+export function reactivateBranch(branchId: number): Promise<Branch> {
+  return apiFetch<Branch>(`/api/v1/partner/branches/${branchId}/reactivate`, { method: "PATCH" });
 }
 
 export function listAgents(branchId: number): Promise<Agent[]> {
@@ -50,5 +63,12 @@ export function createAgent(branchId: number, req: AgentCreateRequest): Promise<
 export function deactivateAgent(branchId: number, agentId: number): Promise<void> {
   return apiFetch<void>(`/api/v1/partner/branches/${branchId}/agents/${agentId}`, {
     method: "DELETE",
+  });
+}
+
+/** Reverses deactivateAgent. */
+export function reactivateAgent(branchId: number, agentId: number): Promise<Agent> {
+  return apiFetch<Agent>(`/api/v1/partner/branches/${branchId}/agents/${agentId}/reactivate`, {
+    method: "PATCH",
   });
 }

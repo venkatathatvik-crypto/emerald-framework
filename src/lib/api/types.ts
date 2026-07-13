@@ -90,6 +90,20 @@ export interface ConvertLeadRequest {
   loginMobile: string;
 }
 
+/** Request body for PATCH /api/v1/admin/partners/{id}. */
+export interface PartnerUpdateRequest {
+  name: string;
+  registrationNumber?: string;
+  type: AllianceType;
+  contactEmail?: string;
+  contactPhone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  commissionRate?: number;
+}
+
 /** Matches entities/dto/admin/PartnerResponse.java. */
 export interface PartnerResponse {
   id: number;
@@ -148,6 +162,8 @@ export interface Branch {
   syncedToAugmont: boolean;
   createdAt: string;
   updatedAt: string;
+  /** Only populated by getPartnerBranches (admin partner-detail view) — undefined everywhere else. */
+  agentCount?: number;
 }
 
 /** Request body for POST /api/v1/partner/branches. */
@@ -164,6 +180,19 @@ export interface BranchCreateRequest {
   managerName: string;
   managerLoginEmail: string;
   managerLoginMobile: string;
+}
+
+/** Request body for PATCH /api/v1/partner/branches/{branchId} — manager login is not editable here. */
+export interface BranchUpdateRequest {
+  name: string;
+  code?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  commissionRate?: number;
 }
 
 /** Matches entities/dto/partner/AgentResponse.java. */

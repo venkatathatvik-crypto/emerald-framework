@@ -16,17 +16,21 @@ export const Route = createFileRoute("/login")({
 type Role = "customer" | "partner" | "branch" | "admin";
 type FieldErrors = Partial<Record<"identifier" | "password", string>>;
 
-const ROLE_BY_TAB: Record<Role, string> = {
-  customer: "ROLE_CUSTOMER",
-  partner: "ROLE_ALLIANCE",
-  branch: "ROLE_BRANCH",
-  admin: "ROLE_ADMIN",
+// The "branch" tab covers both the branch manager (ROLE_BRANCH) and agents
+// created under that branch (ROLE_AGENT) — agents share the branch dashboard
+// rather than getting a separate portal.
+const ROLE_BY_TAB: Record<Role, string[]> = {
+  customer: ["ROLE_CUSTOMER"],
+  partner: ["ROLE_ALLIANCE"],
+  branch: ["ROLE_BRANCH", "ROLE_AGENT"],
+  admin: ["ROLE_ADMIN"],
 };
 
 const DASHBOARD_BY_ROLE: Record<string, string> = {
   ROLE_CUSTOMER: "/dashboard/customer",
   ROLE_ALLIANCE: "/dashboard/partner",
   ROLE_BRANCH: "/dashboard/branch",
+  ROLE_AGENT: "/dashboard/branch",
   ROLE_ADMIN: "/dashboard/admin",
 };
 
@@ -88,7 +92,7 @@ function Page() {
    * /login right after a successful OTP verification.
    */
   function completeLogin(loggedInUser: BackendUser) {
-    if (loggedInUser.role !== ROLE_BY_TAB[role]) {
+    if (!ROLE_BY_TAB[role].includes(loggedInUser.role)) {
       setGeneralError(`This account does not have ${role} access.`);
       return;
     }

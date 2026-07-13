@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { listLeads, deleteLead } from "@/lib/api/admin";
+import { listLeads, deleteLead, updateLeadStatus } from "@/lib/api/admin";
 import type { LeadStatus, PartnerLead } from "@/lib/api/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,7 @@ function Page() {
   const [convertingLead, setConvertingLead] = useState<PartnerLead | null>(null);
   const [deletingLead, setDeletingLead] = useState<PartnerLead | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [updatingStatusId, setUpdatingStatusId] = useState<number | null>(null);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["admin", "leads", { search, status, page }],
@@ -88,6 +89,17 @@ function Page() {
       setDeletingLead(null);
     } finally {
       setIsDeleting(false);
+    }
+  }
+
+  async function handleStatusChange(lead: PartnerLead, status: "CONTACTED" | "REJECTED") {
+    setUpdatingStatusId(lead.id);
+    try {
+      await updateLeadStatus(lead.id, status);
+      queryClient.invalidateQueries({ queryKey: ["admin", "leads"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "leads", "new-count"] });
+    } finally {
+      setUpdatingStatusId(null);
     }
   }
 
@@ -172,10 +184,30 @@ function Page() {
                     {new Date(lead.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right space-x-2">
-                    {(lead.status === "NEW" || lead.status === "CONTACTED") && (
-                      <Button size="sm" variant="pill" onClick={() => setConvertingLead(lead)}>
-                        Convert
+                    {lead.status === "NEW" && (
+                      <Button
+                        size="sm"
+                        variant="pillOutline"
+                        disabled={updatingStatusId === lead.id}
+                        onClick={() => handleStatusChange(lead, "CONTACTED")}
+                      >
+                        Mark Contacted
                       </Button>
+                    )}
+                    {(lead.status === "NEW" || lead.status === "CONTACTED") && (
+                      <>
+                        <Button size="sm" variant="pill" onClick={() => setConvertingLead(lead)}>
+                          Convert
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="pillDestructive"
+                          disabled={updatingStatusId === lead.id}
+                          onClick={() => handleStatusChange(lead, "REJECTED")}
+                        >
+                          Reject
+                        </Button>
+                      </>
                     )}
                     <Button size="sm" variant="pillDestructive" onClick={() => setDeletingLead(lead)}>
                       Delete

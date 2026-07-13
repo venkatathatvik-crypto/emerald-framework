@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { listBranches, deactivateBranch } from "@/lib/api/partner";
+import { listBranches, deactivateBranch, reactivateBranch } from "@/lib/api/partner";
 import { CreateBranchDialog } from "@/components/partner/CreateBranchDialog";
 import type { Branch } from "@/lib/api/types";
 import { Input } from "@/components/ui/input";
@@ -44,6 +44,8 @@ function Page() {
   const [createOpen, setCreateOpen] = useState(false);
   const [deactivatingBranch, setDeactivatingBranch] = useState<Branch | null>(null);
   const [isDeactivating, setIsDeactivating] = useState(false);
+  const [reactivatingId, setReactivatingId] = useState<number | null>(null);
+  const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["partner", "branches", { search, activeFilter, page }],
@@ -72,6 +74,16 @@ function Page() {
       setDeactivatingBranch(null);
     } finally {
       setIsDeactivating(false);
+    }
+  }
+
+  async function handleReactivate(branch: Branch) {
+    setReactivatingId(branch.id);
+    try {
+      await reactivateBranch(branch.id);
+      queryClient.invalidateQueries({ queryKey: ["partner", "branches"] });
+    } finally {
+      setReactivatingId(null);
     }
   }
 
@@ -162,13 +174,25 @@ function Page() {
                         View
                       </Link>
                     </Button>
-                    {branch.active && (
+                    <Button size="sm" variant="pillOutline" onClick={() => setEditingBranch(branch)}>
+                      Edit
+                    </Button>
+                    {branch.active ? (
                       <Button
                         size="sm"
                         variant="pillDestructive"
                         onClick={() => setDeactivatingBranch(branch)}
                       >
                         Deactivate
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="pill"
+                        disabled={reactivatingId === branch.id}
+                        onClick={() => handleReactivate(branch)}
+                      >
+                        {reactivatingId === branch.id ? "Reactivating…" : "Reactivate"}
                       </Button>
                     )}
                   </TableCell>
@@ -208,8 +232,17 @@ function Page() {
       <CreateBranchDialog
         open={createOpen}
         onOpenChange={setCreateOpen}
-        onCreated={() => queryClient.invalidateQueries({ queryKey: ["partner", "branches"] })}
+        onSaved={() => queryClient.invalidateQueries({ queryKey: ["partner", "branches"] })}
       />
+
+      {editingBranch && (
+        <CreateBranchDialog
+          branch={editingBranch}
+          open={!!editingBranch}
+          onOpenChange={(open) => { if (!open) setEditingBranch(null); }}
+          onSaved={() => queryClient.invalidateQueries({ queryKey: ["partner", "branches"] })}
+        />
+      )}
 
       <AlertDialog open={!!deactivatingBranch} onOpenChange={(open) => { if (!open) setDeactivatingBranch(null); }}>
         <AlertDialogContent>

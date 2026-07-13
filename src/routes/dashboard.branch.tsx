@@ -14,7 +14,7 @@ const FLOW = [
 ];
 
 function Page() {
-  const { ready } = useRequireRole("ROLE_BRANCH");
+  const { ready } = useRequireRole(["ROLE_BRANCH", "ROLE_AGENT"]);
   if (!ready) return null;
 
   return (

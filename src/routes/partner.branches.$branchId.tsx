@@ -5,8 +5,9 @@ import { ArrowLeft } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { getBranch, listAgents, deactivateAgent } from "@/lib/api/partner";
+import { getBranch, listAgents, deactivateAgent, reactivateAgent } from "@/lib/api/partner";
 import { CreateAgentDialog } from "@/components/partner/CreateAgentDialog";
+import { CreateBranchDialog } from "@/components/partner/CreateBranchDialog";
 import type { Agent } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,8 +31,10 @@ function Page() {
 
   const id = Number(branchId);
   const [addAgentOpen, setAddAgentOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const [deactivatingAgent, setDeactivatingAgent] = useState<Agent | null>(null);
   const [isDeactivating, setIsDeactivating] = useState(false);
+  const [reactivatingId, setReactivatingId] = useState<number | null>(null);
 
   const enabled = ready && Number.isFinite(id);
 
@@ -63,6 +66,16 @@ function Page() {
     }
   }
 
+  async function handleReactivateAgent(agent: Agent) {
+    setReactivatingId(agent.id);
+    try {
+      await reactivateAgent(id, agent.id);
+      queryClient.invalidateQueries({ queryKey: ["partner", "branch", id, "agents"] });
+    } finally {
+      setReactivatingId(null);
+    }
+  }
+
   return (
     <DashboardShell role="partner" title="Branch details">
       <Link to="/partner/branches" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink mb-4">
@@ -74,7 +87,7 @@ function Page() {
 
       {branch && (
         <div className="space-y-6">
-          <Panel title={branch.name}>
+          <Panel title={branch.name} action={<Button size="sm" variant="pillOutline" onClick={() => setEditOpen(true)}>Edit</Button>}>
             <div className="flex items-center gap-2 mb-4">
               <Badge variant={branch.active ? "default" : "destructive"}>
                 {branch.active ? "Active" : "Deactivated"}
@@ -152,13 +165,22 @@ function Page() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        {agent.active && (
+                        {agent.active ? (
                           <Button
                             size="sm"
                             variant="pillDestructive"
                             onClick={() => setDeactivatingAgent(agent)}
                           >
                             Deactivate
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="pill"
+                            disabled={reactivatingId === agent.id}
+                            onClick={() => handleReactivateAgent(agent)}
+                          >
+                            {reactivatingId === agent.id ? "Reactivating…" : "Reactivate"}
                           </Button>
                         )}
                       </TableCell>
@@ -177,6 +199,15 @@ function Page() {
         onOpenChange={setAddAgentOpen}
         onCreated={() => queryClient.invalidateQueries({ queryKey: ["partner", "branch", id, "agents"] })}
       />
+
+      {branch && (
+        <CreateBranchDialog
+          branch={branch}
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          onSaved={() => queryClient.invalidateQueries({ queryKey: ["partner", "branch", id] })}
+        />
+      )}
 
       <AlertDialog open={!!deactivatingAgent} onOpenChange={(open) => { if (!open) setDeactivatingAgent(null); }}>
         <AlertDialogContent>

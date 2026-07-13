@@ -1,11 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { listPartners, deactivatePartner } from "@/lib/api/admin";
+import { listPartners, deactivatePartner, reactivatePartner } from "@/lib/api/admin";
 import type { PartnerResponse } from "@/lib/api/types";
+import { EditPartnerDialog } from "@/components/admin/EditPartnerDialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,6 +43,8 @@ function Page() {
   const [page, setPage] = useState(0);
   const [deactivatingPartner, setDeactivatingPartner] = useState<PartnerResponse | null>(null);
   const [isDeactivating, setIsDeactivating] = useState(false);
+  const [reactivatingId, setReactivatingId] = useState<number | null>(null);
+  const [editingPartner, setEditingPartner] = useState<PartnerResponse | null>(null);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["admin", "partners", { search, activeFilter, page }],
@@ -70,6 +73,16 @@ function Page() {
       setDeactivatingPartner(null);
     } finally {
       setIsDeactivating(false);
+    }
+  }
+
+  async function handleReactivate(partner: PartnerResponse) {
+    setReactivatingId(partner.id);
+    try {
+      await reactivatePartner(partner.id);
+      queryClient.invalidateQueries({ queryKey: ["admin", "partners"] });
+    } finally {
+      setReactivatingId(null);
     }
   }
 
@@ -157,10 +170,27 @@ function Page() {
                       {partner.active ? "Active" : "Deactivated"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
-                    {partner.active && (
+                  <TableCell className="text-right space-x-2">
+                    <Button size="sm" variant="pill" asChild>
+                      <Link to="/admin/partners/$partnerId" params={{ partnerId: String(partner.id) }}>
+                        View
+                      </Link>
+                    </Button>
+                    <Button size="sm" variant="pillOutline" onClick={() => setEditingPartner(partner)}>
+                      Edit
+                    </Button>
+                    {partner.active ? (
                       <Button size="sm" variant="pillDestructive" onClick={() => setDeactivatingPartner(partner)}>
                         Deactivate
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="pill"
+                        disabled={reactivatingId === partner.id}
+                        onClick={() => handleReactivate(partner)}
+                      >
+                        {reactivatingId === partner.id ? "Reactivating…" : "Reactivate"}
                       </Button>
                     )}
                   </TableCell>
@@ -196,6 +226,15 @@ function Page() {
           </div>
         )}
       </Panel>
+
+      {editingPartner && (
+        <EditPartnerDialog
+          partner={editingPartner}
+          open={!!editingPartner}
+          onOpenChange={(open) => { if (!open) setEditingPartner(null); }}
+          onUpdated={() => queryClient.invalidateQueries({ queryKey: ["admin", "partners"] })}
+        />
+      )}
 
       <AlertDialog open={!!deactivatingPartner} onOpenChange={(open) => { if (!open) setDeactivatingPartner(null); }}>
         <AlertDialogContent>

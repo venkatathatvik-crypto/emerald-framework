@@ -38,6 +38,7 @@ import { Route as CustomerShopIndexRouteImport } from './routes/customer.shop.in
 import { Route as AdminCatalogIndexRouteImport } from './routes/admin.catalog.index'
 import { Route as PartnerBranchesBranchIdRouteImport } from './routes/partner.branches.$branchId'
 import { Route as CustomerShopProductIdRouteImport } from './routes/customer.shop.$productId'
+import { Route as AdminPartnersPartnerIdRouteImport } from './routes/admin.partners.$partnerId'
 import { Route as AdminCatalogProductIdRouteImport } from './routes/admin.catalog.$productId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -185,6 +186,11 @@ const CustomerShopProductIdRoute = CustomerShopProductIdRouteImport.update({
   path: '/customer/shop/$productId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPartnersPartnerIdRoute = AdminPartnersPartnerIdRouteImport.update({
+  id: '/$partnerId',
+  path: '/$partnerId',
+  getParentRoute: () => AdminPartnersRoute,
+} as any)
 const AdminCatalogProductIdRoute = AdminCatalogProductIdRouteImport.update({
   id: '/admin/catalog/$productId',
   path: '/admin/catalog/$productId',
@@ -207,7 +213,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/leads': typeof AdminLeadsRoute
-  '/admin/partners': typeof AdminPartnersRoute
+  '/admin/partners': typeof AdminPartnersRouteWithChildren
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/branch': typeof DashboardBranchRoute
   '/dashboard/customer': typeof DashboardCustomerRoute
@@ -217,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/register/customer': typeof RegisterCustomerRoute
   '/register/partner': typeof RegisterPartnerRoute
   '/admin/catalog/$productId': typeof AdminCatalogProductIdRoute
+  '/admin/partners/$partnerId': typeof AdminPartnersPartnerIdRoute
   '/customer/shop/$productId': typeof CustomerShopProductIdRoute
   '/partner/branches/$branchId': typeof PartnerBranchesBranchIdRoute
   '/admin/catalog/': typeof AdminCatalogIndexRoute
@@ -239,7 +246,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/leads': typeof AdminLeadsRoute
-  '/admin/partners': typeof AdminPartnersRoute
+  '/admin/partners': typeof AdminPartnersRouteWithChildren
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/branch': typeof DashboardBranchRoute
   '/dashboard/customer': typeof DashboardCustomerRoute
@@ -249,6 +256,7 @@ export interface FileRoutesByTo {
   '/register/customer': typeof RegisterCustomerRoute
   '/register/partner': typeof RegisterPartnerRoute
   '/admin/catalog/$productId': typeof AdminCatalogProductIdRoute
+  '/admin/partners/$partnerId': typeof AdminPartnersPartnerIdRoute
   '/customer/shop/$productId': typeof CustomerShopProductIdRoute
   '/partner/branches/$branchId': typeof PartnerBranchesBranchIdRoute
   '/admin/catalog': typeof AdminCatalogIndexRoute
@@ -272,7 +280,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/leads': typeof AdminLeadsRoute
-  '/admin/partners': typeof AdminPartnersRoute
+  '/admin/partners': typeof AdminPartnersRouteWithChildren
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/branch': typeof DashboardBranchRoute
   '/dashboard/customer': typeof DashboardCustomerRoute
@@ -282,6 +290,7 @@ export interface FileRoutesById {
   '/register/customer': typeof RegisterCustomerRoute
   '/register/partner': typeof RegisterPartnerRoute
   '/admin/catalog/$productId': typeof AdminCatalogProductIdRoute
+  '/admin/partners/$partnerId': typeof AdminPartnersPartnerIdRoute
   '/customer/shop/$productId': typeof CustomerShopProductIdRoute
   '/partner/branches/$branchId': typeof PartnerBranchesBranchIdRoute
   '/admin/catalog/': typeof AdminCatalogIndexRoute
@@ -316,6 +325,7 @@ export interface FileRouteTypes {
     | '/register/customer'
     | '/register/partner'
     | '/admin/catalog/$productId'
+    | '/admin/partners/$partnerId'
     | '/customer/shop/$productId'
     | '/partner/branches/$branchId'
     | '/admin/catalog/'
@@ -348,6 +358,7 @@ export interface FileRouteTypes {
     | '/register/customer'
     | '/register/partner'
     | '/admin/catalog/$productId'
+    | '/admin/partners/$partnerId'
     | '/customer/shop/$productId'
     | '/partner/branches/$branchId'
     | '/admin/catalog'
@@ -380,6 +391,7 @@ export interface FileRouteTypes {
     | '/register/customer'
     | '/register/partner'
     | '/admin/catalog/$productId'
+    | '/admin/partners/$partnerId'
     | '/customer/shop/$productId'
     | '/partner/branches/$branchId'
     | '/admin/catalog/'
@@ -403,7 +415,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
-  AdminPartnersRoute: typeof AdminPartnersRoute
+  AdminPartnersRoute: typeof AdminPartnersRouteWithChildren
   DashboardAdminRoute: typeof DashboardAdminRoute
   DashboardBranchRoute: typeof DashboardBranchRoute
   DashboardCustomerRoute: typeof DashboardCustomerRoute
@@ -625,6 +637,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerShopProductIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/partners/$partnerId': {
+      id: '/admin/partners/$partnerId'
+      path: '/$partnerId'
+      fullPath: '/admin/partners/$partnerId'
+      preLoaderRoute: typeof AdminPartnersPartnerIdRouteImport
+      parentRoute: typeof AdminPartnersRoute
+    }
     '/admin/catalog/$productId': {
       id: '/admin/catalog/$productId'
       path: '/admin/catalog/$productId'
@@ -634,6 +653,18 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AdminPartnersRouteChildren {
+  AdminPartnersPartnerIdRoute: typeof AdminPartnersPartnerIdRoute
+}
+
+const AdminPartnersRouteChildren: AdminPartnersRouteChildren = {
+  AdminPartnersPartnerIdRoute: AdminPartnersPartnerIdRoute,
+}
+
+const AdminPartnersRouteWithChildren = AdminPartnersRoute._addFileChildren(
+  AdminPartnersRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -651,7 +682,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminLeadsRoute: AdminLeadsRoute,
-  AdminPartnersRoute: AdminPartnersRoute,
+  AdminPartnersRoute: AdminPartnersRouteWithChildren,
   DashboardAdminRoute: DashboardAdminRoute,
   DashboardBranchRoute: DashboardBranchRoute,
   DashboardCustomerRoute: DashboardCustomerRoute,
