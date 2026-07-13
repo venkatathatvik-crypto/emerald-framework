@@ -8,7 +8,7 @@ import { ArrowLeft, Boxes, Lock } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { useStates, useCities } from "@/hooks/use-location-data";
+import { useAugmontStates, useAugmontCities } from "@/hooks/use-location-data";
 import { getProductDetails, getSubCategoryImage, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
 import type { AugmontProductPriceTier } from "@/lib/api/types";
 import { Badge } from "@/components/ui/badge";
@@ -84,8 +84,8 @@ function Page() {
     defaultValues: { panCardNumber: "", dateOfBirth: "", addressLine: "", state: "", city: "", pincode: "" },
   });
   const stateValue = form.watch("state");
-  const { data: states } = useStates();
-  const { data: cities } = useCities(stateValue);
+  const { data: states } = useAugmontStates();
+  const { data: cities } = useAugmontCities(stateValue);
 
   if (!ready) {
     return null;

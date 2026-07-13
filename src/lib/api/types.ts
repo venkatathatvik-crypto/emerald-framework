@@ -161,6 +161,9 @@ export interface BranchCreateRequest {
   state?: string;
   pincode?: string;
   commissionRate?: number;
+  managerName: string;
+  managerLoginEmail: string;
+  managerLoginMobile: string;
 }
 
 /** Matches entities/dto/partner/AgentResponse.java. */

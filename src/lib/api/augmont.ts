@@ -20,6 +20,41 @@ export async function getShopCategories(): Promise<AugmontShopCategory[]> {
   return res.data ?? [];
 }
 
+export interface AugmontState {
+  id: number;
+  name: string;
+}
+
+export interface AugmontCity {
+  id: number;
+  name: string;
+  stateId: number;
+}
+
+/** Augmont's /states and /cities/{id} wrap their array in {"message": [...]} — not {"data": [...]} like its other endpoints. */
+interface AugmontMessageEnvelope<T> {
+  message: T[];
+}
+
+/**
+ * Augmont's own state/city list — required for order creation, which
+ * validates cityName/stateName against Augmont's own master data and
+ * rejects anything else (confirmed live: our own mas_states/mas_cities
+ * values like "Bengaluru" 422'd with "incorrect city name"; Augmont's own
+ * list for Karnataka only has "Bengaluru Urban"/"Bengaluru Rural" etc — no
+ * plain "Bengaluru"). Use these two, not useStates()/useCities(), for any
+ * form whose values get submitted to /api/v1/augmont/orders.
+ */
+export async function getAugmontStates(): Promise<AugmontState[]> {
+  const res = await apiFetch<AugmontMessageEnvelope<AugmontState>>("/api/v1/augmont/states");
+  return res.message ?? [];
+}
+
+export async function getAugmontCities(stateId: number): Promise<AugmontCity[]> {
+  const res = await apiFetch<AugmontMessageEnvelope<AugmontCity>>(`/api/v1/augmont/cities/${stateId}`);
+  return res.message ?? [];
+}
+
 /**
  * Looks up one category by id on the separate, richer sub-categories
  * endpoint — confirmed live that `?id=` reliably returns an exact match,

@@ -29,6 +29,9 @@ const schema = z.object({
   state: z.string().trim().max(100).optional(),
   pincode: z.string().trim().regex(/^\d*$/, "Digits only").max(10).optional(),
   commissionRate: z.string().optional(),
+  managerName: z.string().trim().min(1, "Manager name is required").max(255),
+  managerLoginEmail: z.string().trim().min(1, "Manager login email is required").email("Enter a valid email").max(255),
+  managerLoginMobile: z.string().trim().regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -48,6 +51,9 @@ const DEFAULT_VALUES: FormValues = {
   state: "",
   pincode: "",
   commissionRate: "",
+  managerName: "",
+  managerLoginEmail: "",
+  managerLoginMobile: "",
 };
 
 export function CreateBranchDialog({
@@ -80,6 +86,9 @@ export function CreateBranchDialog({
       state: blankToUndefined(values.state),
       pincode: blankToUndefined(values.pincode),
       commissionRate: values.commissionRate ? Number(values.commissionRate) : undefined,
+      managerName: values.managerName,
+      managerLoginEmail: values.managerLoginEmail,
+      managerLoginMobile: values.managerLoginMobile,
     };
 
     try {
@@ -203,6 +212,38 @@ export function CreateBranchDialog({
                 <FormMessage />
               </FormItem>
             )} />
+
+            <div className="pt-2 border-t border-line">
+              <p className="text-sm font-medium text-ink mt-4 mb-1">Branch manager login</p>
+              <p className="text-xs text-muted-foreground mb-4">
+                We'll email this person a link to set their password and sign in as this branch.
+              </p>
+              <div className="space-y-4">
+                <FormField control={form.control} name="managerName" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Manager name</FormLabel>
+                    <FormControl><Input {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <FormField control={form.control} name="managerLoginEmail" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Login email</FormLabel>
+                      <FormControl><Input type="email" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name="managerLoginMobile" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Login mobile</FormLabel>
+                      <FormControl><Input inputMode="tel" maxLength={10} {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </div>
+              </div>
+            </div>
 
             <DialogFooter>
               <Button type="submit" variant="pill" disabled={form.formState.isSubmitting}>

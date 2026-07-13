@@ -41,7 +41,8 @@ function Page() {
   const nav = useNavigate();
   const { login, setUser, user, isLoading: authLoading } = useAuth();
   const [role, setRole] = useState<Role>("customer");
-  const [mode, setMode] = useState<"password" | "otp">("password");
+  // Default role is customer, which is OTP-only — mode must start in sync with that.
+  const [mode, setMode] = useState<"password" | "otp">("otp");
   const [otpStep, setOtpStep] = useState<"send" | "verify">("send");
   const [otpIdentifier, setOtpIdentifier] = useState("");
   const [otpCode, setOtpCode] = useState("");
@@ -60,6 +61,12 @@ function Page() {
 
   function selectRole(r: Role) {
     setRole(r);
+    // Customers are OTP-only — no password option exists for this role.
+    if (r === "customer") {
+      setMode("otp");
+      setOtpStep("send");
+      setOtpCode("");
+    }
     setGeneralError(null);
     setFieldErrors({});
   }
@@ -198,21 +205,23 @@ function Page() {
         ))}
       </div>
 
-      <div className="flex items-center gap-6 mb-5 border-b border-line">
-        {(["password", "otp"] as const).map((m) => (
-          <button
-            key={m}
-            onClick={() => selectMode(m)}
-            className={`pb-2.5 -mb-px text-xs font-medium uppercase tracking-wide border-b-2 transition-colors ${
-              mode === m ? "border-emerald-deep text-ink" : "border-transparent text-muted-foreground hover:text-ink"
-            }`}
-          >
-            {m === "password" ? "Password" : "One-time code"}
-          </button>
-        ))}
-      </div>
+      {role !== "customer" && (
+        <div className="flex items-center gap-6 mb-5 border-b border-line">
+          {(["password", "otp"] as const).map((m) => (
+            <button
+              key={m}
+              onClick={() => selectMode(m)}
+              className={`pb-2.5 -mb-px text-xs font-medium uppercase tracking-wide border-b-2 transition-colors ${
+                mode === m ? "border-emerald-deep text-ink" : "border-transparent text-muted-foreground hover:text-ink"
+              }`}
+            >
+              {m === "password" ? "Password" : "One-time code"}
+            </button>
+          ))}
+        </div>
+      )}
 
-      {mode === "password" && (
+      {role !== "customer" && mode === "password" && (
         <form onSubmit={handlePasswordSubmit} noValidate className="space-y-4">
           <AuthField label="Email or phone" name="identifier" required error={fieldErrors.identifier} />
           <AuthField label="Password" type="password" name="password" required error={fieldErrors.password} />
