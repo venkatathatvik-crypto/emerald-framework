@@ -1,6 +1,7 @@
 import { apiFetch } from "./client";
 import type {
-  Branch, ConvertLeadRequest, LeadStatus, Paged, PartnerLead, PartnerResponse, PartnerUpdateRequest,
+  Branch, ConvertLeadRequest, CustomerResponse, LeadStatus, Paged, PartnerLead,
+  PartnerResponse, PartnerUpdateRequest,
 } from "./types";
 
 export interface ListLeadsParams {
@@ -102,4 +103,25 @@ export function deactivatePartner(id: number): Promise<void> {
 /** Reverses deactivatePartner. */
 export function reactivatePartner(id: number): Promise<PartnerResponse> {
   return apiFetch<PartnerResponse>(`/api/v1/admin/partners/${id}/reactivate`, { method: "PATCH" });
+}
+
+export interface ListAdminCustomersParams {
+  allianceCompanyId?: number;
+  branchId?: number;
+  q?: string;
+  page?: number;
+  size?: number;
+}
+
+/** All customers, optionally filtered to one partner and/or one branch. */
+export function listCustomers(params: ListAdminCustomersParams = {}): Promise<Paged<CustomerResponse>> {
+  return apiFetch<Paged<CustomerResponse>>("/api/v1/admin/customers", {
+    query: {
+      allianceCompanyId: params.allianceCompanyId,
+      branchId: params.branchId,
+      q: params.q,
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+    },
+  });
 }

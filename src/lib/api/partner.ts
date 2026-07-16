@@ -1,5 +1,13 @@
 import { apiFetch } from "./client";
-import type { Agent, AgentCreateRequest, Branch, BranchCreateRequest, BranchUpdateRequest, Paged } from "./types";
+import type {
+  Agent, AgentCreateRequest, Branch, BranchCreateRequest, BranchUpdateRequest,
+  CustomerResponse, OrderResponse, Paged, PartnerResponse,
+} from "./types";
+
+/** The caller's own company — including its referral code, for sharing with prospective customers. */
+export function getMyCompany(): Promise<PartnerResponse> {
+  return apiFetch<PartnerResponse>("/api/v1/partner/me");
+}
 
 export interface ListBranchesParams {
   q?: string;
@@ -70,5 +78,45 @@ export function deactivateAgent(branchId: number, agentId: number): Promise<void
 export function reactivateAgent(branchId: number, agentId: number): Promise<Agent> {
   return apiFetch<Agent>(`/api/v1/partner/branches/${branchId}/agents/${agentId}/reactivate`, {
     method: "PATCH",
+  });
+}
+
+export interface ListPartnerOrdersParams {
+  branchId?: number;
+  from?: string; // yyyy-MM-dd
+  to?: string;
+  page?: number;
+  size?: number;
+}
+
+/** Orders across every branch of the caller's company, optionally narrowed to one branch. */
+export function listOrders(params: ListPartnerOrdersParams = {}): Promise<Paged<OrderResponse>> {
+  return apiFetch<Paged<OrderResponse>>("/api/v1/partner/orders", {
+    query: {
+      branchId: params.branchId,
+      from: params.from,
+      to: params.to,
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+    },
+  });
+}
+
+export interface ListPartnerCustomersParams {
+  branchId?: number;
+  q?: string;
+  page?: number;
+  size?: number;
+}
+
+/** Customers attributed to the caller's company, across all its branches. */
+export function listCustomers(params: ListPartnerCustomersParams = {}): Promise<Paged<CustomerResponse>> {
+  return apiFetch<Paged<CustomerResponse>>("/api/v1/partner/customers", {
+    query: {
+      branchId: params.branchId,
+      q: params.q,
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+    },
   });
 }

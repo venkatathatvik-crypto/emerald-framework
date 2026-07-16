@@ -28,3 +28,19 @@ export function useRequireRole(role: string | string[]) {
 
   return { user, isLoading, ready };
 }
+
+/** Guards a page to any authenticated user, regardless of role — e.g. a shared /profile page. */
+export function useRequireAuth() {
+  const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  const ready = !isLoading && !!user;
+
+  useEffect(() => {
+    if (!isLoading && !ready) {
+      navigate({ to: "/login" });
+    }
+  }, [isLoading, ready, navigate]);
+
+  return { user, isLoading, ready };
+}

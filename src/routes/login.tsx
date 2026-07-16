@@ -66,10 +66,13 @@ function Page() {
   function selectRole(r: Role) {
     setRole(r);
     // Customers are OTP-only — no password option exists for this role.
+    // Every other role defaults back to password.
     if (r === "customer") {
       setMode("otp");
       setOtpStep("send");
       setOtpCode("");
+    } else {
+      setMode("password");
     }
     setGeneralError(null);
     setFieldErrors({});

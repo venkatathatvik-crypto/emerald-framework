@@ -1,0 +1,29 @@
+name: Deploy Frontend
+
+# Manual only — deploys go live on the real PM2 process, so this never
+# runs automatically on push. Trigger from the Actions tab → "Run workflow".
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            cd /home/saitejassp2580/emerald-framework
+
+            # Mirror exactly what's on GitHub — discards any local drift on
+            # the server rather than risking a merge conflict mid-deploy.
+            git fetch origin main
+            git reset --hard origin/main
+
+            npm ci
+            npm run build
+            pm2 restart gold-emi-app

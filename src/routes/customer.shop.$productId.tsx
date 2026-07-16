@@ -4,13 +4,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
-import { ArrowLeft, Boxes, Lock } from "lucide-react";
+import { ArrowLeft, Boxes, CheckCircle2, AlertTriangle } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
 import { useAugmontStates, useAugmontCities } from "@/hooks/use-location-data";
 import { getProductDetails, getSubCategoryImage, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
-import type { AugmontProductPriceTier } from "@/lib/api/types";
+import { placeOrder } from "@/lib/api/customer";
+import { ApiError } from "@/lib/api/types";
+import type { AugmontProductPriceTier, PlaceOrderRequest, OrderResponse } from "@/lib/api/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +47,19 @@ function pricingFor(tier: AugmontProductPriceTier | null, tenure: Tenure) {
   }
 }
 
+const TENURE_TO_PAYMENT_TYPE_ID: Record<Tenure, number> = {
+  spot: 4,
+  three: 1,
+  six: 2,
+  nine: 3,
+};
+
+function toNumber(v: number | string | undefined): number {
+  if (v === undefined) return 0;
+  const n = typeof v === "number" ? v : parseFloat(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
 const buySchema = z.object({
   panCardNumber: z.string().trim().toUpperCase().regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "Enter a valid PAN, e.g. ABCDE1234F"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
@@ -63,6 +78,8 @@ function Page() {
   const id = Number(productId);
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [tenure, setTenure] = useState<Tenure>("spot");
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [placedOrder, setPlacedOrder] = useState<OrderResponse | null>(null);
 
   const { data: product, isLoading, isError } = useQuery({
     queryKey: ["augmont", "product", id],
@@ -91,12 +108,87 @@ function Page() {
     return null;
   }
 
+  async function onSubmit(values: BuyFormValues) {
+    if (!product) return;
+    setSubmitError(null);
+
+    const tier = getProductPriceTier(product);
+    const price = pricingFor(tier, tenure);
+    const req: PlaceOrderRequest = {
+      augmontProductId: product.id,
+      productName: product.productName,
+      productSku: product.sku,
+      productWeight: product.weight,
+      paymentTypeId: TENURE_TO_PAYMENT_TYPE_ID[tenure],
+      quantity: 1,
+      finalOrderPrice: toNumber(tier?.finalProductPrice),
+      initialPayment: toNumber(price.dueToday),
+      monthlyAmount: price.monthly != null ? toNumber(price.monthly) : undefined,
+      panCardNumber: values.panCardNumber,
+      dateOfBirth: values.dateOfBirth,
+      deliveryAddress: values.addressLine,
+      deliveryCity: values.city,
+      deliveryState: values.state,
+      deliveryPincode: values.pincode,
+    };
+
+    try {
+      const order = await placeOrder(req);
+      setPlacedOrder(order);
+    } catch (err) {
+      if (err instanceof ApiError && err.fieldErrors) {
+        for (const [field, message] of Object.entries(err.fieldErrors)) {
+          form.setError(field as keyof BuyFormValues, { message });
+        }
+      } else {
+        setSubmitError(err instanceof ApiError ? err.message : "Failed to place this order. Please try again.");
+      }
+    }
+  }
+
   const tier = product ? getProductPriceTier(product) : null;
   const thumb = product ? getProductThumbnail(product, categoryImage) : null;
   const gallery = product?.productImages?.map((img) => img.url ?? img.URL).filter((u): u is string => !!u) ?? [];
   const displayImage = activeImage ?? thumb;
   const availableTenures = (product?.paymentData ?? []).map((pt) => pt.paymentType);
   const price = pricingFor(tier, tenure);
+
+  if (placedOrder) {
+    const confirmed = placedOrder.status === "CONFIRMED";
+    return (
+      <DashboardShell role="customer" title="Order placed">
+        <Panel title={confirmed ? "Order confirmed" : "Order recorded"}>
+          <div className="flex items-start gap-3 mb-4">
+            {confirmed ? (
+              <CheckCircle2 className="h-6 w-6 text-emerald-deep shrink-0 mt-0.5" />
+            ) : (
+              <AlertTriangle className="h-6 w-6 text-gold shrink-0 mt-0.5" />
+            )}
+            <div>
+              <p className="font-medium text-ink">
+                {confirmed
+                  ? `Your order for ${placedOrder.productName} is confirmed.`
+                  : `Your order for ${placedOrder.productName} was recorded, but we couldn't confirm it with our gold partner right now.`}
+              </p>
+              {!confirmed && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  This isn't lost — it's saved to your account. Our team has been notified and will follow up once it's resolved.
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex gap-3 mt-2">
+            <Button variant="pill" asChild>
+              <Link to="/customer/orders">View my orders</Link>
+            </Button>
+            <Button variant="pillOutline" asChild>
+              <Link to="/customer/shop">Continue shopping</Link>
+            </Button>
+          </div>
+        </Panel>
+      </DashboardShell>
+    );
+  }
 
   return (
     <DashboardShell role="customer" title="Product details">
@@ -186,7 +278,7 @@ function Page() {
 
             <Panel title="Delivery &amp; identity details" className="lg:col-span-2">
               <Form {...form}>
-                <form className="space-y-4">
+                <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-4">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <FormField control={form.control} name="panCardNumber" render={({ field }) => (
                       <FormItem>
@@ -255,12 +347,13 @@ function Page() {
                     )} />
                   </div>
 
-                  <Button type="button" variant="pill" className="w-full justify-center" disabled title="Checkout opens once payment collection is ready">
-                    <Lock className="h-4 w-4" /> Place order — coming soon
+                  {submitError && (
+                    <p className="text-sm text-destructive text-center" role="alert">{submitError}</p>
+                  )}
+
+                  <Button type="submit" variant="pill" className="w-full justify-center" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? "Placing order…" : "Place order"}
                   </Button>
-                  <p className="text-xs text-muted-foreground text-center">
-                    We're finishing secure payment collection. Your details above aren't submitted anywhere yet.
-                  </p>
                 </form>
               </Form>
             </Panel>

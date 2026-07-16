@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard, Receipt, Truck, BadgePercent, Users, Boxes, BarChart3, Building2,
-  Settings, Bell, Search, ChevronRight, LogOut, Sparkles,
+  Settings, Bell, Search, ChevronRight, LogOut, Sparkles, PlusCircle,
 } from "lucide-react";
 
 import { useAuth } from "@/lib/auth-context";
@@ -16,26 +16,27 @@ const NAV: Record<Role, { to: string; label: string; Icon: typeof LayoutDashboar
   customer: [
     { to: "/dashboard/customer", label: "Overview", Icon: LayoutDashboard },
     { to: "/customer/shop", label: "Shop", Icon: BadgePercent },
-    { to: "/dashboard/customer", label: "Orders", Icon: Truck },
+    { to: "/customer/orders", label: "My Orders", Icon: Truck },
     { to: "/dashboard/customer", label: "EMI Schedule", Icon: Receipt },
   ],
   partner: [
     { to: "/dashboard/partner", label: "Overview", Icon: LayoutDashboard },
     { to: "/partner/branches", label: "Branches", Icon: Building2 },
-    { to: "/dashboard/partner", label: "Indents", Icon: Boxes },
-    { to: "/dashboard/partner", label: "Members", Icon: Users },
+    { to: "/partner/orders", label: "Orders", Icon: Truck },
+    { to: "/partner/customers", label: "Customers", Icon: Users },
     { to: "/dashboard/partner", label: "Analytics", Icon: BarChart3 },
   ],
   branch: [
     { to: "/dashboard/branch", label: "Overview", Icon: LayoutDashboard },
-    { to: "/dashboard/branch", label: "Deliveries", Icon: Truck },
-    { to: "/dashboard/branch", label: "Members", Icon: Users },
-    { to: "/dashboard/branch", label: "Settlements", Icon: Receipt },
+    { to: "/branch/place-order", label: "Place order", Icon: PlusCircle },
+    { to: "/branch/orders", label: "Orders", Icon: Truck },
+    { to: "/branch/customers", label: "Customers", Icon: Users },
   ],
   admin: [
     { to: "/dashboard/admin", label: "Overview", Icon: LayoutDashboard },
     { to: "/admin/leads", label: "Leads", Icon: Users },
     { to: "/admin/partners", label: "Partners", Icon: Building2 },
+    { to: "/admin/customers", label: "Customers", Icon: Users },
     { to: "/admin/catalog", label: "Catalogue", Icon: Boxes },
     { to: "/dashboard/admin", label: "Analytics", Icon: BarChart3 },
   ],
@@ -100,8 +101,8 @@ export function DashboardShell({ role, title, children }: { role: Role; title: s
           ))}
         </nav>
         <div className="border-t border-paper/10 p-4 shrink-0">
-          <Link to="/login" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper">
-            <Settings className="h-4 w-4" /> Settings
+          <Link to="/profile" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper">
+            <Settings className="h-4 w-4" /> Profile
           </Link>
           <button
             onClick={handleSignOut}

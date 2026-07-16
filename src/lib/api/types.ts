@@ -336,3 +336,97 @@ export interface CustomerRegisterStartInput {
   mobile?: string;
   referralCode?: string;
 }
+
+// ── Orders ───────────────────────────────────────────────────────────────
+
+/** Matches entities/enums/OrderStatus.java. */
+export type OrderStatus = "PENDING" | "CONFIRMED" | "AUGMONT_FAILED" | "CANCELLED";
+
+/**
+ * Shared order fields for both self-service and agent-assisted placement.
+ * Price/product snapshot fields are trusted from the client — see
+ * PlaceOrderRequest.java's own doc comment for why that's an acceptable
+ * tradeoff right now (no payment gateway wired through us yet).
+ */
+interface OrderFields {
+  augmontProductId: number;
+  productName: string;
+  productSku?: string;
+  productWeight?: number;
+  paymentTypeId: number;
+  quantity: number;
+  finalOrderPrice: number;
+  initialPayment: number;
+  monthlyAmount?: number;
+  panCardNumber: string;
+  dateOfBirth: string; // yyyy-MM-dd
+  deliveryAddress: string;
+  deliveryCity: string;
+  deliveryState: string;
+  deliveryPincode: string;
+}
+
+/** Request body for POST /api/v1/customer/orders — customer places an order for themselves. */
+export type PlaceOrderRequest = OrderFields;
+
+/** Request body for POST /api/v1/branch/orders — agent places an order on a walk-in customer's behalf. */
+export interface AgentPlaceOrderRequest extends OrderFields {
+  customerFirstName: string;
+  customerLastName?: string;
+  customerEmail: string;
+  customerMobile: string;
+}
+
+/** Matches entities/dto/order/OrderResponse.java. Display-name fields are only populated by list/detail endpoints. */
+export interface OrderResponse {
+  id: number;
+  uuid: string;
+  customerId: number;
+  customerName: string | null;
+  customerEmail: string | null;
+  customerMobile: string | null;
+  createdByUserId: number;
+  createdByName: string | null;
+  branchId: number | null;
+  branchName: string | null;
+  allianceCompanyId: number | null;
+  allianceCompanyName: string | null;
+  augmontProductId: number;
+  productName: string;
+  productSku: string | null;
+  productWeight: number | null;
+  paymentTypeId: number;
+  quantity: number;
+  finalOrderPrice: number | null;
+  initialPayment: number | null;
+  monthlyAmount: number | null;
+  customerPan: string;
+  customerDob: string;
+  deliveryAddress: string;
+  deliveryCity: string;
+  deliveryState: string;
+  deliveryPincode: string;
+  merchantTransactionId: string;
+  augmontOrderId: number | null;
+  augmontOrderUniqueId: number | null;
+  status: OrderStatus;
+  failureReason: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ── Customers ────────────────────────────────────────────────────────────
+
+/** Matches entities/dto/customer/CustomerResponse.java. */
+export interface CustomerResponse {
+  id: number;
+  uuid: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
+  mobile: string | null;
+  allianceCompanyId: number | null;
+  branchId: number | null;
+  active: boolean;
+  createdAt: string;
+}

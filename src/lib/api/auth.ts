@@ -32,6 +32,22 @@ export function logout(): Promise<void> {
   return apiFetch<void>("/api/v1/auth/logout", { method: "POST" });
 }
 
+/** Updates the caller's own display name and mobile. Email isn't editable here — it's the login identifier. */
+export function updateProfile(firstName: string, lastName?: string, mobile?: string): Promise<BackendUser> {
+  return apiFetch<BackendUser>("/api/v1/auth/me", {
+    method: "PATCH",
+    body: { firstName, lastName, mobile },
+  });
+}
+
+/** Changes the caller's own password. Not available for customer accounts (OTP-only). */
+export function changePassword(currentPassword: string, newPassword: string): Promise<void> {
+  return apiFetch<void>("/api/v1/auth/change-password", {
+    method: "POST",
+    body: { currentPassword, newPassword },
+  });
+}
+
 /** Always resolves regardless of whether the identifier matches an account (no enumeration). */
 export function forgotPassword(identifier: string): Promise<void> {
   return apiFetch<void>("/api/v1/auth/forgot-password", {

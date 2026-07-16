@@ -21,7 +21,7 @@ import {
   AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 
-export const Route = createFileRoute("/admin/partners")({
+export const Route = createFileRoute("/admin/partners/")({
   head: () => ({ meta: [{ title: "Partners — Admin" }] }),
   component: Page,
 });

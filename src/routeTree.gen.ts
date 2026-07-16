@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LeadershipRouteImport } from './routes/leadership'
@@ -27,17 +28,25 @@ import { Route as RegisterPartnerRouteImport } from './routes/register.partner'
 import { Route as RegisterCustomerRouteImport } from './routes/register.customer'
 import { Route as PortalPartnerRouteImport } from './routes/portal.partner'
 import { Route as PortalCustomerRouteImport } from './routes/portal.customer'
+import { Route as PartnerOrdersRouteImport } from './routes/partner.orders'
+import { Route as PartnerCustomersRouteImport } from './routes/partner.customers'
 import { Route as DashboardPartnerRouteImport } from './routes/dashboard.partner'
 import { Route as DashboardCustomerRouteImport } from './routes/dashboard.customer'
 import { Route as DashboardBranchRouteImport } from './routes/dashboard.branch'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
-import { Route as AdminPartnersRouteImport } from './routes/admin.partners'
+import { Route as CustomerOrdersRouteImport } from './routes/customer.orders'
+import { Route as BranchOrdersRouteImport } from './routes/branch.orders'
+import { Route as BranchCustomersRouteImport } from './routes/branch.customers'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
+import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
 import { Route as PartnerBranchesIndexRouteImport } from './routes/partner.branches.index'
 import { Route as CustomerShopIndexRouteImport } from './routes/customer.shop.index'
+import { Route as BranchPlaceOrderIndexRouteImport } from './routes/branch.place-order.index'
+import { Route as AdminPartnersIndexRouteImport } from './routes/admin.partners.index'
 import { Route as AdminCatalogIndexRouteImport } from './routes/admin.catalog.index'
 import { Route as PartnerBranchesBranchIdRouteImport } from './routes/partner.branches.$branchId'
 import { Route as CustomerShopProductIdRouteImport } from './routes/customer.shop.$productId'
+import { Route as BranchPlaceOrderProductIdRouteImport } from './routes/branch.place-order.$productId'
 import { Route as AdminPartnersPartnerIdRouteImport } from './routes/admin.partners.$partnerId'
 import { Route as AdminCatalogProductIdRouteImport } from './routes/admin.catalog.$productId'
 
@@ -49,6 +58,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProductsRoute = ProductsRouteImport.update({
@@ -131,6 +145,16 @@ const PortalCustomerRoute = PortalCustomerRouteImport.update({
   path: '/portal/customer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PartnerOrdersRoute = PartnerOrdersRouteImport.update({
+  id: '/partner/orders',
+  path: '/partner/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnerCustomersRoute = PartnerCustomersRouteImport.update({
+  id: '/partner/customers',
+  path: '/partner/customers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardPartnerRoute = DashboardPartnerRouteImport.update({
   id: '/dashboard/partner',
   path: '/dashboard/partner',
@@ -151,14 +175,29 @@ const DashboardAdminRoute = DashboardAdminRouteImport.update({
   path: '/dashboard/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminPartnersRoute = AdminPartnersRouteImport.update({
-  id: '/admin/partners',
-  path: '/admin/partners',
+const CustomerOrdersRoute = CustomerOrdersRouteImport.update({
+  id: '/customer/orders',
+  path: '/customer/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BranchOrdersRoute = BranchOrdersRouteImport.update({
+  id: '/branch/orders',
+  path: '/branch/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BranchCustomersRoute = BranchCustomersRouteImport.update({
+  id: '/branch/customers',
+  path: '/branch/customers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
   id: '/admin/leads',
   path: '/admin/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCustomersRoute = AdminCustomersRouteImport.update({
+  id: '/admin/customers',
+  path: '/admin/customers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PartnerBranchesIndexRoute = PartnerBranchesIndexRouteImport.update({
@@ -169,6 +208,16 @@ const PartnerBranchesIndexRoute = PartnerBranchesIndexRouteImport.update({
 const CustomerShopIndexRoute = CustomerShopIndexRouteImport.update({
   id: '/customer/shop/',
   path: '/customer/shop/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BranchPlaceOrderIndexRoute = BranchPlaceOrderIndexRouteImport.update({
+  id: '/branch/place-order/',
+  path: '/branch/place-order/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPartnersIndexRoute = AdminPartnersIndexRouteImport.update({
+  id: '/admin/partners/',
+  path: '/admin/partners/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminCatalogIndexRoute = AdminCatalogIndexRouteImport.update({
@@ -186,10 +235,16 @@ const CustomerShopProductIdRoute = CustomerShopProductIdRouteImport.update({
   path: '/customer/shop/$productId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BranchPlaceOrderProductIdRoute =
+  BranchPlaceOrderProductIdRouteImport.update({
+    id: '/branch/place-order/$productId',
+    path: '/branch/place-order/$productId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminPartnersPartnerIdRoute = AdminPartnersPartnerIdRouteImport.update({
-  id: '/$partnerId',
-  path: '/$partnerId',
-  getParentRoute: () => AdminPartnersRoute,
+  id: '/admin/partners/$partnerId',
+  path: '/admin/partners/$partnerId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminCatalogProductIdRoute = AdminCatalogProductIdRouteImport.update({
   id: '/admin/catalog/$productId',
@@ -210,23 +265,32 @@ export interface FileRoutesByFullPath {
   '/leadership': typeof LeadershipRoute
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
+  '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/customers': typeof AdminCustomersRoute
   '/admin/leads': typeof AdminLeadsRoute
-  '/admin/partners': typeof AdminPartnersRouteWithChildren
+  '/branch/customers': typeof BranchCustomersRoute
+  '/branch/orders': typeof BranchOrdersRoute
+  '/customer/orders': typeof CustomerOrdersRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/branch': typeof DashboardBranchRoute
   '/dashboard/customer': typeof DashboardCustomerRoute
   '/dashboard/partner': typeof DashboardPartnerRoute
+  '/partner/customers': typeof PartnerCustomersRoute
+  '/partner/orders': typeof PartnerOrdersRoute
   '/portal/customer': typeof PortalCustomerRoute
   '/portal/partner': typeof PortalPartnerRoute
   '/register/customer': typeof RegisterCustomerRoute
   '/register/partner': typeof RegisterPartnerRoute
   '/admin/catalog/$productId': typeof AdminCatalogProductIdRoute
   '/admin/partners/$partnerId': typeof AdminPartnersPartnerIdRoute
+  '/branch/place-order/$productId': typeof BranchPlaceOrderProductIdRoute
   '/customer/shop/$productId': typeof CustomerShopProductIdRoute
   '/partner/branches/$branchId': typeof PartnerBranchesBranchIdRoute
   '/admin/catalog/': typeof AdminCatalogIndexRoute
+  '/admin/partners/': typeof AdminPartnersIndexRoute
+  '/branch/place-order/': typeof BranchPlaceOrderIndexRoute
   '/customer/shop/': typeof CustomerShopIndexRoute
   '/partner/branches/': typeof PartnerBranchesIndexRoute
 }
@@ -243,23 +307,32 @@ export interface FileRoutesByTo {
   '/leadership': typeof LeadershipRoute
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
+  '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/customers': typeof AdminCustomersRoute
   '/admin/leads': typeof AdminLeadsRoute
-  '/admin/partners': typeof AdminPartnersRouteWithChildren
+  '/branch/customers': typeof BranchCustomersRoute
+  '/branch/orders': typeof BranchOrdersRoute
+  '/customer/orders': typeof CustomerOrdersRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/branch': typeof DashboardBranchRoute
   '/dashboard/customer': typeof DashboardCustomerRoute
   '/dashboard/partner': typeof DashboardPartnerRoute
+  '/partner/customers': typeof PartnerCustomersRoute
+  '/partner/orders': typeof PartnerOrdersRoute
   '/portal/customer': typeof PortalCustomerRoute
   '/portal/partner': typeof PortalPartnerRoute
   '/register/customer': typeof RegisterCustomerRoute
   '/register/partner': typeof RegisterPartnerRoute
   '/admin/catalog/$productId': typeof AdminCatalogProductIdRoute
   '/admin/partners/$partnerId': typeof AdminPartnersPartnerIdRoute
+  '/branch/place-order/$productId': typeof BranchPlaceOrderProductIdRoute
   '/customer/shop/$productId': typeof CustomerShopProductIdRoute
   '/partner/branches/$branchId': typeof PartnerBranchesBranchIdRoute
   '/admin/catalog': typeof AdminCatalogIndexRoute
+  '/admin/partners': typeof AdminPartnersIndexRoute
+  '/branch/place-order': typeof BranchPlaceOrderIndexRoute
   '/customer/shop': typeof CustomerShopIndexRoute
   '/partner/branches': typeof PartnerBranchesIndexRoute
 }
@@ -277,23 +350,32 @@ export interface FileRoutesById {
   '/leadership': typeof LeadershipRoute
   '/login': typeof LoginRoute
   '/products': typeof ProductsRoute
+  '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/customers': typeof AdminCustomersRoute
   '/admin/leads': typeof AdminLeadsRoute
-  '/admin/partners': typeof AdminPartnersRouteWithChildren
+  '/branch/customers': typeof BranchCustomersRoute
+  '/branch/orders': typeof BranchOrdersRoute
+  '/customer/orders': typeof CustomerOrdersRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/branch': typeof DashboardBranchRoute
   '/dashboard/customer': typeof DashboardCustomerRoute
   '/dashboard/partner': typeof DashboardPartnerRoute
+  '/partner/customers': typeof PartnerCustomersRoute
+  '/partner/orders': typeof PartnerOrdersRoute
   '/portal/customer': typeof PortalCustomerRoute
   '/portal/partner': typeof PortalPartnerRoute
   '/register/customer': typeof RegisterCustomerRoute
   '/register/partner': typeof RegisterPartnerRoute
   '/admin/catalog/$productId': typeof AdminCatalogProductIdRoute
   '/admin/partners/$partnerId': typeof AdminPartnersPartnerIdRoute
+  '/branch/place-order/$productId': typeof BranchPlaceOrderProductIdRoute
   '/customer/shop/$productId': typeof CustomerShopProductIdRoute
   '/partner/branches/$branchId': typeof PartnerBranchesBranchIdRoute
   '/admin/catalog/': typeof AdminCatalogIndexRoute
+  '/admin/partners/': typeof AdminPartnersIndexRoute
+  '/branch/place-order/': typeof BranchPlaceOrderIndexRoute
   '/customer/shop/': typeof CustomerShopIndexRoute
   '/partner/branches/': typeof PartnerBranchesIndexRoute
 }
@@ -312,23 +394,32 @@ export interface FileRouteTypes {
     | '/leadership'
     | '/login'
     | '/products'
+    | '/profile'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/admin/customers'
     | '/admin/leads'
-    | '/admin/partners'
+    | '/branch/customers'
+    | '/branch/orders'
+    | '/customer/orders'
     | '/dashboard/admin'
     | '/dashboard/branch'
     | '/dashboard/customer'
     | '/dashboard/partner'
+    | '/partner/customers'
+    | '/partner/orders'
     | '/portal/customer'
     | '/portal/partner'
     | '/register/customer'
     | '/register/partner'
     | '/admin/catalog/$productId'
     | '/admin/partners/$partnerId'
+    | '/branch/place-order/$productId'
     | '/customer/shop/$productId'
     | '/partner/branches/$branchId'
     | '/admin/catalog/'
+    | '/admin/partners/'
+    | '/branch/place-order/'
     | '/customer/shop/'
     | '/partner/branches/'
   fileRoutesByTo: FileRoutesByTo
@@ -345,23 +436,32 @@ export interface FileRouteTypes {
     | '/leadership'
     | '/login'
     | '/products'
+    | '/profile'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/admin/customers'
     | '/admin/leads'
-    | '/admin/partners'
+    | '/branch/customers'
+    | '/branch/orders'
+    | '/customer/orders'
     | '/dashboard/admin'
     | '/dashboard/branch'
     | '/dashboard/customer'
     | '/dashboard/partner'
+    | '/partner/customers'
+    | '/partner/orders'
     | '/portal/customer'
     | '/portal/partner'
     | '/register/customer'
     | '/register/partner'
     | '/admin/catalog/$productId'
     | '/admin/partners/$partnerId'
+    | '/branch/place-order/$productId'
     | '/customer/shop/$productId'
     | '/partner/branches/$branchId'
     | '/admin/catalog'
+    | '/admin/partners'
+    | '/branch/place-order'
     | '/customer/shop'
     | '/partner/branches'
   id:
@@ -378,23 +478,32 @@ export interface FileRouteTypes {
     | '/leadership'
     | '/login'
     | '/products'
+    | '/profile'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/admin/customers'
     | '/admin/leads'
-    | '/admin/partners'
+    | '/branch/customers'
+    | '/branch/orders'
+    | '/customer/orders'
     | '/dashboard/admin'
     | '/dashboard/branch'
     | '/dashboard/customer'
     | '/dashboard/partner'
+    | '/partner/customers'
+    | '/partner/orders'
     | '/portal/customer'
     | '/portal/partner'
     | '/register/customer'
     | '/register/partner'
     | '/admin/catalog/$productId'
     | '/admin/partners/$partnerId'
+    | '/branch/place-order/$productId'
     | '/customer/shop/$productId'
     | '/partner/branches/$branchId'
     | '/admin/catalog/'
+    | '/admin/partners/'
+    | '/branch/place-order/'
     | '/customer/shop/'
     | '/partner/branches/'
   fileRoutesById: FileRoutesById
@@ -412,22 +521,32 @@ export interface RootRouteChildren {
   LeadershipRoute: typeof LeadershipRoute
   LoginRoute: typeof LoginRoute
   ProductsRoute: typeof ProductsRoute
+  ProfileRoute: typeof ProfileRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AdminCustomersRoute: typeof AdminCustomersRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
-  AdminPartnersRoute: typeof AdminPartnersRouteWithChildren
+  BranchCustomersRoute: typeof BranchCustomersRoute
+  BranchOrdersRoute: typeof BranchOrdersRoute
+  CustomerOrdersRoute: typeof CustomerOrdersRoute
   DashboardAdminRoute: typeof DashboardAdminRoute
   DashboardBranchRoute: typeof DashboardBranchRoute
   DashboardCustomerRoute: typeof DashboardCustomerRoute
   DashboardPartnerRoute: typeof DashboardPartnerRoute
+  PartnerCustomersRoute: typeof PartnerCustomersRoute
+  PartnerOrdersRoute: typeof PartnerOrdersRoute
   PortalCustomerRoute: typeof PortalCustomerRoute
   PortalPartnerRoute: typeof PortalPartnerRoute
   RegisterCustomerRoute: typeof RegisterCustomerRoute
   RegisterPartnerRoute: typeof RegisterPartnerRoute
   AdminCatalogProductIdRoute: typeof AdminCatalogProductIdRoute
+  AdminPartnersPartnerIdRoute: typeof AdminPartnersPartnerIdRoute
+  BranchPlaceOrderProductIdRoute: typeof BranchPlaceOrderProductIdRoute
   CustomerShopProductIdRoute: typeof CustomerShopProductIdRoute
   PartnerBranchesBranchIdRoute: typeof PartnerBranchesBranchIdRoute
   AdminCatalogIndexRoute: typeof AdminCatalogIndexRoute
+  AdminPartnersIndexRoute: typeof AdminPartnersIndexRoute
+  BranchPlaceOrderIndexRoute: typeof BranchPlaceOrderIndexRoute
   CustomerShopIndexRoute: typeof CustomerShopIndexRoute
   PartnerBranchesIndexRoute: typeof PartnerBranchesIndexRoute
 }
@@ -446,6 +565,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/products': {
@@ -560,6 +686,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalCustomerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/partner/orders': {
+      id: '/partner/orders'
+      path: '/partner/orders'
+      fullPath: '/partner/orders'
+      preLoaderRoute: typeof PartnerOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partner/customers': {
+      id: '/partner/customers'
+      path: '/partner/customers'
+      fullPath: '/partner/customers'
+      preLoaderRoute: typeof PartnerCustomersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/partner': {
       id: '/dashboard/partner'
       path: '/dashboard/partner'
@@ -588,11 +728,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/partners': {
-      id: '/admin/partners'
-      path: '/admin/partners'
-      fullPath: '/admin/partners'
-      preLoaderRoute: typeof AdminPartnersRouteImport
+    '/customer/orders': {
+      id: '/customer/orders'
+      path: '/customer/orders'
+      fullPath: '/customer/orders'
+      preLoaderRoute: typeof CustomerOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/branch/orders': {
+      id: '/branch/orders'
+      path: '/branch/orders'
+      fullPath: '/branch/orders'
+      preLoaderRoute: typeof BranchOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/branch/customers': {
+      id: '/branch/customers'
+      path: '/branch/customers'
+      fullPath: '/branch/customers'
+      preLoaderRoute: typeof BranchCustomersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/leads': {
@@ -600,6 +754,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/leads'
       fullPath: '/admin/leads'
       preLoaderRoute: typeof AdminLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/customers': {
+      id: '/admin/customers'
+      path: '/admin/customers'
+      fullPath: '/admin/customers'
+      preLoaderRoute: typeof AdminCustomersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/partner/branches/': {
@@ -614,6 +775,20 @@ declare module '@tanstack/react-router' {
       path: '/customer/shop'
       fullPath: '/customer/shop/'
       preLoaderRoute: typeof CustomerShopIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/branch/place-order/': {
+      id: '/branch/place-order/'
+      path: '/branch/place-order'
+      fullPath: '/branch/place-order/'
+      preLoaderRoute: typeof BranchPlaceOrderIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/partners/': {
+      id: '/admin/partners/'
+      path: '/admin/partners'
+      fullPath: '/admin/partners/'
+      preLoaderRoute: typeof AdminPartnersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/catalog/': {
@@ -637,12 +812,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerShopProductIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/branch/place-order/$productId': {
+      id: '/branch/place-order/$productId'
+      path: '/branch/place-order/$productId'
+      fullPath: '/branch/place-order/$productId'
+      preLoaderRoute: typeof BranchPlaceOrderProductIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/partners/$partnerId': {
       id: '/admin/partners/$partnerId'
-      path: '/$partnerId'
+      path: '/admin/partners/$partnerId'
       fullPath: '/admin/partners/$partnerId'
       preLoaderRoute: typeof AdminPartnersPartnerIdRouteImport
-      parentRoute: typeof AdminPartnersRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/catalog/$productId': {
       id: '/admin/catalog/$productId'
@@ -653,18 +835,6 @@ declare module '@tanstack/react-router' {
     }
   }
 }
-
-interface AdminPartnersRouteChildren {
-  AdminPartnersPartnerIdRoute: typeof AdminPartnersPartnerIdRoute
-}
-
-const AdminPartnersRouteChildren: AdminPartnersRouteChildren = {
-  AdminPartnersPartnerIdRoute: AdminPartnersPartnerIdRoute,
-}
-
-const AdminPartnersRouteWithChildren = AdminPartnersRoute._addFileChildren(
-  AdminPartnersRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -679,22 +849,32 @@ const rootRouteChildren: RootRouteChildren = {
   LeadershipRoute: LeadershipRoute,
   LoginRoute: LoginRoute,
   ProductsRoute: ProductsRoute,
+  ProfileRoute: ProfileRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AdminCustomersRoute: AdminCustomersRoute,
   AdminLeadsRoute: AdminLeadsRoute,
-  AdminPartnersRoute: AdminPartnersRouteWithChildren,
+  BranchCustomersRoute: BranchCustomersRoute,
+  BranchOrdersRoute: BranchOrdersRoute,
+  CustomerOrdersRoute: CustomerOrdersRoute,
   DashboardAdminRoute: DashboardAdminRoute,
   DashboardBranchRoute: DashboardBranchRoute,
   DashboardCustomerRoute: DashboardCustomerRoute,
   DashboardPartnerRoute: DashboardPartnerRoute,
+  PartnerCustomersRoute: PartnerCustomersRoute,
+  PartnerOrdersRoute: PartnerOrdersRoute,
   PortalCustomerRoute: PortalCustomerRoute,
   PortalPartnerRoute: PortalPartnerRoute,
   RegisterCustomerRoute: RegisterCustomerRoute,
   RegisterPartnerRoute: RegisterPartnerRoute,
   AdminCatalogProductIdRoute: AdminCatalogProductIdRoute,
+  AdminPartnersPartnerIdRoute: AdminPartnersPartnerIdRoute,
+  BranchPlaceOrderProductIdRoute: BranchPlaceOrderProductIdRoute,
   CustomerShopProductIdRoute: CustomerShopProductIdRoute,
   PartnerBranchesBranchIdRoute: PartnerBranchesBranchIdRoute,
   AdminCatalogIndexRoute: AdminCatalogIndexRoute,
+  AdminPartnersIndexRoute: AdminPartnersIndexRoute,
+  BranchPlaceOrderIndexRoute: BranchPlaceOrderIndexRoute,
   CustomerShopIndexRoute: CustomerShopIndexRoute,
   PartnerBranchesIndexRoute: PartnerBranchesIndexRoute,
 }
