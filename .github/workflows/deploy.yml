@@ -1,12 +1,67 @@
 name: Deploy Frontend
 
 # Deploys go live on the real PM2 process automatically on every push to main.
+# CI builds the app and publishes .output/ as an npm package to Nexus; the
+# server then downloads that exact artifact and extracts it in place — no
+# build happens on the server anymore.
 on:
   push:
     branches: [main]
 
 jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: NITRO_PRESET=node-server npm run build
+
+      - name: Set release version
+        id: version
+        run: echo "version=1.0.0-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+
+      # .output/ has no package.json of its own (it's just Nitro's build
+      # output) — the main package.json is also "private": true, which npm
+      # refuses to publish. So we write a throwaway one just for the artifact,
+      # without touching the real dev package.json's safety net.
+      - name: Publish build output to Nexus
+        env:
+          NEXUS_URL: ${{ secrets.NEXUS_URL }}
+          NEXUS_USER: ${{ secrets.NEXUS_USER }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          cd .output
+          cat > package.json <<EOF
+          {
+            "name": "emerald-framework",
+            "version": "${VERSION}",
+            "private": false
+          }
+          EOF
+
+          HOST_PATH=$(echo "$NEXUS_URL" | sed -E 's~^https?://~~')
+          AUTH=$(echo -n "$NEXUS_USER:$NEXUS_PASSWORD" | base64 -w0)
+          cat > .npmrc <<EOF
+          registry=${NEXUS_URL}/repository/emerald-frontend-releases/
+          //${HOST_PATH}/repository/emerald-frontend-releases/:_auth=${AUTH}
+          always-auth=true
+          EOF
+
+          npm publish
+
   deploy:
+    needs: build-and-publish
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to server via SSH
@@ -17,11 +72,19 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
             set -e
-            cd /home/saitejassp2580/emerald-framework
+            VERSION="${{ needs.build-and-publish.outputs.version }}"
 
-            git fetch origin main
-            git reset --hard origin/main
+            curl -sf -u "${{ secrets.NEXUS_USER }}:${{ secrets.NEXUS_PASSWORD }}" \
+              -o /tmp/emerald-framework.tgz \
+              "${{ secrets.NEXUS_URL }}/repository/emerald-frontend-releases/emerald-framework/-/emerald-framework-${VERSION}.tgz"
 
-            npm ci
-            NITRO_PRESET=node-server npm run build
+            rm -rf /tmp/emerald-extract
+            mkdir -p /tmp/emerald-extract
+            tar -xzf /tmp/emerald-framework.tgz -C /tmp/emerald-extract
+
+            rm -rf /home/saitejassp2580/emerald-framework/.output
+            mv /tmp/emerald-extract/package /home/saitejassp2580/emerald-framework/.output
+
             pm2 restart gold-emi-app
+
+            echo "Deployed emerald-framework version ${VERSION}"
