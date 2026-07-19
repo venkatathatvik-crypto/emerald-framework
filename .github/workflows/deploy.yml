@@ -1,9 +1,9 @@
 name: Deploy Frontend
 
-# Manual only — deploys go live on the real PM2 process, so this never
-# runs automatically on push. Trigger from the Actions tab → "Run workflow".
+# Deploys go live on the real PM2 process automatically on every push to main.
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
   deploy:
