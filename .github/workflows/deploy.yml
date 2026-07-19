@@ -19,11 +19,9 @@ jobs:
             set -e
             cd /home/saitejassp2580/emerald-framework
 
-            # Mirror exactly what's on GitHub — discards any local drift on
-            # the server rather than risking a merge conflict mid-deploy.
             git fetch origin main
             git reset --hard origin/main
 
             npm ci
-            npm run build
+            NITRO_PRESET=node-server npm run build
             pm2 restart gold-emi-app
