@@ -20,7 +20,20 @@ export function ReferralCodeCard({ code }: { code: string | null | undefined }) 
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(link);
+      // navigator.clipboard requires a secure context (HTTPS or localhost) —
+      // the production site is served over plain HTTP, where it's undefined.
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(link);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = link;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
