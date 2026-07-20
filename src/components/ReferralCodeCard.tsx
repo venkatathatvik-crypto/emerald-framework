@@ -16,7 +16,7 @@ export function ReferralCodeCard({ code }: { code: string | null | undefined }) 
     return null;
   }
 
-  const link = `${typeof window !== "undefined" ? window.location.origin : ""}/register/customer?ref=${code}`;
+  const link = `${typeof window !== "undefined" ? window.location.origin : ""}${import.meta.env.BASE_URL}register/customer?ref=${code}`;
 
   async function handleCopy() {
     try {
