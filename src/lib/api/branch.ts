@@ -1,6 +1,6 @@
 import { apiFetch } from "./client";
 import type {
-  AgentPlaceOrderRequest, Branch, CustomerResponse, OrderResponse, Paged,
+  AgentPlaceOrderRequest, AugmontEmiSchedule, AugmontReceipt, Branch, CustomerResponse, OrderResponse, Paged,
 } from "./types";
 
 /** The caller's own branch — including its referral code, for sharing with walk-in customers. */
@@ -33,6 +33,36 @@ export function listOrders(params: ListBranchOrdersParams = {}): Promise<Paged<O
       size: params.size ?? 20,
     },
   });
+}
+
+/** An order placed at the caller's own branch, by id. */
+export function getOrder(orderId: number): Promise<OrderResponse> {
+  return apiFetch<OrderResponse>(`/api/v1/branch/orders/${orderId}`);
+}
+
+/** Pulls Augmont's own live status for an order placed at the caller's own branch. */
+export function refreshOrderStatus(orderId: number): Promise<OrderResponse> {
+  return apiFetch<OrderResponse>(`/api/v1/branch/orders/${orderId}/refresh-status`, { method: "POST" });
+}
+
+/** EMI schedule for an order placed at the caller's own branch. */
+export function getOrderEmiSchedule(orderId: number): Promise<AugmontEmiSchedule> {
+  return apiFetch<AugmontEmiSchedule>(`/api/v1/branch/orders/${orderId}/emi-schedule`);
+}
+
+/** Contract document link for an order placed at the caller's own branch. */
+export function getOrderContractReceipt(orderId: number): Promise<AugmontReceipt> {
+  return apiFetch<AugmontReceipt>(`/api/v1/branch/orders/${orderId}/receipts/contract`);
+}
+
+/** Proforma invoice link for an order placed at the caller's own branch. */
+export function getOrderProformaInvoiceReceipt(orderId: number): Promise<AugmontReceipt> {
+  return apiFetch<AugmontReceipt>(`/api/v1/branch/orders/${orderId}/receipts/proforma-invoice`);
+}
+
+/** EMI receipt link for one installment of an order placed at the caller's own branch. */
+export function getOrderEmiReceipt(orderId: number, emiId: number): Promise<AugmontReceipt> {
+  return apiFetch<AugmontReceipt>(`/api/v1/branch/orders/${orderId}/receipts/emi/${emiId}`);
 }
 
 export interface ListBranchCustomersParams {

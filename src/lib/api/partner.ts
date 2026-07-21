@@ -1,6 +1,6 @@
 import { apiFetch } from "./client";
 import type {
-  Agent, AgentCreateRequest, Branch, BranchCreateRequest, BranchUpdateRequest,
+  Agent, AgentCreateRequest, AugmontEmiSchedule, AugmontReceipt, Branch, BranchCreateRequest, BranchUpdateRequest,
   CustomerResponse, OrderResponse, Paged, PartnerResponse,
 } from "./types";
 
@@ -100,6 +100,36 @@ export function listOrders(params: ListPartnerOrdersParams = {}): Promise<Paged<
       size: params.size ?? 20,
     },
   });
+}
+
+/** An order placed anywhere in the caller's company, by id. */
+export function getOrder(orderId: number): Promise<OrderResponse> {
+  return apiFetch<OrderResponse>(`/api/v1/partner/orders/${orderId}`);
+}
+
+/** Pulls Augmont's own live status for an order placed anywhere in the caller's company. */
+export function refreshOrderStatus(orderId: number): Promise<OrderResponse> {
+  return apiFetch<OrderResponse>(`/api/v1/partner/orders/${orderId}/refresh-status`, { method: "POST" });
+}
+
+/** EMI schedule for an order placed anywhere in the caller's company. */
+export function getOrderEmiSchedule(orderId: number): Promise<AugmontEmiSchedule> {
+  return apiFetch<AugmontEmiSchedule>(`/api/v1/partner/orders/${orderId}/emi-schedule`);
+}
+
+/** Contract document link for an order placed anywhere in the caller's company. */
+export function getOrderContractReceipt(orderId: number): Promise<AugmontReceipt> {
+  return apiFetch<AugmontReceipt>(`/api/v1/partner/orders/${orderId}/receipts/contract`);
+}
+
+/** Proforma invoice link for an order placed anywhere in the caller's company. */
+export function getOrderProformaInvoiceReceipt(orderId: number): Promise<AugmontReceipt> {
+  return apiFetch<AugmontReceipt>(`/api/v1/partner/orders/${orderId}/receipts/proforma-invoice`);
+}
+
+/** EMI receipt link for one installment of an order placed anywhere in the caller's company. */
+export function getOrderEmiReceipt(orderId: number, emiId: number): Promise<AugmontReceipt> {
+  return apiFetch<AugmontReceipt>(`/api/v1/partner/orders/${orderId}/receipts/emi/${emiId}`);
 }
 
 export interface ListPartnerCustomersParams {

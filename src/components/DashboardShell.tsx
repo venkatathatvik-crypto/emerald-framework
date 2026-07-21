@@ -34,6 +34,7 @@ const NAV: Record<Role, { to: string; label: string; Icon: typeof LayoutDashboar
   ],
   admin: [
     { to: "/dashboard/admin", label: "Overview", Icon: LayoutDashboard },
+    { to: "/admin/orders", label: "Orders", Icon: Truck },
     { to: "/admin/leads", label: "Leads", Icon: Users },
     { to: "/admin/partners", label: "Partners", Icon: Building2 },
     { to: "/admin/customers", label: "Customers", Icon: Users },

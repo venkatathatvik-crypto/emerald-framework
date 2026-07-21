@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -16,7 +16,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 
-export const Route = createFileRoute("/partner/orders")({
+export const Route = createFileRoute("/partner/orders/")({
   head: () => ({ meta: [{ title: "Orders — Partner" }] }),
   component: Page,
 });
@@ -25,6 +25,7 @@ const PAGE_SIZE = 20;
 
 function Page() {
   const { ready } = useRequireRole("ROLE_ALLIANCE");
+  const navigate = useNavigate();
 
   const [branchId, setBranchId] = useState<string>("ALL");
   const [from, setFrom] = useState("");
@@ -111,7 +112,11 @@ function Page() {
                 </TableRow>
               )}
               {orders.map((order) => (
-                <TableRow key={order.id}>
+                <TableRow
+                  key={order.id}
+                  className="cursor-pointer hover:bg-stone/60"
+                  onClick={() => navigate({ to: "/partner/orders/$orderId", params: { orderId: String(order.id) } })}
+                >
                   <TableCell>
                     <p className="font-medium text-ink">{order.customerName}</p>
                     <p className="text-xs text-muted-foreground">{order.customerMobile}</p>

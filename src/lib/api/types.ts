@@ -411,8 +411,62 @@ export interface OrderResponse {
   augmontOrderUniqueId: number | null;
   status: OrderStatus;
   failureReason: string | null;
+  /** Augmont's own live status label — only populated after an explicit status refresh, not kept in sync automatically. */
+  augmontStatusName: string | null;
+  augmontStatusSyncedAt: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+// ── Order detail: status refresh, EMI schedule, receipts, cancellation ─────
+
+/** Matches entities/dto/augmont/AugmontEmiScheduleResponse.java — GET .../orders/{id}/emi-schedule. */
+export interface AugmontEmiSchedule {
+  orderUniqueId: number | null;
+  numberOfPendingEmi: number | null;
+  orderdetails: { finalOrderPrice: number; initialPayment: number; emiAmount: number }[];
+  orderemidetails: {
+    emiId: number;
+    emiAmount: number;
+    emiBalancePayment: number;
+    dueDate: string;
+    paymentRecievedDate: string | null;
+    emiPaidAmount: number;
+    paymentDescription: string;
+    orderemistatus: { statusName: string } | null;
+  }[];
+  product: { productName: string; sku: string } | null;
+}
+
+/** Matches entities/dto/augmont/AugmontReceiptResponse.java — GET .../orders/{id}/receipts/*. */
+export interface AugmontReceipt {
+  message: string;
+  url: string;
+}
+
+/** Matches entities/dto/augmont/AugmontCancellationQuoteResponse.java — GET .../orders/{id}/cancellation-quote. */
+export interface AugmontCancellationQuote {
+  cancellationCharges: string | null;
+  totalCancelationCharges: string | null;
+  payableToCustomer: string | null;
+  totalAmountPaid: string | null;
+  cancelationPriceOfOrder: number | null;
+  diffrenceAmount: string | null;
+  cancelationFees: number | null;
+  emiPaid: string | null;
+  totalPrice: number | null;
+  emiAmount: number | null;
+  tenure: string | null;
+  currentStatus: string | null;
+  nextStatus: { statusId: number; statusName: string } | null;
+}
+
+/** Request body for POST /api/v1/customer/orders/{id}/cancel. */
+export interface CancelOrderRequest {
+  reason: string;
+  customerBankName: string;
+  customerAccountNo: string;
+  ifscCode: string;
 }
 
 // ── Customers ────────────────────────────────────────────────────────────

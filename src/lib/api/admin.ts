@@ -1,7 +1,7 @@
 import { apiFetch } from "./client";
 import type {
-  Branch, ConvertLeadRequest, CustomerResponse, LeadStatus, Paged, PartnerLead,
-  PartnerResponse, PartnerUpdateRequest,
+  AugmontEmiSchedule, AugmontReceipt, Branch, ConvertLeadRequest, CustomerResponse, LeadStatus, OrderResponse,
+  Paged, PartnerLead, PartnerResponse, PartnerUpdateRequest,
 } from "./types";
 
 export interface ListLeadsParams {
@@ -124,4 +124,57 @@ export function listCustomers(params: ListAdminCustomersParams = {}): Promise<Pa
       size: params.size ?? 20,
     },
   });
+}
+
+export interface ListAdminOrdersParams {
+  allianceCompanyId?: number;
+  branchId?: number;
+  from?: string;
+  to?: string;
+  page?: number;
+  size?: number;
+}
+
+/** Every order system-wide, optionally filtered to one partner and/or one branch. Also surfaces unattributed (direct-signup) orders. */
+export function listOrders(params: ListAdminOrdersParams = {}): Promise<Paged<OrderResponse>> {
+  return apiFetch<Paged<OrderResponse>>("/api/v1/admin/orders", {
+    query: {
+      allianceCompanyId: params.allianceCompanyId,
+      branchId: params.branchId,
+      from: params.from,
+      to: params.to,
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+    },
+  });
+}
+
+/** Any order system-wide, by id. */
+export function getOrder(orderId: number): Promise<OrderResponse> {
+  return apiFetch<OrderResponse>(`/api/v1/admin/orders/${orderId}`);
+}
+
+/** Pulls Augmont's own live status for any order system-wide. */
+export function refreshOrderStatus(orderId: number): Promise<OrderResponse> {
+  return apiFetch<OrderResponse>(`/api/v1/admin/orders/${orderId}/refresh-status`, { method: "POST" });
+}
+
+/** EMI schedule for any order system-wide. */
+export function getOrderEmiSchedule(orderId: number): Promise<AugmontEmiSchedule> {
+  return apiFetch<AugmontEmiSchedule>(`/api/v1/admin/orders/${orderId}/emi-schedule`);
+}
+
+/** Contract document link for any order system-wide. */
+export function getOrderContractReceipt(orderId: number): Promise<AugmontReceipt> {
+  return apiFetch<AugmontReceipt>(`/api/v1/admin/orders/${orderId}/receipts/contract`);
+}
+
+/** Proforma invoice link for any order system-wide. */
+export function getOrderProformaInvoiceReceipt(orderId: number): Promise<AugmontReceipt> {
+  return apiFetch<AugmontReceipt>(`/api/v1/admin/orders/${orderId}/receipts/proforma-invoice`);
+}
+
+/** EMI receipt link for one installment of any order system-wide. */
+export function getOrderEmiReceipt(orderId: number, emiId: number): Promise<AugmontReceipt> {
+  return apiFetch<AugmontReceipt>(`/api/v1/admin/orders/${orderId}/receipts/emi/${emiId}`);
 }

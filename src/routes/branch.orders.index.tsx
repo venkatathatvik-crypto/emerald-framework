@@ -1,32 +1,36 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { listMyOrders } from "@/lib/api/customer";
+import { listOrders } from "@/lib/api/branch";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { formatInr } from "@/lib/api/augmont";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 
-export const Route = createFileRoute("/customer/orders")({
-  head: () => ({ meta: [{ title: "My Orders — 2+ Fortune Alliances" }] }),
+export const Route = createFileRoute("/branch/orders/")({
+  head: () => ({ meta: [{ title: "Orders — Branch" }] }),
   component: Page,
 });
 
 const PAGE_SIZE = 20;
 
 function Page() {
-  const { ready } = useRequireRole("ROLE_CUSTOMER");
+  const { ready } = useRequireRole(["ROLE_BRANCH", "ROLE_AGENT"]);
+  const navigate = useNavigate();
 
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
   const [page, setPage] = useState(0);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["customer", "orders", { page }],
-    queryFn: () => listMyOrders({ page, size: PAGE_SIZE }),
+    queryKey: ["branch", "orders", { from, to, page }],
+    queryFn: () => listOrders({ from: from || undefined, to: to || undefined, page, size: PAGE_SIZE }),
     enabled: ready,
   });
 
@@ -37,17 +41,28 @@ function Page() {
   const orders = data?.items ?? [];
 
   return (
-    <DashboardShell role="customer" title="My orders">
-      <Panel title="Order history">
+    <DashboardShell role="branch" title="Orders">
+      <Panel
+        title="Orders placed at your branch"
+        action={
+          <div className="flex items-center gap-3">
+            <Input type="date" value={from} onChange={(e) => { setFrom(e.target.value); setPage(0); }} className="w-40" />
+            <span className="text-sm text-muted-foreground">to</span>
+            <Input type="date" value={to} onChange={(e) => { setTo(e.target.value); setPage(0); }} className="w-40" />
+          </div>
+        }
+      >
         {isError && (
-          <p className="text-sm text-destructive py-6">Failed to load your orders. Please try again.</p>
+          <p className="text-sm text-destructive py-6">Failed to load orders. Please try again.</p>
         )}
 
         {!isError && (
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Customer</TableHead>
                 <TableHead>Product</TableHead>
+                <TableHead>Placed by</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Date</TableHead>
@@ -56,24 +71,33 @@ function Page() {
             <TableBody>
               {isLoading && (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center text-muted-foreground py-10">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-10">
                     Loading orders…
                   </TableCell>
                 </TableRow>
               )}
               {!isLoading && orders.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center text-muted-foreground py-10">
-                    You haven't placed any orders yet.
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-10">
+                    No orders yet.
                   </TableCell>
                 </TableRow>
               )}
               {orders.map((order) => (
-                <TableRow key={order.id}>
+                <TableRow
+                  key={order.id}
+                  className="cursor-pointer hover:bg-stone/60"
+                  onClick={() => navigate({ to: "/branch/orders/$orderId", params: { orderId: String(order.id) } })}
+                >
                   <TableCell>
-                    <p className="font-medium text-ink">{order.productName}</p>
+                    <p className="font-medium text-ink">{order.customerName}</p>
+                    <p className="text-xs text-muted-foreground">{order.customerMobile}</p>
+                  </TableCell>
+                  <TableCell>
+                    <p>{order.productName}</p>
                     <p className="text-xs text-muted-foreground">{order.productWeight}g</p>
                   </TableCell>
+                  <TableCell>{order.createdByName}</TableCell>
                   <TableCell>{formatInr(order.finalOrderPrice ?? undefined)}</TableCell>
                   <TableCell><OrderStatusBadge status={order.status} /></TableCell>
                   <TableCell className="text-right text-sm text-muted-foreground">
