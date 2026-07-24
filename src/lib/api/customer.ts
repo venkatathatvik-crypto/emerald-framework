@@ -1,7 +1,7 @@
 import { apiFetch } from "./client";
 import type {
   AugmontCancellationQuote, AugmontEmiSchedule, AugmontReceipt, BackendUser, CancelOrderRequest,
-  CustomerRegisterStartInput, OrderResponse, Paged, PlaceOrderRequest,
+  CustomerRegisterStartInput, OrderResponse, OrderStatus, Paged, PlaceOrderRequest,
 } from "./types";
 
 /** Step 1 — creates (or resumes) a pending account and emails an OTP. */
@@ -29,14 +29,20 @@ export function placeOrder(req: PlaceOrderRequest): Promise<OrderResponse> {
 }
 
 export interface ListMyOrdersParams {
+  status?: OrderStatus;
+  from?: string; // yyyy-MM-dd
+  to?: string;
   page?: number;
   size?: number;
 }
 
-/** The authenticated customer's own order history. */
+/** The authenticated customer's own order history, optionally filtered by status and/or date range. */
 export function listMyOrders(params: ListMyOrdersParams = {}): Promise<Paged<OrderResponse>> {
   return apiFetch<Paged<OrderResponse>>("/api/v1/customer/orders", {
     query: {
+      status: params.status,
+      from: params.from,
+      to: params.to,
       page: params.page ?? 0,
       size: params.size ?? 20,
     },

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
-  LayoutDashboard, Receipt, Truck, BadgePercent, Users, Boxes, BarChart3, Building2,
+  LayoutDashboard, Truck, BadgePercent, Users, Boxes, BarChart3, Building2,
   Settings, Bell, Search, ChevronRight, LogOut, Sparkles, PlusCircle,
 } from "lucide-react";
 
@@ -17,7 +17,6 @@ const NAV: Record<Role, { to: string; label: string; Icon: typeof LayoutDashboar
     { to: "/dashboard/customer", label: "Overview", Icon: LayoutDashboard },
     { to: "/customer/shop", label: "Shop", Icon: BadgePercent },
     { to: "/customer/orders", label: "My Orders", Icon: Truck },
-    { to: "/dashboard/customer", label: "EMI Schedule", Icon: Receipt },
   ],
   partner: [
     { to: "/dashboard/partner", label: "Overview", Icon: LayoutDashboard },

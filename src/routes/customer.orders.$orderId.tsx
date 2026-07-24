@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft, RefreshCcw, FileText, Receipt, XCircle, Boxes,
   CheckCircle2, Circle, AlertTriangle, PackageX,
@@ -17,6 +17,7 @@ import {
 } from "@/lib/api/customer";
 import { getProductDetails, getProductThumbnail, formatInr } from "@/lib/api/augmont";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
+import { Badge } from "@/components/ui/badge";
 import { ApiError } from "@/lib/api/types";
 import type { OrderResponse, OrderStatus } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
@@ -58,6 +59,26 @@ const TENURE_LABEL: Record<number, string> = {
  * as real future stages (so the pattern is ready once that tracking
  * exists) but are never marked complete, rather than faking progress.
  */
+
+/**
+ * CANCELLED/AUGMONT_FAILED/PENDING are our own authoritative local facts —
+ * shown as-is. Only CONFIRMED is replaced with Augmont's own live status
+ * text (auto-refreshed once on page load) — no fallback to "Confirmed"
+ * once Augmont's own wording is what's supposed to be shown instead.
+ */
+function StatusDisplay({ order, isRefreshing }: { order: OrderResponse; isRefreshing: boolean }) {
+  if (order.status !== "CONFIRMED") {
+    return <OrderStatusBadge status={order.status} />;
+  }
+  if (isRefreshing && !order.augmontStatusName) {
+    return <span className="text-sm text-muted-foreground">Checking with Augmont…</span>;
+  }
+  if (order.augmontStatusName) {
+    return <Badge variant="outline" className="capitalize">{order.augmontStatusName}</Badge>;
+  }
+  return <span className="text-sm text-muted-foreground">Not synced yet</span>;
+}
+
 function OrderProgressStepper({ status }: { status: OrderStatus }) {
   if (status === "CANCELLED") {
     return (
@@ -140,6 +161,18 @@ function Page() {
   const thumb = product ? getProductThumbnail(product) : null;
 
   const canSyncAugmont = order?.augmontOrderId != null;
+
+  // Augmont's own status replaces our "Confirmed" label wherever it's shown
+  // (see StatusDisplay below) — auto-refresh once on load so it isn't blank
+  // the first time this page is opened, rather than requiring a manual click.
+  const autoRefreshed = useRef(false);
+  useEffect(() => {
+    if (order && canSyncAugmont && !order.augmontStatusName && !autoRefreshed.current) {
+      autoRefreshed.current = true;
+      handleRefresh();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order?.id, canSyncAugmont]);
 
   const { data: schedule, isLoading: scheduleLoading } = useQuery({
     queryKey: ["customer", "order", id, "emi-schedule"],
@@ -236,8 +269,13 @@ function Page() {
                       SKU: {order.productSku} · {order.productWeight}g
                     </p>
                   </div>
-                  <div className="ml-auto">
-                    <OrderStatusBadge status={order.status} />
+                  <div className="ml-auto text-right">
+                    <StatusDisplay order={order} isRefreshing={isRefreshing} />
+                    {order.status === "CONFIRMED" && order.augmontStatusSyncedAt && (
+                      <p className="text-[10px] text-muted-foreground mt-1">
+                        Synced {new Date(order.augmontStatusSyncedAt).toLocaleString()}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -245,12 +283,6 @@ function Page() {
 
                 {order.status === "AUGMONT_FAILED" && order.failureReason && (
                   <p className="text-sm text-destructive mt-4">Augmont error: {order.failureReason}</p>
-                )}
-                {order.augmontStatusName && (
-                  <p className="text-xs text-muted-foreground mt-4">
-                    Augmont status: {order.augmontStatusName}
-                    {order.augmontStatusSyncedAt && ` · synced ${new Date(order.augmontStatusSyncedAt).toLocaleString()}`}
-                  </p>
                 )}
               </Panel>
 
