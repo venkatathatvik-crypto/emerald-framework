@@ -79,7 +79,7 @@ function Page() {
       {isError && <p className="text-sm text-destructive py-10 text-center">Failed to load this order.</p>}
 
       {order && (
-        <div className="space-y-6">
+        <div className="grid lg:grid-cols-[3fr_2fr] gap-6 items-start">
           <Panel
             title={order.productName}
             action={
@@ -100,7 +100,7 @@ function Page() {
                 </span>
               )}
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+            <div className="grid sm:grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-muted-foreground">Customer</p>
                 <p>{order.customerName}</p>
@@ -148,65 +148,69 @@ function Page() {
             )}
           </Panel>
 
-          {canSyncAugmont && (
-            <Panel title="Documents">
-              <div className="flex flex-wrap gap-3">
-                <Button variant="pillOutline" size="sm" onClick={() => openReceipt(() => getOrderContractReceipt(id))}>
-                  <FileText className="h-3.5 w-3.5" /> Contract
-                </Button>
-                <Button variant="pillOutline" size="sm" onClick={() => openReceipt(() => getOrderProformaInvoiceReceipt(id))}>
-                  <FileText className="h-3.5 w-3.5" /> Proforma invoice
-                </Button>
-              </div>
-            </Panel>
-          )}
+          <div className="space-y-6">
+            {canSyncAugmont && (
+              <Panel title="Documents">
+                <div className="flex flex-wrap gap-3">
+                  <Button variant="pillOutline" size="sm" onClick={() => openReceipt(() => getOrderContractReceipt(id))}>
+                    <FileText className="h-3.5 w-3.5" /> Contract
+                  </Button>
+                  <Button variant="pillOutline" size="sm" onClick={() => openReceipt(() => getOrderProformaInvoiceReceipt(id))}>
+                    <FileText className="h-3.5 w-3.5" /> Proforma invoice
+                  </Button>
+                </div>
+              </Panel>
+            )}
 
-          {canSyncAugmont && (
-            <Panel title="EMI schedule">
-              {scheduleLoading && <p className="text-sm text-muted-foreground py-6 text-center">Loading schedule…</p>}
-              {!scheduleLoading && (!schedule || schedule.orderemidetails.length === 0) && (
-                <p className="text-sm text-muted-foreground py-6 text-center">
-                  {order.paymentTypeId === 4 ? "This was a spot order — no EMI schedule." : "No EMI schedule found."}
-                </p>
-              )}
-              {!scheduleLoading && schedule && schedule.orderemidetails.length > 0 && (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Installment</TableHead>
-                      <TableHead>Due date</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Receipt</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {schedule.orderemidetails.map((emi) => (
-                      <TableRow key={emi.emiId}>
-                        <TableCell>{emi.paymentDescription}</TableCell>
-                        <TableCell>{new Date(emi.dueDate).toLocaleDateString()}</TableCell>
-                        <TableCell>{formatInr(emi.emiAmount)}</TableCell>
-                        <TableCell className="capitalize">{emi.orderemistatus?.statusName ?? "—"}</TableCell>
-                        <TableCell className="text-right">
-                          {emi.paymentRecievedDate ? (
-                            <Button
-                              variant="pillOutline"
-                              size="sm"
-                              onClick={() => openReceipt(() => getOrderEmiReceipt(id, emi.emiId))}
-                            >
-                              <Receipt className="h-3.5 w-3.5" /> Receipt
-                            </Button>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </Panel>
-          )}
+            {canSyncAugmont && (
+              <Panel title="EMI schedule">
+                {scheduleLoading && <p className="text-sm text-muted-foreground py-6 text-center">Loading schedule…</p>}
+                {!scheduleLoading && (!schedule || schedule.orderemidetails.length === 0) && (
+                  <p className="text-sm text-muted-foreground py-6 text-center">
+                    {order.paymentTypeId === 4 ? "This was a spot order — no EMI schedule." : "No EMI schedule found."}
+                  </p>
+                )}
+                {!scheduleLoading && schedule && schedule.orderemidetails.length > 0 && (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Installment</TableHead>
+                          <TableHead>Due date</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead className="text-right">Receipt</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {schedule.orderemidetails.map((emi) => (
+                          <TableRow key={emi.emiId}>
+                            <TableCell>{emi.paymentDescription}</TableCell>
+                            <TableCell>{new Date(emi.dueDate).toLocaleDateString()}</TableCell>
+                            <TableCell>{formatInr(emi.emiAmount)}</TableCell>
+                            <TableCell className="capitalize">{emi.orderemistatus?.statusName ?? "—"}</TableCell>
+                            <TableCell className="text-right">
+                              {emi.paymentRecievedDate ? (
+                                <Button
+                                  variant="pillOutline"
+                                  size="sm"
+                                  onClick={() => openReceipt(() => getOrderEmiReceipt(id, emi.emiId))}
+                                >
+                                  <Receipt className="h-3.5 w-3.5" /> Receipt
+                                </Button>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">—</span>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </Panel>
+            )}
+          </div>
         </div>
       )}
     </DashboardShell>
