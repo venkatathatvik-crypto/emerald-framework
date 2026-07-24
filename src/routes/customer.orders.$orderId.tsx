@@ -379,18 +379,21 @@ function Page() {
             </div>
           </div>
 
-          {/* ── Cancel — deliberately de-emphasized, full width, page bottom ── */}
+          {/* ── Cancel — secondary to the actions above, but still a clearly
+                 findable control, not a plain link that blends into the page ── */}
           {order.status === "CONFIRMED" && (
-            <div className="flex items-center justify-between border-t border-line pt-4">
-              <p className="text-xs text-muted-foreground">
+            <div className="flex items-center justify-between border border-line rounded-md px-5 py-4">
+              <p className="text-sm text-muted-foreground">
                 Cancelling stops future EMIs and refunds any eligible balance, minus applicable charges.
               </p>
-              <button
+              <Button
+                variant="pillOutline"
+                size="sm"
                 onClick={() => setCancelStep("quote")}
-                className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive transition-colors shrink-0 ml-4"
+                className="shrink-0 ml-4 text-destructive border-destructive/40 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive"
               >
                 <XCircle className="h-3.5 w-3.5" /> Cancel order
-              </button>
+              </Button>
             </div>
           )}
         </div>
