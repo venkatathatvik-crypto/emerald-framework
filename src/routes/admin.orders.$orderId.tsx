@@ -100,16 +100,16 @@ function Page() {
                 </span>
               )}
             </div>
-            <div className="grid sm:grid-cols-3 gap-4 text-sm">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
               <div>
                 <p className="text-muted-foreground">Customer</p>
                 <p>{order.customerName}</p>
                 <p className="text-xs text-muted-foreground">{order.customerMobile}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Partner / Branch</p>
-                <p>{order.allianceCompanyName || "Direct signup"}</p>
-                <p className="text-xs text-muted-foreground">{order.branchName || "—"}</p>
+                <p className="text-muted-foreground">Product</p>
+                <p>{order.productName}</p>
+                <p className="text-xs text-muted-foreground">{order.productWeight}g</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Amount</p>
@@ -119,9 +119,14 @@ function Page() {
                 </p>
               </div>
               <div>
-                <p className="text-muted-foreground">Product</p>
-                <p>{order.productName}</p>
-                <p className="text-xs text-muted-foreground">{order.productWeight}g</p>
+                <p className="text-muted-foreground">Placed</p>
+                <p>{new Date(order.createdAt).toLocaleDateString()}</p>
+                <p className="text-xs text-muted-foreground">by {order.createdByName}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Partner / Branch</p>
+                <p>{order.allianceCompanyName || "Direct signup"}</p>
+                <p className="text-xs text-muted-foreground">{order.branchName || "—"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Delivery address</p>
@@ -129,11 +134,6 @@ function Page() {
                 <p className="text-xs text-muted-foreground">
                   {order.deliveryCity}, {order.deliveryState} {order.deliveryPincode}
                 </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Placed</p>
-                <p>{new Date(order.createdAt).toLocaleDateString()}</p>
-                <p className="text-xs text-muted-foreground">by {order.createdByName}</p>
               </div>
               {canSyncAugmont && (
                 <div>
