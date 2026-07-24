@@ -341,6 +341,18 @@ function Page() {
                     <span className="text-muted-foreground">Reference</span>
                     <span className="text-ink text-xs">{order.merchantTransactionId}</span>
                   </div>
+                  {canSyncAugmont && (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">Augmont order ID</span>
+                        <span className="text-ink text-xs">{order.augmontOrderId}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">Augmont unique ID</span>
+                        <span className="text-ink text-xs">{order.augmontOrderUniqueId}</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </Panel>
 
