@@ -31,7 +31,7 @@ export interface AugmontCity {
   stateId: number;
 }
 
-/** Augmont's /states and /cities/{id} wrap their array in {"message": [...]} — not {"data": [...]} like its other endpoints. */
+/** Augmont's /states wraps its array in {"message": [...]} — not {"data": [...]} like its other endpoints. */
 interface AugmontMessageEnvelope<T> {
   message: T[];
 }
@@ -50,9 +50,14 @@ export async function getAugmontStates(): Promise<AugmontState[]> {
   return res.message ?? [];
 }
 
+/**
+ * Unlike /states, /cities/{id} returns a bare array directly (confirmed
+ * live) — not wrapped in {"message": [...]}. Cities silently never rendered
+ * before this fix because the code read res.message off an array, which is
+ * always undefined.
+ */
 export async function getAugmontCities(stateId: number): Promise<AugmontCity[]> {
-  const res = await apiFetch<AugmontMessageEnvelope<AugmontCity>>(`/api/v1/augmont/cities/${stateId}`);
-  return res.message ?? [];
+  return apiFetch<AugmontCity[]>(`/api/v1/augmont/cities/${stateId}`);
 }
 
 /**

@@ -60,6 +60,15 @@ function toNumber(v: number | string | undefined): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+/** Splits a tax-inclusive total into subtotal + GST, using the product's own gst% field. */
+function taxBreakdown(total: number | undefined, gstPercent: number | string | undefined) {
+  const totalNum = toNumber(total);
+  const gst = toNumber(gstPercent);
+  if (!totalNum || !gst) return { subtotal: totalNum, tax: 0, total: totalNum };
+  const subtotal = totalNum / (1 + gst / 100);
+  return { subtotal, tax: totalNum - subtotal, total: totalNum };
+}
+
 const buySchema = z.object({
   panCardNumber: z.string().trim().toUpperCase().regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "Enter a valid PAN, e.g. ABCDE1234F"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
@@ -76,7 +85,6 @@ function Page() {
   const { ready } = useRequireRole("ROLE_CUSTOMER");
 
   const id = Number(productId);
-  const [activeImage, setActiveImage] = useState<string | null>(null);
   const [tenure, setTenure] = useState<Tenure>("spot");
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [placedOrder, setPlacedOrder] = useState<OrderResponse | null>(null);
@@ -148,10 +156,9 @@ function Page() {
 
   const tier = product ? getProductPriceTier(product) : null;
   const thumb = product ? getProductThumbnail(product, categoryImage) : null;
-  const gallery = product?.productImages?.map((img) => img.url ?? img.URL).filter((u): u is string => !!u) ?? [];
-  const displayImage = activeImage ?? thumb;
   const availableTenures = (product?.paymentData ?? []).map((pt) => pt.paymentType);
   const price = pricingFor(tier, tenure);
+  const breakdown = taxBreakdown(tier?.finalProductPrice, tier?.gst);
 
   if (placedOrder) {
     const confirmed = placedOrder.status === "CONFIRMED";
@@ -200,164 +207,178 @@ function Page() {
       {isError && <p className="text-sm text-destructive py-10 text-center">Failed to load this product.</p>}
 
       {product && (
-        <div className="grid lg:grid-cols-2 gap-6 items-stretch">
-          <Panel title="Product" className="flex flex-col">
-            <div className="h-56 bg-stone rounded-md flex items-center justify-center overflow-hidden mb-4">
-              {displayImage ? (
-                <img src={displayImage} alt={product.productName} className="w-full h-full object-cover" />
-              ) : (
-                <Boxes className="h-14 w-14 text-muted-foreground" />
-              )}
-            </div>
-            {gallery.length > 1 && (
-              <div className="flex gap-2 flex-wrap mb-4">
-                {gallery.map((url) => (
-                  <button
-                    key={url}
-                    onClick={() => setActiveImage(url)}
-                    className={`h-14 w-14 rounded-md overflow-hidden border-2 ${displayImage === url ? "border-emerald-deep" : "border-line"}`}
-                  >
-                    <img src={url} alt="" className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
-            <div>
-              <h2 className="font-display text-2xl text-ink">{product.productName}</h2>
-              <p className="text-sm text-muted-foreground mt-1">SKU: {product.sku}</p>
-            </div>
-            <div className="flex items-center gap-2 flex-wrap mt-3">
-              <Badge variant="secondary">{product.weight}g</Badge>
-              {product.subCategory?.category?.metalType && (
-                <Badge variant="outline">
-                  {product.subCategory.category.metalType.metalType} · {product.subCategory.category.metalType.metalFitness}
-                </Badge>
-              )}
-              {product.isEmiAvailable && <Badge>EMI Available</Badge>}
-            </div>
-          </Panel>
-
-          <Panel title="Choose how to pay">
-              {availableTenures.length > 0 ? (
-                <div className="flex gap-2 flex-wrap mb-5">
-                  {(["spot", "three", "six", "nine"] as Tenure[])
-                    .filter((t) => t === "spot" || availableTenures.includes(t === "three" ? "3" : t === "six" ? "6" : "9"))
-                    .map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => setTenure(t)}
-                        className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
-                          tenure === t ? "bg-emerald-deep text-paper border-emerald-deep" : "border-line text-ink hover:border-emerald-deep"
-                        }`}
-                      >
-                        {TENURE_LABELS[t]}
-                      </button>
-                    ))}
-                </div>
-              ) : null}
-
-              <div className="rounded-md bg-stone p-4 grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs text-muted-foreground">{tenure === "spot" ? "Pay today" : "Down payment today"}</p>
-                  <p className="font-display text-2xl mt-1">{formatInr(price.dueToday)}</p>
-                </div>
-                {price.months > 0 && (
-                  <div>
-                    <p className="text-xs text-muted-foreground">Then, per month for {price.months} months</p>
-                    <p className="font-display text-2xl mt-1">{formatInr(price.monthly)}</p>
-                  </div>
-                )}
-              </div>
-              {tier?.productInitialPaymentPer != null && tenure !== "spot" && (
-                <p className="text-xs text-muted-foreground mt-2">
-                  Down payment is {tier.productInitialPaymentPer}% of the EMI plan value.{tier.gst != null ? ` Includes ${tier.gst}% GST.` : ""}
-                </p>
-              )}
-            </Panel>
-
-            <Panel title="Delivery &amp; identity details" className="lg:col-span-2">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-4">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
+            <div className="grid lg:grid-cols-[13fr_7fr] gap-6 lg:gap-10 items-start">
+              {/* ── Left column (~65%): action area ───────────────────────── */}
+              <div className="space-y-6 min-w-0">
+                <Panel title="Identity verification">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <FormField control={form.control} name="panCardNumber" render={({ field }) => (
                       <FormItem>
                         <FormLabel>PAN number</FormLabel>
-                        <FormControl><Input placeholder="ABCDE1234F" maxLength={10} {...field} /></FormControl>
+                        <FormControl><Input className="h-11" placeholder="ABCDE1234F" maxLength={10} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
                     <FormField control={form.control} name="dateOfBirth" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Date of birth</FormLabel>
-                        <FormControl><Input type="date" {...field} /></FormControl>
+                        <FormControl><Input className="h-11" type="date" {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
                   </div>
+                </Panel>
 
-                  <FormField control={form.control} name="addressLine" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Delivery address</FormLabel>
-                      <FormControl><Input {...field} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
+                <Panel title="Shipping address">
+                  <div className="space-y-4">
+                    <FormField control={form.control} name="addressLine" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Delivery address</FormLabel>
+                        <FormControl><Input className="h-11" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
 
-                  <div className="grid sm:grid-cols-3 gap-4">
-                    <FormField control={form.control} name="state" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>State</FormLabel>
-                        <Select
-                          value={field.value}
-                          onValueChange={(v) => { field.onChange(v); form.setValue("city", ""); }}
-                        >
-                          <FormControl>
-                            <SelectTrigger><SelectValue placeholder="Select state" /></SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {states?.map((s) => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
-                    <FormField control={form.control} name="city" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>City</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange} disabled={!stateValue}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={stateValue ? "Select city" : "Select a state first"} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {cities?.map((c) => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
-                    <FormField control={form.control} name="pincode" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Pincode</FormLabel>
-                        <FormControl><Input inputMode="numeric" maxLength={6} {...field} /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
+                    <div className="grid sm:grid-cols-[2fr_2fr_1.2fr] gap-4">
+                      <FormField control={form.control} name="state" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>State</FormLabel>
+                          <Select
+                            value={field.value}
+                            onValueChange={(v) => { field.onChange(v); form.setValue("city", ""); }}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="h-11"><SelectValue placeholder="Select state" /></SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {states?.map((s) => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="city" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>City</FormLabel>
+                          <Select value={field.value} onValueChange={field.onChange} disabled={!stateValue}>
+                            <FormControl>
+                              <SelectTrigger className="h-11">
+                                <SelectValue placeholder={stateValue ? "Select city" : "Select a state first"} />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {cities?.map((c) => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="pincode" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Pincode</FormLabel>
+                          <FormControl><Input className="h-11" inputMode="numeric" maxLength={6} {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </div>
+                  </div>
+                </Panel>
+              </div>
+
+              {/* ── Right column (~35%): sticky order summary ─────────────── */}
+              <div className="lg:sticky lg:top-24 space-y-6">
+                <Panel title="Order summary">
+                  <div className="flex items-center gap-3 pb-5 mb-5 border-b border-line">
+                    <div className="h-16 w-16 shrink-0 rounded-md border border-line overflow-hidden bg-stone grid place-items-center">
+                      {thumb ? (
+                        <img src={thumb} alt={product.productName} className="w-full h-full object-cover" />
+                      ) : (
+                        <Boxes className="h-6 w-6 text-muted-foreground" />
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-display text-base text-ink truncate">{product.productName}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">SKU: {product.sku}</p>
+                      <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{product.weight}g</Badge>
+                        {product.isEmiAvailable && <Badge className="text-[10px] px-1.5 py-0">EMI</Badge>}
+                      </div>
+                    </div>
                   </div>
 
-                  {submitError && (
-                    <p className="text-sm text-destructive text-center" role="alert">{submitError}</p>
+                  <p className="text-sm font-medium text-ink mb-3">Choose how to pay</p>
+                  {availableTenures.length > 0 ? (
+                    <div className="flex gap-2 flex-wrap mb-5">
+                      {(["spot", "three", "six", "nine"] as Tenure[])
+                        .filter((t) => t === "spot" || availableTenures.includes(t === "three" ? "3" : t === "six" ? "6" : "9"))
+                        .map((t) => (
+                          <button
+                            key={t}
+                            type="button"
+                            onClick={() => setTenure(t)}
+                            className={`px-3.5 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                              tenure === t ? "bg-emerald-deep text-paper border-emerald-deep" : "border-line text-ink hover:border-emerald-deep"
+                            }`}
+                          >
+                            {TENURE_LABELS[t]}
+                          </button>
+                        ))}
+                    </div>
+                  ) : null}
+
+                  <div className="space-y-2 text-sm border-t border-line pt-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span className="text-ink">{formatInr(breakdown.subtotal)}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">
+                        Taxes (GST{tier?.gst != null ? ` ${tier.gst}%` : ""})
+                      </span>
+                      <span className="text-ink">{formatInr(breakdown.tax)}</span>
+                    </div>
+                    <div className="flex items-center justify-between pt-2 mt-1 border-t border-line">
+                      <span className="font-medium text-ink">Total amount</span>
+                      <span className="font-display text-xl text-ink">{formatInr(breakdown.total)}</span>
+                    </div>
+                  </div>
+
+                  {tenure !== "spot" && (
+                    <div className="rounded-md bg-stone p-3.5 mt-4 space-y-1">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Due today (down payment)</span>
+                        <span className="font-medium text-ink">{formatInr(price.dueToday)}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Then, per month × {price.months}</span>
+                        <span className="font-medium text-ink">{formatInr(price.monthly)}</span>
+                      </div>
+                      {tier?.productInitialPaymentPer != null && (
+                        <p className="text-xs text-muted-foreground pt-1">
+                          Down payment is {tier.productInitialPaymentPer}% of the EMI plan value.
+                        </p>
+                      )}
+                    </div>
                   )}
 
-                  <Button type="submit" variant="pill" className="w-full justify-center" disabled={form.formState.isSubmitting}>
+                  {submitError && (
+                    <p className="text-sm text-destructive text-center mt-4" role="alert">{submitError}</p>
+                  )}
+
+                  <Button
+                    type="submit"
+                    className="w-full justify-center h-14 text-base font-medium mt-5"
+                    disabled={form.formState.isSubmitting}
+                  >
                     {form.formState.isSubmitting ? "Placing order…" : "Place order"}
                   </Button>
-                </form>
-              </Form>
-            </Panel>
-        </div>
+                </Panel>
+              </div>
+            </div>
+          </form>
+        </Form>
       )}
     </DashboardShell>
   );
