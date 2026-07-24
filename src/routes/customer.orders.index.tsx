@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { Boxes, ChevronRight } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
@@ -48,23 +49,25 @@ function Page() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-16"></TableHead>
                 <TableHead>Product</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Date</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead className="w-10"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading && (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center text-muted-foreground py-10">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-10">
                     Loading orders…
                   </TableCell>
                 </TableRow>
               )}
               {!isLoading && orders.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center text-muted-foreground py-10">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-10">
                     You haven't placed any orders yet.
                   </TableCell>
                 </TableRow>
@@ -75,14 +78,27 @@ function Page() {
                   className="cursor-pointer hover:bg-stone/60"
                   onClick={() => navigate({ to: "/customer/orders/$orderId", params: { orderId: String(order.id) } })}
                 >
-                  <TableCell>
-                    <p className="font-medium text-ink">{order.productName}</p>
-                    <p className="text-xs text-muted-foreground">{order.productWeight}g</p>
+                  <TableCell className="py-5">
+                    {/* Order history doesn't carry a per-order image (only the shop/detail
+                        views fetch Augmont product data) — a generic icon here avoids an
+                        extra product lookup per row. */}
+                    <div className="h-11 w-11 rounded-md border border-line bg-stone grid place-items-center">
+                      <Boxes className="h-4 w-4 text-muted-foreground" />
+                    </div>
                   </TableCell>
-                  <TableCell>{formatInr(order.finalOrderPrice ?? undefined)}</TableCell>
-                  <TableCell><OrderStatusBadge status={order.status} /></TableCell>
-                  <TableCell className="text-right text-sm text-muted-foreground">
+                  <TableCell className="py-5">
+                    <p className="font-semibold text-ink">{order.productName}</p>
+                    <p className="text-xs text-muted-foreground/80 font-light mt-0.5">{order.productWeight}g</p>
+                  </TableCell>
+                  <TableCell className="py-5">{formatInr(order.finalOrderPrice ?? undefined)}</TableCell>
+                  <TableCell className="py-5">
+                    <OrderStatusBadge status={order.status} className="rounded-full text-[11px] px-2 py-0" />
+                  </TableCell>
+                  <TableCell className="py-5 text-sm text-muted-foreground">
                     {new Date(order.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="py-5 text-right">
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </TableCell>
                 </TableRow>
               ))}

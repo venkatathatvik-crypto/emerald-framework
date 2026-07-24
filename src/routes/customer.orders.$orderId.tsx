@@ -4,7 +4,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
-import { ArrowLeft, RefreshCcw, FileText, Receipt, XCircle } from "lucide-react";
+import {
+  ArrowLeft, RefreshCcw, FileText, Receipt, XCircle, Boxes,
+  CheckCircle2, Circle, AlertTriangle, PackageX,
+} from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
@@ -12,9 +15,10 @@ import {
   getOrder, refreshOrderStatus, getOrderEmiSchedule, getOrderContractReceipt,
   getOrderProformaInvoiceReceipt, getOrderEmiReceipt, getOrderCancellationQuote, cancelOrder,
 } from "@/lib/api/customer";
+import { getProductDetails, getProductThumbnail, formatInr } from "@/lib/api/augmont";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
-import { formatInr } from "@/lib/api/augmont";
 import { ApiError } from "@/lib/api/types";
+import type { OrderResponse, OrderStatus } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -40,6 +44,74 @@ const cancelSchema = z.object({
 });
 type CancelValues = z.infer<typeof cancelSchema>;
 
+const TENURE_LABEL: Record<number, string> = {
+  1: "3-month EMI",
+  2: "6-month EMI",
+  3: "9-month EMI",
+  4: "Spot (pay in full)",
+};
+
+/**
+ * Ordered → Confirmed are the only stages this app can actually attest to —
+ * OrderStatus never advances past CONFIRMED in our own data, and Augmont
+ * gives us no shipping/delivery signal today. Shipped/Delivered are shown
+ * as real future stages (so the pattern is ready once that tracking
+ * exists) but are never marked complete, rather than faking progress.
+ */
+function OrderProgressStepper({ status }: { status: OrderStatus }) {
+  if (status === "CANCELLED") {
+    return (
+      <div className="flex items-center gap-2.5 text-destructive">
+        <PackageX className="h-5 w-5" />
+        <span className="text-sm font-medium">This order was cancelled</span>
+      </div>
+    );
+  }
+  if (status === "AUGMONT_FAILED") {
+    return (
+      <div className="flex items-center gap-2.5 text-gold">
+        <AlertTriangle className="h-5 w-5" />
+        <span className="text-sm font-medium">Needs attention — couldn't be confirmed with our gold partner</span>
+      </div>
+    );
+  }
+
+  const confirmed = status === "CONFIRMED";
+  const steps = [
+    { label: "Ordered", done: true, current: false },
+    { label: "Confirmed", done: confirmed, current: !confirmed },
+    { label: "Shipped", done: false, current: false },
+    { label: "Delivered", done: false, current: false },
+  ];
+
+  return (
+    <div>
+      <div className="flex items-center">
+        {steps.map((step, i) => (
+          <div key={step.label} className="flex items-center flex-1 last:flex-none">
+            <div className="flex flex-col items-center gap-1.5 shrink-0">
+              {step.done ? (
+                <CheckCircle2 className="h-6 w-6 text-emerald-deep" />
+              ) : step.current ? (
+                <Circle className="h-6 w-6 text-gold fill-gold/20" />
+              ) : (
+                <Circle className="h-6 w-6 text-line" />
+              )}
+              <span className={`text-xs whitespace-nowrap ${step.done || step.current ? "text-ink font-medium" : "text-muted-foreground"}`}>
+                {step.label}
+              </span>
+            </div>
+            {i < steps.length - 1 && (
+              <div className={`h-0.5 flex-1 mx-2 mb-5 ${steps[i + 1].done ? "bg-emerald-deep" : "bg-line"}`} />
+            )}
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-muted-foreground mt-3">Shipping and delivery tracking isn't available yet.</p>
+    </div>
+  );
+}
+
 function Page() {
   const { orderId } = Route.useParams();
   const { ready } = useRequireRole("ROLE_CUSTOMER");
@@ -58,6 +130,14 @@ function Page() {
     queryFn: () => getOrder(id),
     enabled,
   });
+
+  const { data: product } = useQuery({
+    queryKey: ["augmont", "product", order?.augmontProductId],
+    queryFn: () => getProductDetails(order!.augmontProductId),
+    enabled: enabled && !!order,
+    staleTime: 5 * 60 * 1000,
+  });
+  const thumb = product ? getProductThumbnail(product) : null;
 
   const canSyncAugmont = order?.augmontOrderId != null;
 
@@ -99,7 +179,7 @@ function Page() {
       const receipt = await fetcher();
       window.open(receipt.url, "_blank", "noopener,noreferrer");
     } catch {
-      // best-effort — the download button itself doesn't need its own error banner
+      // best-effort — the download action itself doesn't need its own error banner
     }
   }
 
@@ -119,135 +199,186 @@ function Page() {
 
   return (
     <DashboardShell role="customer" title="Order details">
-      <Link to="/customer/orders" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink mb-4">
-        <ArrowLeft className="h-3.5 w-3.5" /> Back to orders
-      </Link>
+      {/* ── Header bar ─────────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <Link to="/customer/orders" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
+          <ArrowLeft className="h-3.5 w-3.5" /> Back to orders
+        </Link>
+        {order && canSyncAugmont && (
+          <Button variant="pillOutline" size="sm" onClick={handleRefresh} disabled={isRefreshing}>
+            <RefreshCcw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+            {isRefreshing ? "Refreshing…" : "Refresh status"}
+          </Button>
+        )}
+      </div>
 
       {isLoading && <p className="text-sm text-muted-foreground py-10 text-center">Loading order…</p>}
       {isError && <p className="text-sm text-destructive py-10 text-center">Failed to load this order.</p>}
 
       {order && (
         <div className="space-y-6">
-          <Panel
-            title={order.productName}
-            action={
-              canSyncAugmont && (
-                <Button variant="pillOutline" size="sm" onClick={handleRefresh} disabled={isRefreshing}>
-                  <RefreshCcw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-                  {isRefreshing ? "Refreshing…" : "Refresh status"}
-                </Button>
-              )
-            }
-          >
-            <div className="flex items-center gap-2 mb-4 flex-wrap">
-              <OrderStatusBadge status={order.status} />
-              {order.augmontStatusName && (
-                <span className="text-xs text-muted-foreground">
-                  Augmont: {order.augmontStatusName}
-                  {order.augmontStatusSyncedAt && ` · synced ${new Date(order.augmontStatusSyncedAt).toLocaleString()}`}
-                </span>
+          <div className="grid lg:grid-cols-[13fr_7fr] gap-6 lg:gap-10 items-start">
+            {/* ── Left column (~65%) ─────────────────────────────────────── */}
+            <div className="space-y-6 min-w-0">
+              <Panel title="Product summary">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="h-16 w-16 shrink-0 rounded-md border border-line overflow-hidden bg-stone grid place-items-center">
+                    {thumb ? (
+                      <img src={thumb} alt={order.productName} className="w-full h-full object-cover" />
+                    ) : (
+                      <Boxes className="h-6 w-6 text-muted-foreground" />
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-display text-lg text-ink truncate">{order.productName}</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">
+                      SKU: {order.productSku} · {order.productWeight}g
+                    </p>
+                  </div>
+                  <div className="ml-auto">
+                    <OrderStatusBadge status={order.status} />
+                  </div>
+                </div>
+
+                <OrderProgressStepper status={order.status} />
+
+                {order.status === "AUGMONT_FAILED" && order.failureReason && (
+                  <p className="text-sm text-destructive mt-4">Augmont error: {order.failureReason}</p>
+                )}
+                {order.augmontStatusName && (
+                  <p className="text-xs text-muted-foreground mt-4">
+                    Augmont status: {order.augmontStatusName}
+                    {order.augmontStatusSyncedAt && ` · synced ${new Date(order.augmontStatusSyncedAt).toLocaleString()}`}
+                  </p>
+                )}
+              </Panel>
+
+              {canSyncAugmont && (
+                <Panel title="EMI schedule">
+                  {scheduleLoading && <p className="text-sm text-muted-foreground py-8 text-center">Loading schedule…</p>}
+                  {!scheduleLoading && (!schedule || schedule.orderemidetails.length === 0) && (
+                    <p className="text-sm text-muted-foreground py-8 text-center">
+                      {order.paymentTypeId === 4 ? "This was a spot order — no EMI schedule." : "No EMI schedule found."}
+                    </p>
+                  )}
+                  {!scheduleLoading && schedule && schedule.orderemidetails.length > 0 && (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="py-3">Installment</TableHead>
+                          <TableHead className="py-3">Due date</TableHead>
+                          <TableHead className="py-3">Amount</TableHead>
+                          <TableHead className="py-3">Status</TableHead>
+                          <TableHead className="py-3 text-right">Receipt</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {schedule.orderemidetails.map((emi) => (
+                          <TableRow key={emi.emiId}>
+                            <TableCell className="py-4">{emi.paymentDescription}</TableCell>
+                            <TableCell className="py-4">{new Date(emi.dueDate).toLocaleDateString()}</TableCell>
+                            <TableCell className="py-4">{formatInr(emi.emiAmount)}</TableCell>
+                            <TableCell className="py-4 capitalize">{emi.orderemistatus?.statusName ?? "—"}</TableCell>
+                            <TableCell className="py-4 text-right">
+                              {emi.paymentRecievedDate ? (
+                                <Button
+                                  variant="pillOutline"
+                                  size="sm"
+                                  onClick={() => openReceipt(() => getOrderEmiReceipt(id, emi.emiId))}
+                                >
+                                  <Receipt className="h-3.5 w-3.5" /> Receipt
+                                </Button>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">—</span>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </Panel>
               )}
             </div>
-            <div className="grid sm:grid-cols-3 gap-4 text-sm">
-              <div>
-                <p className="text-muted-foreground">Product</p>
-                <p>{order.productName}</p>
-                <p className="text-xs text-muted-foreground">{order.productWeight}g</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Amount</p>
-                <p>{formatInr(order.finalOrderPrice ?? undefined)}</p>
-                <p className="text-xs text-muted-foreground">
-                  {order.monthlyAmount ? `${formatInr(order.monthlyAmount)}/mo` : "Spot"}
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Placed</p>
-                <p>{new Date(order.createdAt).toLocaleDateString()}</p>
-                <p className="text-xs text-muted-foreground">{order.merchantTransactionId}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Delivery address</p>
-                <p>{order.deliveryAddress}</p>
-                <p className="text-xs text-muted-foreground">
+
+            {/* ── Right column (~35%) ────────────────────────────────────── */}
+            <div className="space-y-6">
+              <Panel title="Delivery address">
+                <p className="text-sm text-ink">{order.deliveryAddress}</p>
+                <p className="text-sm text-muted-foreground mt-1">
                   {order.deliveryCity}, {order.deliveryState} {order.deliveryPincode}
                 </p>
-              </div>
+              </Panel>
+
+              <Panel title="Payment summary">
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Plan</span>
+                    <span className="text-ink">{TENURE_LABEL[order.paymentTypeId] ?? "—"}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Order value</span>
+                    <span className="text-ink">{formatInr(order.finalOrderPrice ?? undefined)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">
+                      {order.paymentTypeId === 4 ? "Paid" : "Down payment"}
+                    </span>
+                    <span className="text-ink">{formatInr(order.initialPayment ?? undefined)}</span>
+                  </div>
+                  {order.monthlyAmount != null && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Monthly EMI</span>
+                      <span className="text-ink">{formatInr(order.monthlyAmount)}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between pt-2 mt-1 border-t border-line">
+                    <span className="text-muted-foreground">Placed on</span>
+                    <span className="text-ink">{new Date(order.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Reference</span>
+                    <span className="text-ink text-xs">{order.merchantTransactionId}</span>
+                  </div>
+                </div>
+              </Panel>
+
+              {canSyncAugmont && (
+                <Panel title="Documents">
+                  <div className="divide-y divide-line">
+                    <button
+                      onClick={() => openReceipt(() => getOrderContractReceipt(id))}
+                      className="w-full flex items-center gap-3 py-3 text-sm text-ink hover:text-emerald-deep transition-colors"
+                    >
+                      <FileText className="h-4 w-4 text-muted-foreground" />
+                      Contract
+                    </button>
+                    <button
+                      onClick={() => openReceipt(() => getOrderProformaInvoiceReceipt(id))}
+                      className="w-full flex items-center gap-3 py-3 text-sm text-ink hover:text-emerald-deep transition-colors"
+                    >
+                      <FileText className="h-4 w-4 text-muted-foreground" />
+                      Proforma invoice
+                    </button>
+                  </div>
+                </Panel>
+              )}
             </div>
-            {order.status === "AUGMONT_FAILED" && order.failureReason && (
-              <p className="text-sm text-destructive mt-4">Augmont error: {order.failureReason}</p>
-            )}
-          </Panel>
+          </div>
 
-          {canSyncAugmont && (
-            <Panel title="Documents">
-              <div className="flex flex-wrap gap-3">
-                <Button variant="pillOutline" size="sm" onClick={() => openReceipt(() => getOrderContractReceipt(id))}>
-                  <FileText className="h-3.5 w-3.5" /> Contract
-                </Button>
-                <Button variant="pillOutline" size="sm" onClick={() => openReceipt(() => getOrderProformaInvoiceReceipt(id))}>
-                  <FileText className="h-3.5 w-3.5" /> Proforma invoice
-                </Button>
-              </div>
-            </Panel>
-          )}
-
-          {canSyncAugmont && (
-            <Panel title="EMI schedule">
-              {scheduleLoading && <p className="text-sm text-muted-foreground py-6 text-center">Loading schedule…</p>}
-              {!scheduleLoading && (!schedule || schedule.orderemidetails.length === 0) && (
-                <p className="text-sm text-muted-foreground py-6 text-center">
-                  {order.paymentTypeId === 4 ? "This was a spot order — no EMI schedule." : "No EMI schedule found."}
-                </p>
-              )}
-              {!scheduleLoading && schedule && schedule.orderemidetails.length > 0 && (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Installment</TableHead>
-                      <TableHead>Due date</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Receipt</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {schedule.orderemidetails.map((emi) => (
-                      <TableRow key={emi.emiId}>
-                        <TableCell>{emi.paymentDescription}</TableCell>
-                        <TableCell>{new Date(emi.dueDate).toLocaleDateString()}</TableCell>
-                        <TableCell>{formatInr(emi.emiAmount)}</TableCell>
-                        <TableCell className="capitalize">{emi.orderemistatus?.statusName ?? "—"}</TableCell>
-                        <TableCell className="text-right">
-                          {emi.paymentRecievedDate ? (
-                            <Button
-                              variant="pillOutline"
-                              size="sm"
-                              onClick={() => openReceipt(() => getOrderEmiReceipt(id, emi.emiId))}
-                            >
-                              <Receipt className="h-3.5 w-3.5" /> Receipt
-                            </Button>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </Panel>
-          )}
-
+          {/* ── Cancel — deliberately de-emphasized, full width, page bottom ── */}
           {order.status === "CONFIRMED" && (
-            <Panel title="Cancel this order">
-              <p className="text-sm text-muted-foreground mb-4">
-                Cancelling stops future EMIs and refunds any eligible balance to your bank account, minus applicable charges.
+            <div className="flex items-center justify-between border-t border-line pt-4">
+              <p className="text-xs text-muted-foreground">
+                Cancelling stops future EMIs and refunds any eligible balance, minus applicable charges.
               </p>
-              <Button variant="pillOutline" size="sm" onClick={() => setCancelStep("quote")}>
+              <button
+                onClick={() => setCancelStep("quote")}
+                className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive transition-colors shrink-0 ml-4"
+              >
                 <XCircle className="h-3.5 w-3.5" /> Cancel order
-              </Button>
-            </Panel>
+              </button>
+            </div>
           )}
         </div>
       )}
