@@ -230,6 +230,7 @@ function Page() {
                     )}
                   </div>
                   <div className="min-w-0">
+                    <p className="text-xs text-muted-foreground">Order #{order.id}</p>
                     <p className="font-display text-lg text-ink truncate">{order.productName}</p>
                     <p className="text-sm text-muted-foreground mt-0.5">
                       SKU: {order.productSku} · {order.productWeight}g
