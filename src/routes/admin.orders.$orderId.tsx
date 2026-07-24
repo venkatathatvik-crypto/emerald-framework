@@ -135,6 +135,13 @@ function Page() {
                 <p>{new Date(order.createdAt).toLocaleDateString()}</p>
                 <p className="text-xs text-muted-foreground">by {order.createdByName}</p>
               </div>
+              {canSyncAugmont && (
+                <div>
+                  <p className="text-muted-foreground">Augmont order ID</p>
+                  <p>{order.augmontOrderId}</p>
+                  <p className="text-xs text-muted-foreground">{order.augmontOrderUniqueId}</p>
+                </div>
+              )}
             </div>
             {order.status === "AUGMONT_FAILED" && order.failureReason && (
               <p className="text-sm text-destructive mt-4">Augmont error: {order.failureReason}</p>
