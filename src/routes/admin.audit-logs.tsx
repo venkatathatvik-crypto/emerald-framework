@@ -22,6 +22,7 @@ import { useRequireRole } from "@/hooks/use-require-role";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   Table,
   TableBody,
@@ -162,9 +163,33 @@ function Page() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [sortField, setSortField] = useState<
+    "timestamp" | "category" | "action" | "actor" | "status"
+  >("timestamp");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [exportConfirmOpen, setExportConfirmOpen] = useState(false);
 
   if (!ready) return null;
+
+  const toggleSort = (field: typeof sortField) => {
+    if (sortField === field) {
+      setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
+
+  const renderSortIcon = (field: typeof sortField) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0 ml-1" />;
+    }
+    return sortDir === "asc" ? (
+      <ArrowUp className="h-3.5 w-3.5 text-primary shrink-0 ml-1" />
+    ) : (
+      <ArrowDown className="h-3.5 w-3.5 text-primary shrink-0 ml-1" />
+    );
+  };
 
   const filteredLogs = MOCK_AUDIT_LOGS.filter((log) => {
     const matchesSearch =
@@ -179,9 +204,29 @@ function Page() {
 
     return matchesSearch && matchesCategory && matchesStatus;
   }).sort((a, b) => {
-    const timeA = new Date(a.timestamp).getTime();
-    const timeB = new Date(b.timestamp).getTime();
-    return sortDir === "desc" ? timeB - timeA : timeA - timeB;
+    let valA = "";
+    let valB = "";
+
+    if (sortField === "timestamp") {
+      const timeA = new Date(a.timestamp).getTime();
+      const timeB = new Date(b.timestamp).getTime();
+      return sortDir === "desc" ? timeB - timeA : timeA - timeB;
+    } else if (sortField === "category") {
+      valA = a.category;
+      valB = b.category;
+    } else if (sortField === "action") {
+      valA = a.action;
+      valB = b.action;
+    } else if (sortField === "actor") {
+      valA = a.actor.name;
+      valB = b.actor.name;
+    } else if (sortField === "status") {
+      valA = a.status;
+      valB = b.status;
+    }
+
+    const comp = valA.localeCompare(valB);
+    return sortDir === "asc" ? comp : -comp;
   });
 
   const getCategoryBadge = (cat: AuditLogEntry["category"]) => {
@@ -252,11 +297,7 @@ function Page() {
         <Panel
           title="Administrative System Audit Feed"
           action={
-            <Button
-              variant="pillOutline"
-              size="sm"
-              onClick={() => alert("Audit log report exported as CSV.")}
-            >
+            <Button variant="pillOutline" size="sm" onClick={() => setExportConfirmOpen(true)}>
               <Download className="h-3.5 w-3.5 mr-1.5" /> Export Audit Log
             </Button>
           }
@@ -310,14 +351,9 @@ function Page() {
                 variant="outline"
                 size="sm"
                 className="h-9 text-xs"
-                onClick={() => setSortDir((prev) => (prev === "desc" ? "asc" : "desc"))}
+                onClick={() => toggleSort("timestamp")}
               >
-                Time{" "}
-                {sortDir === "desc" ? (
-                  <ArrowDown className="h-3.5 w-3.5 ml-1" />
-                ) : (
-                  <ArrowUp className="h-3.5 w-3.5 ml-1" />
-                )}
+                Time {renderSortIcon("timestamp")}
               </Button>
             </div>
           </div>
@@ -326,13 +362,53 @@ function Page() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Timestamp / Log ID</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Action</TableHead>
-                <TableHead>Actor / Role</TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("timestamp")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Timestamp / Log ID</span>
+                    {renderSortIcon("timestamp")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("category")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Category</span>
+                    {renderSortIcon("category")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("action")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Action</span>
+                    {renderSortIcon("action")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("actor")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Actor / Role</span>
+                    {renderSortIcon("actor")}
+                  </button>
+                </TableHead>
                 <TableHead>Target Entity</TableHead>
                 <TableHead>IP Address</TableHead>
-                <TableHead className="text-right">Result</TableHead>
+                <TableHead className="text-right">
+                  <button
+                    onClick={() => toggleSort("status")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none ml-auto"
+                  >
+                    <span>Result</span>
+                    {renderSortIcon("status")}
+                  </button>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -384,6 +460,18 @@ function Page() {
           </Table>
         </Panel>
       </div>
+
+      {/* Confirmation Dialog for Export */}
+      <ConfirmDialog
+        open={exportConfirmOpen}
+        onOpenChange={setExportConfirmOpen}
+        title="Export System Audit Logs?"
+        description="Are you sure you want to download an encrypted CSV dump of all administrative audit logs? This action will be recorded in the security log."
+        confirmText="Export CSV"
+        onConfirm={() => {
+          alert("Audit log CSV exported successfully.");
+        }}
+      />
     </DashboardShell>
   );
 }
