@@ -171,7 +171,11 @@ function Page() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [exportConfirmOpen, setExportConfirmOpen] = useState(false);
 
-  const { data: apiData } = useQuery({
+  const {
+    data: apiData,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["admin", "audit-logs", search, categoryFilter, statusFilter],
     queryFn: () =>
       listAuditLogs({
@@ -184,10 +188,10 @@ function Page() {
 
   if (!ready) return null;
 
-  const logsToDisplay: AuditLogEntry[] =
-    apiData?.items && apiData.items.length > 0
-      ? (apiData.items as AuditLogEntry[])
-      : MOCK_AUDIT_LOGS;
+  const isLiveBackend = !!apiData && !isError;
+  const logsToDisplay: AuditLogEntry[] = isLiveBackend
+    ? (apiData.items as AuditLogEntry[])
+    : MOCK_AUDIT_LOGS;
 
   const toggleSort = (field: typeof sortField) => {
     if (sortField === field) {
@@ -317,9 +321,24 @@ function Page() {
         <Panel
           title="Administrative System Audit Feed"
           action={
-            <Button variant="pillOutline" size="sm" onClick={() => setExportConfirmOpen(true)}>
-              <Download className="h-3.5 w-3.5 mr-1.5" /> Export Audit Log
-            </Button>
+            <div className="flex items-center gap-2">
+              <Badge
+                variant="outline"
+                className={
+                  isLiveBackend
+                    ? "border-emerald-600/40 text-emerald-700 bg-emerald-50 dark:bg-emerald-950/30 text-[11px]"
+                    : "border-amber-600/40 text-amber-700 bg-amber-50 dark:bg-amber-950/30 text-[11px]"
+                }
+              >
+                <span
+                  className={`h-2 w-2 rounded-full mr-1.5 ${isLiveBackend ? "bg-emerald-500 animate-pulse" : "bg-amber-500"}`}
+                />
+                {isLiveBackend ? "Spring Boot Live Feed" : "Demo Mode"}
+              </Badge>
+              <Button variant="pillOutline" size="sm" onClick={() => setExportConfirmOpen(true)}>
+                <Download className="h-3.5 w-3.5 mr-1.5" /> Export Audit Log
+              </Button>
+            </div>
           }
         >
           {/* Filters Row */}
