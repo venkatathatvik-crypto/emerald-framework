@@ -1,13 +1,4 @@
-import {
-  CheckCircle2,
-  Circle,
-  PackageX,
-  AlertTriangle,
-  Clock,
-  Truck,
-  PackageCheck,
-  Building2,
-} from "lucide-react";
+import { Check, PackageX, AlertTriangle } from "lucide-react";
 import type { OrderStatus } from "@/lib/api/types";
 
 interface OrderProgressionStepperProps {
@@ -59,7 +50,6 @@ export function OrderProgressionStepper({
     {
       id: "placed",
       label: "Order Placed",
-      icon: Clock,
       done: true,
       current: isPending,
       description: createdAt ? new Date(createdAt).toLocaleDateString() : "Received",
@@ -67,7 +57,6 @@ export function OrderProgressionStepper({
     {
       id: "payment",
       label: "Payment Confirmed",
-      icon: CheckCircle2,
       done: isConfirmed,
       current: false,
       description: isConfirmed ? "EMI Active" : "Pending",
@@ -75,7 +64,6 @@ export function OrderProgressionStepper({
     {
       id: "augmont",
       label: "Augmont Booked",
-      icon: Building2,
       done: isConfirmed && Boolean(augmontStatusName),
       current: isConfirmed && !augmontStatusName,
       description: augmontStatusName ? augmontStatusName : isConfirmed ? "Syncing…" : "Awaiting",
@@ -83,7 +71,6 @@ export function OrderProgressionStepper({
     {
       id: "dispatched",
       label: "Dispatched",
-      icon: Truck,
       done: false,
       current: false,
       description: "Vault Dispatch",
@@ -91,7 +78,6 @@ export function OrderProgressionStepper({
     {
       id: "transit",
       label: "In Transit",
-      icon: Truck,
       done: false,
       current: false,
       description: "Courier Partner",
@@ -99,62 +85,63 @@ export function OrderProgressionStepper({
     {
       id: "delivered",
       label: "Delivered",
-      icon: PackageCheck,
       done: false,
       current: false,
       description: "Secure Delivery",
     },
   ];
 
+  // Calculate filled progress track percentage
+  const completedCount = stages.filter((s) => s.done).length;
+  const progressPercent = Math.max(
+    0,
+    Math.min(100, ((completedCount - 1) / (stages.length - 1)) * 100),
+  );
+
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full py-4 px-2 sm:px-4">
       <div className="relative flex items-center justify-between">
-        {/* Connection line behind step icons */}
+        {/* Background line track */}
+        <div className="absolute top-2.5 left-4 right-4 h-0.5 bg-line -z-0" />
+
+        {/* Active progress fill line */}
         <div
-          className="absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 bg-line"
-          aria-hidden="true"
+          className="absolute top-2.5 left-4 h-0.5 bg-emerald transition-all duration-500 -z-0"
+          style={{
+            width: `calc(${progressPercent}% * (100% - 32px) / 100)`,
+          }}
         />
 
-        {stages.map((stage, idx) => {
-          const IconComponent = stage.icon;
-          return (
-            <div
-              key={stage.id}
-              className="relative flex flex-col items-center group z-10 bg-surface px-1"
-            >
-              <div
-                className={`flex h-9 w-9 items-center justify-center rounded-full border-2 transition-all ${
-                  stage.done
-                    ? "border-emerald bg-emerald text-white"
-                    : stage.current
-                      ? "border-primary bg-primary/10 text-primary ring-4 ring-primary/20"
-                      : "border-line bg-paper text-muted-foreground"
+        {stages.map((stage) => (
+          <div key={stage.id} className="relative flex flex-col items-center group z-10">
+            {/* Timeline Dot Node */}
+            <div className="bg-card p-1 rounded-full flex items-center justify-center">
+              {stage.done ? (
+                <div className="h-4 w-4 rounded-full bg-emerald text-white flex items-center justify-center shadow-xs">
+                  <Check className="h-2.5 w-2.5 stroke-[3]" />
+                </div>
+              ) : stage.current ? (
+                <div className="h-4 w-4 rounded-full bg-primary ring-4 ring-primary/25 animate-pulse" />
+              ) : (
+                <div className="h-3 w-3 rounded-full bg-stone border-2 border-line" />
+              )}
+            </div>
+
+            {/* Stage Label Below Dot */}
+            <div className="mt-3 text-center">
+              <p
+                className={`text-xs font-medium ${
+                  stage.done || stage.current ? "text-ink" : "text-muted-foreground/70"
                 }`}
               >
-                {stage.done ? (
-                  <CheckCircle2 className="h-5 w-5" />
-                ) : stage.current ? (
-                  <IconComponent className="h-4 w-4 animate-pulse" />
-                ) : (
-                  <Circle className="h-4 w-4 text-muted-foreground/40" />
-                )}
-              </div>
-
-              <div className="mt-2 text-center">
-                <p
-                  className={`text-xs font-semibold ${
-                    stage.done || stage.current ? "text-ink" : "text-muted-foreground"
-                  }`}
-                >
-                  {stage.label}
-                </p>
-                <p className="text-[10px] text-muted-foreground/80 font-light hidden sm:block">
-                  {stage.description}
-                </p>
-              </div>
+                {stage.label}
+              </p>
+              <p className="text-[10px] text-muted-foreground/80 font-light mt-0.5 hidden sm:block">
+                {stage.description}
+              </p>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </div>
   );
