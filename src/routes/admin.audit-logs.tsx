@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { listAuditLogs } from "@/lib/api/admin";
 import {
   ShieldAlert,
   Search,
@@ -169,7 +171,23 @@ function Page() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [exportConfirmOpen, setExportConfirmOpen] = useState(false);
 
+  const { data: apiData } = useQuery({
+    queryKey: ["admin", "audit-logs", search, categoryFilter, statusFilter],
+    queryFn: () =>
+      listAuditLogs({
+        q: search || undefined,
+        category: categoryFilter,
+        status: statusFilter,
+      }),
+    enabled: ready,
+  });
+
   if (!ready) return null;
+
+  const logsToDisplay: AuditLogEntry[] =
+    apiData?.items && apiData.items.length > 0
+      ? (apiData.items as AuditLogEntry[])
+      : MOCK_AUDIT_LOGS;
 
   const toggleSort = (field: typeof sortField) => {
     if (sortField === field) {
@@ -191,43 +209,45 @@ function Page() {
     );
   };
 
-  const filteredLogs = MOCK_AUDIT_LOGS.filter((log) => {
-    const matchesSearch =
-      !search ||
-      log.action.toLowerCase().includes(search.toLowerCase()) ||
-      log.actor.name.toLowerCase().includes(search.toLowerCase()) ||
-      log.targetEntity.toLowerCase().includes(search.toLowerCase()) ||
-      log.id.toLowerCase().includes(search.toLowerCase());
+  const filteredLogs = logsToDisplay
+    .filter((log) => {
+      const matchesSearch =
+        !search ||
+        log.action.toLowerCase().includes(search.toLowerCase()) ||
+        log.actor.name.toLowerCase().includes(search.toLowerCase()) ||
+        log.targetEntity.toLowerCase().includes(search.toLowerCase()) ||
+        log.id.toLowerCase().includes(search.toLowerCase());
 
-    const matchesCategory = categoryFilter === "ALL" || log.category === categoryFilter;
-    const matchesStatus = statusFilter === "ALL" || log.status === statusFilter;
+      const matchesCategory = categoryFilter === "ALL" || log.category === categoryFilter;
+      const matchesStatus = statusFilter === "ALL" || log.status === statusFilter;
 
-    return matchesSearch && matchesCategory && matchesStatus;
-  }).sort((a, b) => {
-    let valA = "";
-    let valB = "";
+      return matchesSearch && matchesCategory && matchesStatus;
+    })
+    .sort((a, b) => {
+      let valA = "";
+      let valB = "";
 
-    if (sortField === "timestamp") {
-      const timeA = new Date(a.timestamp).getTime();
-      const timeB = new Date(b.timestamp).getTime();
-      return sortDir === "desc" ? timeB - timeA : timeA - timeB;
-    } else if (sortField === "category") {
-      valA = a.category;
-      valB = b.category;
-    } else if (sortField === "action") {
-      valA = a.action;
-      valB = b.action;
-    } else if (sortField === "actor") {
-      valA = a.actor.name;
-      valB = b.actor.name;
-    } else if (sortField === "status") {
-      valA = a.status;
-      valB = b.status;
-    }
+      if (sortField === "timestamp") {
+        const timeA = new Date(a.timestamp).getTime();
+        const timeB = new Date(b.timestamp).getTime();
+        return sortDir === "desc" ? timeB - timeA : timeA - timeB;
+      } else if (sortField === "category") {
+        valA = a.category;
+        valB = b.category;
+      } else if (sortField === "action") {
+        valA = a.action;
+        valB = b.action;
+      } else if (sortField === "actor") {
+        valA = a.actor.name;
+        valB = b.actor.name;
+      } else if (sortField === "status") {
+        valA = a.status;
+        valB = b.status;
+      }
 
-    const comp = valA.localeCompare(valB);
-    return sortDir === "asc" ? comp : -comp;
-  });
+      const comp = valA.localeCompare(valB);
+      return sortDir === "asc" ? comp : -comp;
+    });
 
   const getCategoryBadge = (cat: AuditLogEntry["category"]) => {
     switch (cat) {

@@ -198,3 +198,47 @@ export function getOrderProformaInvoiceReceipt(orderId: number): Promise<Augmont
 export function getOrderEmiReceipt(orderId: number, emiId: number): Promise<AugmontReceipt> {
   return apiFetch<AugmontReceipt>(`/api/v1/admin/orders/${orderId}/receipts/emi/${emiId}`);
 }
+
+export interface ListAuditLogsParams {
+  q?: string;
+  category?: string;
+  status?: string;
+  page?: number;
+  size?: number;
+}
+
+export interface ApiAuditLogEntry {
+  id: string;
+  timestamp: string;
+  category:
+    | "AUTH"
+    | "ORDER_MUTATION"
+    | "AUGMONT_SYNC"
+    | "PARTNER_ONBOARDING"
+    | "BRANCH_ACTIONS"
+    | "AGENT_ACTIONS"
+    | "CUSTOMER_ACTIONS";
+  action: string;
+  actor: {
+    name: string;
+    email: string;
+    role: string;
+  };
+  targetEntity: string;
+  ipAddress: string;
+  status: "SUCCESS" | "WARNING" | "FAILURE";
+  details: string;
+}
+
+/** Paged administrative system audit logs. */
+export function listAuditLogs(params: ListAuditLogsParams = {}): Promise<Paged<ApiAuditLogEntry>> {
+  return apiFetch<Paged<ApiAuditLogEntry>>("/api/v1/admin/audit-logs", {
+    query: {
+      q: params.q,
+      category: params.category === "ALL" ? undefined : params.category,
+      status: params.status === "ALL" ? undefined : params.status,
+      page: params.page ?? 0,
+      size: params.size ?? 50,
+    },
+  });
+}
