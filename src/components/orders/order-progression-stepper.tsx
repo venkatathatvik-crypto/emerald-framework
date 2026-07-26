@@ -99,44 +99,48 @@ export function OrderProgressionStepper({
   );
 
   return (
-    <div className="w-full py-4 px-2 sm:px-4">
+    <div className="w-full py-2">
       <div className="relative flex items-center justify-between">
-        {/* Background line track */}
-        <div className="absolute top-2.5 left-4 right-4 h-0.5 bg-line -z-0" />
+        {/* Background track line */}
+        <div className="absolute top-2.5 left-6 right-6 h-1 bg-slate-200 dark:bg-slate-700 rounded-full -z-0" />
 
         {/* Active progress fill line */}
         <div
-          className="absolute top-2.5 left-4 h-0.5 bg-emerald transition-all duration-500 -z-0"
+          className="absolute top-2.5 left-6 h-1 bg-emerald-600 dark:bg-emerald-500 rounded-full transition-all duration-500 -z-0"
           style={{
-            width: `calc(${progressPercent}% * (100% - 32px) / 100)`,
+            width: `calc(${progressPercent}% * (100% - 48px) / 100)`,
           }}
         />
 
         {stages.map((stage) => (
           <div key={stage.id} className="relative flex flex-col items-center group z-10">
-            {/* Timeline Dot Node */}
-            <div className="bg-card p-1 rounded-full flex items-center justify-center">
+            {/* Timeline Dot Node (No white gaps, solid colored nodes) */}
+            <div className="h-6 w-6 flex items-center justify-center">
               {stage.done ? (
-                <div className="h-4 w-4 rounded-full bg-emerald text-white flex items-center justify-center shadow-xs">
-                  <Check className="h-2.5 w-2.5 stroke-[3]" />
+                <div className="h-5 w-5 rounded-full bg-emerald-600 dark:bg-emerald-500 text-white flex items-center justify-center shadow-xs">
+                  <Check className="h-3 w-3 stroke-[3]" />
                 </div>
               ) : stage.current ? (
-                <div className="h-4 w-4 rounded-full bg-primary ring-4 ring-primary/25 animate-pulse" />
+                <div className="h-5 w-5 rounded-full bg-primary ring-4 ring-primary/20 flex items-center justify-center animate-pulse">
+                  <div className="h-2 w-2 rounded-full bg-white" />
+                </div>
               ) : (
-                <div className="h-3 w-3 rounded-full bg-stone border-2 border-line" />
+                <div className="h-3.5 w-3.5 rounded-full bg-slate-300 dark:bg-slate-600 border border-slate-400 dark:border-slate-500" />
               )}
             </div>
 
             {/* Stage Label Below Dot */}
-            <div className="mt-3 text-center">
+            <div className="mt-2 text-center">
               <p
-                className={`text-xs font-medium ${
-                  stage.done || stage.current ? "text-ink" : "text-muted-foreground/70"
+                className={`text-xs ${
+                  stage.done || stage.current
+                    ? "font-semibold text-foreground"
+                    : "font-medium text-muted-foreground/75"
                 }`}
               >
                 {stage.label}
               </p>
-              <p className="text-[10px] text-muted-foreground/80 font-light mt-0.5 hidden sm:block">
+              <p className="text-[11px] text-muted-foreground/80 font-normal mt-0.5 hidden sm:block">
                 {stage.description}
               </p>
             </div>

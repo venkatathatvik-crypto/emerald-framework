@@ -120,7 +120,7 @@ export function OrderDetailLayout({
             </div>
           }
         >
-          <div className="flex flex-wrap items-center gap-3 mb-6 pb-4 border-b border-line">
+          <div className="flex flex-wrap items-center gap-3 mb-4">
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground">Status:</span>
               <OrderStatusBadge status={order.status} />
