@@ -331,7 +331,9 @@ function Page() {
                 }
               >
                 <span
-                  className={`h-2 w-2 rounded-full mr-1.5 ${isLiveBackend ? "bg-emerald-500 animate-pulse" : "bg-amber-500"}`}
+                  className={`h-2 w-2 rounded-full mr-1.5 ${
+                    isLiveBackend ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
+                  }`}
                 />
                 {isLiveBackend ? "Spring Boot Live Feed" : "Demo Mode"}
               </Badge>
@@ -341,6 +343,27 @@ function Page() {
             </div>
           }
         >
+          {/* Unauthenticated / Demo Mode Notice Banner */}
+          {!isLiveBackend && (
+            <div className="mb-4 p-3 rounded-lg border border-amber-600/30 bg-amber-50/60 dark:bg-amber-950/20 text-xs text-amber-900 dark:text-amber-300 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <ShieldAlert className="h-4 w-4 shrink-0 text-amber-600" />
+                <span>
+                  Currently rendering demo fallback logs. Log in with Admin credentials (
+                  <code>test-admin@yopmail.com</code>) to connect live to PostgreSQL database.
+                </span>
+              </div>
+              <Link to="/login" className="shrink-0">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 text-xs border-amber-600/40 text-amber-900 dark:text-amber-200"
+                >
+                  Sign In
+                </Button>
+              </Link>
+            </div>
+          )}
           {/* Filters Row */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6">
             <div className="relative w-full sm:w-80">
