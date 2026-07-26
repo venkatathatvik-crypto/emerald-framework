@@ -188,50 +188,59 @@ function Page() {
     switch (cat) {
       case "AUTH":
         return (
-          <Badge variant="outline">
-            <KeyRound className="h-3 w-3 mr-1" /> AUTH
+          <Badge
+            variant="outline"
+            className="border-slate-500/40 text-slate-700 dark:text-slate-300"
+          >
+            <KeyRound className="h-3 w-3 mr-1 text-slate-500" /> AUTH
           </Badge>
         );
       case "ORDER_MUTATION":
         return (
-          <Badge variant="secondary">
-            <Package className="h-3 w-3 mr-1" /> ORDER
+          <Badge
+            variant="outline"
+            className="border-amber-600/40 text-amber-700 dark:text-amber-400"
+          >
+            <Package className="h-3 w-3 mr-1 text-amber-600" /> ORDER
           </Badge>
         );
       case "AUGMONT_SYNC":
         return (
-          <Badge variant="default" className="bg-emerald text-white">
-            <ShieldAlert className="h-3 w-3 mr-1" /> AUGMONT
+          <Badge
+            variant="outline"
+            className="border-emerald-600/40 text-emerald-700 dark:text-emerald-400"
+          >
+            <ShieldAlert className="h-3 w-3 mr-1 text-emerald-600" /> AUGMONT
           </Badge>
         );
       case "PARTNER_ONBOARDING":
         return (
           <Badge
             variant="outline"
-            className="border-purple-500/40 text-purple-600 dark:text-purple-400"
+            className="border-purple-600/40 text-purple-700 dark:text-purple-400"
           >
-            <UserCheck className="h-3 w-3 mr-1" /> PARTNER
+            <UserCheck className="h-3 w-3 mr-1 text-purple-600" /> PARTNER
           </Badge>
         );
       case "BRANCH_ACTIONS":
         return (
-          <Badge variant="outline" className="border-blue-500/40 text-blue-600 dark:text-blue-400">
-            <Building2 className="h-3 w-3 mr-1" /> BRANCH
+          <Badge variant="outline" className="border-blue-600/40 text-blue-700 dark:text-blue-400">
+            <Building2 className="h-3 w-3 mr-1 text-blue-600" /> BRANCH
           </Badge>
         );
       case "AGENT_ACTIONS":
         return (
           <Badge
             variant="outline"
-            className="border-amber-500/40 text-amber-600 dark:text-amber-400"
+            className="border-orange-600/40 text-orange-700 dark:text-orange-400"
           >
-            <User className="h-3 w-3 mr-1" /> AGENT
+            <User className="h-3 w-3 mr-1 text-orange-600" /> AGENT
           </Badge>
         );
       case "CUSTOMER_ACTIONS":
         return (
-          <Badge variant="secondary">
-            <User className="h-3 w-3 mr-1" /> CUSTOMER
+          <Badge variant="outline" className="border-teal-600/40 text-teal-700 dark:text-teal-400">
+            <User className="h-3 w-3 mr-1 text-teal-600" /> CUSTOMER
           </Badge>
         );
     }
