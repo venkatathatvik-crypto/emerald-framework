@@ -6,7 +6,11 @@ export const Route = createFileRoute("/careers")({
   head: () => ({
     meta: [
       { title: "Careers — Build with 2+ Fortune Alliances" },
-      { name: "description", content: "Help us build sustainable market ecosystems for rural India. Open roles across distribution, operations, technology and finance." },
+      {
+        name: "description",
+        content:
+          "Help us build sustainable market ecosystems for rural India. Open roles across distribution, operations, technology and finance.",
+      },
       { property: "og:title", content: "Careers — 2+ Fortune Alliances" },
       { property: "og:description", content: "Onwards & upwards — together." },
     ],
@@ -15,10 +19,30 @@ export const Route = createFileRoute("/careers")({
 });
 
 const ROLES = [
-  { team: "Operations", title: "Back End Operation Manager", location: "Hyderabad", type: "Full-time" },
-  { team: "Operations", title: "Front Operation Manager", location: "Regional / Multi-state", type: "Full-time" },
-  { team: "Partnerships", title: "Front End Business Alliance Manager", location: "Hyderabad / Mumbai", type: "Full-time" },
-  { team: "Partnerships", title: "Key Account Manager (KAM)", location: "Bengaluru / Chennai", type: "Full-time" },
+  {
+    team: "Operations",
+    title: "Back End Operation Manager",
+    location: "Hyderabad",
+    type: "Full-time",
+  },
+  {
+    team: "Operations",
+    title: "Front Operation Manager",
+    location: "Regional / Multi-state",
+    type: "Full-time",
+  },
+  {
+    team: "Partnerships",
+    title: "Front End Business Alliance Manager",
+    location: "Hyderabad / Mumbai",
+    type: "Full-time",
+  },
+  {
+    team: "Partnerships",
+    title: "Key Account Manager (KAM)",
+    location: "Bengaluru / Chennai",
+    type: "Full-time",
+  },
 ];
 
 const VALUES = [
@@ -32,16 +56,27 @@ function Page() {
     <PageShell>
       <PageHero
         eyebrow="Careers"
-        title={<>Build the bridge. <em className="text-emerald-deep">Onwards & upwards.</em></>}
+        title={
+          <>
+            Build the bridge. <em className="text-emerald-deep">Onwards & upwards.</em>
+          </>
+        }
         lede="We're hiring operation managers, business alliance professionals, and key account managers who want to put consumer goods within reach of the next 600 million Indians."
       />
 
       {/* Values */}
       <section className="container-edge border-t border-line section-y">
-        <p className="eyebrow mb-6" data-reveal="rise-soft">How we work</p>
+        <p className="eyebrow mb-6" data-reveal="rise-soft">
+          How we work
+        </p>
         <div className="grid lg:grid-cols-3 gap-10">
           {VALUES.map(([t, d], i) => (
-            <div key={t} data-reveal="rise" style={{ animationDelay: `${i * 80}ms` }} className="border-t border-line pt-6">
+            <div
+              key={t}
+              data-reveal="rise"
+              style={{ animationDelay: `${i * 80}ms` }}
+              className="border-t border-line pt-6"
+            >
               <p className="font-display text-4xl text-emerald-deep mb-4">{t}</p>
               <p className="text-muted-foreground">{d}</p>
             </div>
@@ -56,7 +91,9 @@ function Page() {
             <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl leading-[1.02]">
               Open roles
             </h2>
-            <p className="text-sm text-muted-foreground" data-reveal="rise-soft">{ROLES.length} positions · India</p>
+            <p className="text-sm text-muted-foreground" data-reveal="rise-soft">
+              {ROLES.length} positions · India
+            </p>
           </div>
           <ul>
             {ROLES.map((r, i) => (
@@ -67,9 +104,13 @@ function Page() {
                 className="grid grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[7rem_minmax(0,1fr)_1fr_8rem_auto] items-center gap-4 py-6 border-t border-line group cursor-pointer hover:bg-paper transition-colors px-4 -mx-4 rounded-sm"
               >
                 <span className="hidden md:inline eyebrow">{r.team}</span>
-                <h3 className="font-display text-xl md:text-2xl text-ink group-hover:text-emerald-deep transition-colors truncate">{r.title}</h3>
+                <h3 className="font-display text-xl md:text-2xl text-ink group-hover:text-emerald-deep transition-colors truncate">
+                  {r.title}
+                </h3>
                 <span className="hidden md:inline text-sm text-muted-foreground">{r.location}</span>
-                <span className="hidden md:inline text-xs px-3 py-1 rounded-full border border-line w-fit">{r.type}</span>
+                <span className="hidden md:inline text-xs px-3 py-1 rounded-full border border-line w-fit">
+                  {r.type}
+                </span>
                 <ArrowUpRight className="h-5 w-5 text-muted-foreground group-hover:text-emerald-deep group-hover:-translate-y-1 group-hover:translate-x-1 transition-all" />
               </li>
             ))}
@@ -82,7 +123,9 @@ function Page() {
           Don't see your role? <em className="text-emerald-deep">Write to us.</em>
         </h2>
         <div className="mt-10 flex gap-3 flex-wrap">
-          <Link to="/contact" className="btn-primary">Send a note <ArrowUpRight className="h-4 w-4" /></Link>
+          <Link to="/contact" className="btn-primary">
+            Send a note <ArrowUpRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
     </PageShell>

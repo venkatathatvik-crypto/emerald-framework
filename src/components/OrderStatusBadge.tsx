@@ -15,6 +15,16 @@ const VARIANT: Record<OrderStatus, "default" | "secondary" | "outline" | "destru
   CANCELLED: "outline",
 };
 
-export function OrderStatusBadge({ status, className }: { status: OrderStatus; className?: string }) {
-  return <Badge variant={VARIANT[status]} className={className}>{LABEL[status]}</Badge>;
+export function OrderStatusBadge({
+  status,
+  className,
+}: {
+  status: OrderStatus;
+  className?: string;
+}) {
+  return (
+    <Badge variant={VARIANT[status]} className={className}>
+      {LABEL[status]}
+    </Badge>
+  );
 }

@@ -10,10 +10,19 @@ import { formatInr } from "@/lib/api/augmont";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 
 export const Route = createFileRoute("/partner/orders/")({
@@ -40,13 +49,14 @@ function Page() {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["partner", "orders", { branchId, from, to, page }],
-    queryFn: () => listOrders({
-      branchId: branchId === "ALL" ? undefined : Number(branchId),
-      from: from || undefined,
-      to: to || undefined,
-      page,
-      size: PAGE_SIZE,
-    }),
+    queryFn: () =>
+      listOrders({
+        branchId: branchId === "ALL" ? undefined : Number(branchId),
+        from: from || undefined,
+        to: to || undefined,
+        page,
+        size: PAGE_SIZE,
+      }),
     enabled: ready,
   });
 
@@ -62,20 +72,44 @@ function Page() {
         title="Orders across your branches"
         action={
           <div className="flex items-center gap-3 flex-wrap">
-            <Select value={branchId} onValueChange={(v) => { setBranchId(v); setPage(0); }}>
+            <Select
+              value={branchId}
+              onValueChange={(v) => {
+                setBranchId(v);
+                setPage(0);
+              }}
+            >
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="All branches" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ALL">All branches</SelectItem>
                 {branches?.items.map((b) => (
-                  <SelectItem key={b.id} value={String(b.id)}>{b.name}</SelectItem>
+                  <SelectItem key={b.id} value={String(b.id)}>
+                    {b.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Input type="date" value={from} onChange={(e) => { setFrom(e.target.value); setPage(0); }} className="w-40" />
+            <Input
+              type="date"
+              value={from}
+              onChange={(e) => {
+                setFrom(e.target.value);
+                setPage(0);
+              }}
+              className="w-40"
+            />
             <span className="text-sm text-muted-foreground">to</span>
-            <Input type="date" value={to} onChange={(e) => { setTo(e.target.value); setPage(0); }} className="w-40" />
+            <Input
+              type="date"
+              value={to}
+              onChange={(e) => {
+                setTo(e.target.value);
+                setPage(0);
+              }}
+              className="w-40"
+            />
           </div>
         }
       >
@@ -115,7 +149,12 @@ function Page() {
                 <TableRow
                   key={order.id}
                   className="cursor-pointer hover:bg-stone/60"
-                  onClick={() => navigate({ to: "/partner/orders/$orderId", params: { orderId: String(order.id) } })}
+                  onClick={() =>
+                    navigate({
+                      to: "/partner/orders/$orderId",
+                      params: { orderId: String(order.id) },
+                    })
+                  }
                 >
                   <TableCell>
                     <p className="font-medium text-ink">{order.customerName}</p>
@@ -128,7 +167,9 @@ function Page() {
                   </TableCell>
                   <TableCell>{order.createdByName}</TableCell>
                   <TableCell>{formatInr(order.finalOrderPrice ?? undefined)}</TableCell>
-                  <TableCell><OrderStatusBadge status={order.status} /></TableCell>
+                  <TableCell>
+                    <OrderStatusBadge status={order.status} />
+                  </TableCell>
                   <TableCell className="text-right text-sm text-muted-foreground">
                     {new Date(order.createdAt).toLocaleDateString()}
                   </TableCell>

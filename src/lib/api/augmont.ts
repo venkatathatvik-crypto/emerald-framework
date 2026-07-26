@@ -16,7 +16,9 @@ interface AugmontListEnvelope<T> {
 }
 
 export async function getShopCategories(): Promise<AugmontShopCategory[]> {
-  const res = await apiFetch<AugmontListEnvelope<AugmontShopCategory>>("/api/v1/augmont/shop-categories");
+  const res = await apiFetch<AugmontListEnvelope<AugmontShopCategory>>(
+    "/api/v1/augmont/shop-categories",
+  );
   return res.data ?? [];
 }
 
@@ -71,9 +73,12 @@ export async function getAugmontCities(stateId: number): Promise<AugmontCity[]> 
  * pricing entirely).
  */
 export async function getSubCategoryImage(subCategoryId: number): Promise<string | undefined> {
-  const res = await apiFetch<AugmontListEnvelope<AugmontSubCategoryFull>>("/api/v1/augmont/sub-categories", {
-    query: { id: subCategoryId },
-  });
+  const res = await apiFetch<AugmontListEnvelope<AugmontSubCategoryFull>>(
+    "/api/v1/augmont/sub-categories",
+    {
+      query: { id: subCategoryId },
+    },
+  );
   return res.data?.[0]?.subCategoryImg;
 }
 
@@ -82,10 +87,15 @@ export interface ListProductsParams {
   search?: string;
 }
 
-export async function getProductsBySubCategory(params: ListProductsParams): Promise<AugmontProductListItem[]> {
-  const res = await apiFetch<AugmontListEnvelope<AugmontProductListItem>>("/api/v1/augmont/products", {
-    query: { subCategoryId: params.subCategoryId, search: params.search },
-  });
+export async function getProductsBySubCategory(
+  params: ListProductsParams,
+): Promise<AugmontProductListItem[]> {
+  const res = await apiFetch<AugmontListEnvelope<AugmontProductListItem>>(
+    "/api/v1/augmont/products",
+    {
+      query: { subCategoryId: params.subCategoryId, search: params.search },
+    },
+  );
   return res.data ?? [];
 }
 
@@ -112,7 +122,9 @@ function isRealImageUrl(v: string | null | undefined): v is string {
 }
 
 /** The first (current) pricing tier for either a list item or a detail response. */
-export function getProductPriceTier(product: AugmontProductListItem | AugmontProductDetail): AugmontProductPriceTier | null {
+export function getProductPriceTier(
+  product: AugmontProductListItem | AugmontProductDetail,
+): AugmontProductPriceTier | null {
   return product.productPrice && product.productPrice.length > 0 ? product.productPrice[0] : null;
 }
 

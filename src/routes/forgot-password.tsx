@@ -38,7 +38,9 @@ function Page() {
       await forgotPassword(email);
       setSent(true);
     } catch (err) {
-      setGeneralError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+      setGeneralError(
+        err instanceof ApiError ? err.message : "Something went wrong. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -48,23 +50,45 @@ function Page() {
     <AuthShell
       eyebrow="Password reset"
       title={sent ? <>Check your inbox.</> : <>Forgot your password?</>}
-      subtitle={sent ? "We've sent a reset link if an account exists for that address." : "Enter the email on your account and we'll send a reset link."}
+      subtitle={
+        sent
+          ? "We've sent a reset link if an account exists for that address."
+          : "Enter the email on your account and we'll send a reset link."
+      }
     >
       {!sent ? (
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <AuthField label="Email" type="email" name="email" required error={fieldError} />
           {generalError && (
-            <p className="text-sm text-destructive" role="alert">{generalError}</p>
+            <p className="text-sm text-destructive" role="alert">
+              {generalError}
+            </p>
           )}
-          <button type="submit" disabled={isSubmitting} className="btn-primary w-full justify-center disabled:opacity-60">
-            {isSubmitting ? "Sending…" : <>Send reset link <ArrowUpRight className="h-4 w-4" /></>}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn-primary w-full justify-center disabled:opacity-60"
+          >
+            {isSubmitting ? (
+              "Sending…"
+            ) : (
+              <>
+                Send reset link <ArrowUpRight className="h-4 w-4" />
+              </>
+            )}
           </button>
         </form>
       ) : (
-        <Link to="/login" className="btn-ghost">← Back to sign in</Link>
+        <Link to="/login" className="btn-ghost">
+          ← Back to sign in
+        </Link>
       )}
       <p className="mt-8 text-sm text-muted-foreground">
-        Remembered it? <Link to="/login" className="link-underline">Sign in</Link>.
+        Remembered it?{" "}
+        <Link to="/login" className="link-underline">
+          Sign in
+        </Link>
+        .
       </p>
     </AuthShell>
   );

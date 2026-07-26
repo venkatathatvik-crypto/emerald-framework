@@ -1,6 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AuthShell, AuthField } from "@/components/AuthShell";
-import { InputOTP, InputOTPGroup, InputOTPSlot, REGEXP_ONLY_DIGITS } from "@/components/ui/input-otp";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  REGEXP_ONLY_DIGITS,
+} from "@/components/ui/input-otp";
 import { useAuth } from "@/lib/auth-context";
 import { sendOtp, verifyOtpLogin } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/types";
@@ -9,7 +14,15 @@ import { ArrowUpRight } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Sign in — 2+ Fortune Alliances" }, { name: "description", content: "Sign in to your 2+ Fortune Alliances account. Gold EMI powered by Augmont." }] }),
+  head: () => ({
+    meta: [
+      { title: "Sign in — 2+ Fortune Alliances" },
+      {
+        name: "description",
+        content: "Sign in to your 2+ Fortune Alliances account. Gold EMI powered by Augmont.",
+      },
+    ],
+  }),
   component: Page,
 });
 
@@ -126,7 +139,9 @@ function Page() {
       if (err instanceof ApiError && err.fieldErrors) {
         setFieldErrors(err.fieldErrors as FieldErrors);
       } else {
-        setGeneralError(err instanceof ApiError ? err.message : "Sign in failed. Please try again.");
+        setGeneralError(
+          err instanceof ApiError ? err.message : "Sign in failed. Please try again.",
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -151,7 +166,9 @@ function Page() {
       setOtpIdentifier(identifier);
       setOtpStep("verify");
     } catch (err) {
-      setGeneralError(err instanceof ApiError ? err.message : "Failed to send OTP. Please try again.");
+      setGeneralError(
+        err instanceof ApiError ? err.message : "Failed to send OTP. Please try again.",
+      );
     } finally {
       setIsSendingOtp(false);
     }
@@ -171,7 +188,9 @@ function Page() {
       const user = await verifyOtpLogin(otpIdentifier, otpCode);
       completeLogin(user);
     } catch (err) {
-      setGeneralError(err instanceof ApiError ? err.message : "Invalid or expired code. Please try again.");
+      setGeneralError(
+        err instanceof ApiError ? err.message : "Invalid or expired code. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -184,7 +203,11 @@ function Page() {
   }
 
   return (
-    <AuthShell eyebrow="Sign in" title={<>Welcome back.</>} subtitle="Choose your portal and continue.">
+    <AuthShell
+      eyebrow="Sign in"
+      title={<>Welcome back.</>}
+      subtitle="Choose your portal and continue."
+    >
       {role === "customer" && (
         <div className="flex items-center gap-3 mb-4 p-2.5 bg-gold-soft/20 rounded-xl border border-gold/30">
           <img
@@ -204,7 +227,9 @@ function Page() {
             key={r}
             onClick={() => selectRole(r)}
             className={`px-4 py-1.5 rounded-full text-xs font-medium capitalize transition-colors ${
-              role === r ? "bg-emerald-deep text-paper shadow-sm" : "text-muted-foreground hover:text-ink"
+              role === r
+                ? "bg-emerald-deep text-paper shadow-sm"
+                : "text-muted-foreground hover:text-ink"
             }`}
           >
             {r}
@@ -219,7 +244,9 @@ function Page() {
               key={m}
               onClick={() => selectMode(m)}
               className={`pb-2.5 -mb-px text-xs font-medium uppercase tracking-wide border-b-2 transition-colors ${
-                mode === m ? "border-emerald-deep text-ink" : "border-transparent text-muted-foreground hover:text-ink"
+                mode === m
+                  ? "border-emerald-deep text-ink"
+                  : "border-transparent text-muted-foreground hover:text-ink"
               }`}
             >
               {m === "password" ? "Password" : "One-time code"}
@@ -230,31 +257,73 @@ function Page() {
 
       {role !== "customer" && mode === "password" && (
         <form onSubmit={handlePasswordSubmit} noValidate className="space-y-4">
-          <AuthField label="Email or phone" name="identifier" required error={fieldErrors.identifier} />
-          <AuthField label="Password" type="password" name="password" required error={fieldErrors.password} />
+          <AuthField
+            label="Email or phone"
+            name="identifier"
+            required
+            error={fieldErrors.identifier}
+          />
+          <AuthField
+            label="Password"
+            type="password"
+            name="password"
+            required
+            error={fieldErrors.password}
+          />
           <div className="flex items-center justify-between text-sm">
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" className="accent-emerald-deep" /> Remember me
             </label>
-            <Link to="/forgot-password" className="link-underline text-sm">Forgot password?</Link>
+            <Link to="/forgot-password" className="link-underline text-sm">
+              Forgot password?
+            </Link>
           </div>
           {generalError && (
-            <p className="text-sm text-destructive" role="alert">{generalError}</p>
+            <p className="text-sm text-destructive" role="alert">
+              {generalError}
+            </p>
           )}
-          <button type="submit" disabled={isSubmitting} className="btn-primary w-full justify-center disabled:opacity-60">
-            {isSubmitting ? "Signing in…" : <>Sign in as {role} <ArrowUpRight className="h-4 w-4" /></>}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn-primary w-full justify-center disabled:opacity-60"
+          >
+            {isSubmitting ? (
+              "Signing in…"
+            ) : (
+              <>
+                Sign in as {role} <ArrowUpRight className="h-4 w-4" />
+              </>
+            )}
           </button>
         </form>
       )}
 
       {mode === "otp" && otpStep === "send" && (
         <form onSubmit={handleSendOtp} noValidate className="space-y-5">
-          <AuthField label="Email or phone" name="identifier" required error={fieldErrors.identifier} />
+          <AuthField
+            label="Email or phone"
+            name="identifier"
+            required
+            error={fieldErrors.identifier}
+          />
           {generalError && (
-            <p className="text-sm text-destructive" role="alert">{generalError}</p>
+            <p className="text-sm text-destructive" role="alert">
+              {generalError}
+            </p>
           )}
-          <button type="submit" disabled={isSendingOtp} className="btn-primary w-full justify-center disabled:opacity-60">
-            {isSendingOtp ? "Sending code…" : <>Send OTP <ArrowUpRight className="h-4 w-4" /></>}
+          <button
+            type="submit"
+            disabled={isSendingOtp}
+            className="btn-primary w-full justify-center disabled:opacity-60"
+          >
+            {isSendingOtp ? (
+              "Sending code…"
+            ) : (
+              <>
+                Send OTP <ArrowUpRight className="h-4 w-4" />
+              </>
+            )}
           </button>
         </form>
       )}
@@ -262,7 +331,8 @@ function Page() {
       {mode === "otp" && otpStep === "verify" && (
         <form onSubmit={handleVerifyOtp} noValidate className="space-y-6">
           <p className="text-sm text-muted-foreground">
-            Enter the 6-digit code sent to <span className="text-ink font-medium">{otpIdentifier}</span>.
+            Enter the 6-digit code sent to{" "}
+            <span className="text-ink font-medium">{otpIdentifier}</span>.
           </p>
           <InputOTP
             maxLength={6}
@@ -282,10 +352,22 @@ function Page() {
             </InputOTPGroup>
           </InputOTP>
           {generalError && (
-            <p className="text-sm text-destructive text-center" role="alert">{generalError}</p>
+            <p className="text-sm text-destructive text-center" role="alert">
+              {generalError}
+            </p>
           )}
-          <button type="submit" disabled={isSubmitting} className="btn-primary w-full justify-center disabled:opacity-60">
-            {isSubmitting ? "Verifying…" : <>Verify & sign in <ArrowUpRight className="h-4 w-4" /></>}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn-primary w-full justify-center disabled:opacity-60"
+          >
+            {isSubmitting ? (
+              "Verifying…"
+            ) : (
+              <>
+                Verify & sign in <ArrowUpRight className="h-4 w-4" />
+              </>
+            )}
           </button>
           <button
             type="button"
@@ -299,8 +381,14 @@ function Page() {
 
       <p className="mt-6 text-sm text-muted-foreground">
         New here? Register as a{" "}
-        <Link to="/register/customer" className="link-underline">customer</Link> or{" "}
-        <Link to="/register/partner" className="link-underline">partner</Link>.
+        <Link to="/register/customer" className="link-underline">
+          customer
+        </Link>{" "}
+        or{" "}
+        <Link to="/register/partner" className="link-underline">
+          partner
+        </Link>
+        .
       </p>
     </AuthShell>
   );

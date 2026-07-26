@@ -1,7 +1,16 @@
 import { apiFetch } from "./client";
 import type {
-  AugmontEmiSchedule, AugmontReceipt, Branch, ConvertLeadRequest, CustomerResponse, LeadStatus, OrderResponse,
-  Paged, PartnerLead, PartnerResponse, PartnerUpdateRequest,
+  AugmontEmiSchedule,
+  AugmontReceipt,
+  Branch,
+  ConvertLeadRequest,
+  CustomerResponse,
+  LeadStatus,
+  OrderResponse,
+  Paged,
+  PartnerLead,
+  PartnerResponse,
+  PartnerUpdateRequest,
 } from "./types";
 
 export interface ListLeadsParams {
@@ -40,7 +49,11 @@ export function deleteLead(id: number): Promise<void> {
 }
 
 /** Moves a lead to a new status (e.g. mark as Contacted or Rejected after follow-up). */
-export function updateLeadStatus(id: number, status: LeadStatus, notes?: string): Promise<PartnerLead> {
+export function updateLeadStatus(
+  id: number,
+  status: LeadStatus,
+  notes?: string,
+): Promise<PartnerLead> {
   return apiFetch<PartnerLead>(`/api/v1/admin/leads/${id}/status`, {
     method: "PATCH",
     body: { status, notes },
@@ -77,7 +90,10 @@ export interface ListPartnerBranchesParams {
 }
 
 /** Branches belonging to a given partner — the admin-side view into someone else's branches. */
-export function getPartnerBranches(id: number, params: ListPartnerBranchesParams = {}): Promise<Paged<Branch>> {
+export function getPartnerBranches(
+  id: number,
+  params: ListPartnerBranchesParams = {},
+): Promise<Paged<Branch>> {
   return apiFetch<Paged<Branch>>(`/api/v1/admin/partners/${id}/branches`, {
     query: {
       q: params.q,
@@ -114,7 +130,9 @@ export interface ListAdminCustomersParams {
 }
 
 /** All customers, optionally filtered to one partner and/or one branch. */
-export function listCustomers(params: ListAdminCustomersParams = {}): Promise<Paged<CustomerResponse>> {
+export function listCustomers(
+  params: ListAdminCustomersParams = {},
+): Promise<Paged<CustomerResponse>> {
   return apiFetch<Paged<CustomerResponse>>("/api/v1/admin/customers", {
     query: {
       allianceCompanyId: params.allianceCompanyId,
@@ -156,7 +174,9 @@ export function getOrder(orderId: number): Promise<OrderResponse> {
 
 /** Pulls Augmont's own live status for any order system-wide. */
 export function refreshOrderStatus(orderId: number): Promise<OrderResponse> {
-  return apiFetch<OrderResponse>(`/api/v1/admin/orders/${orderId}/refresh-status`, { method: "POST" });
+  return apiFetch<OrderResponse>(`/api/v1/admin/orders/${orderId}/refresh-status`, {
+    method: "POST",
+  });
 }
 
 /** EMI schedule for any order system-wide. */

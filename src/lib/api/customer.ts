@@ -1,7 +1,15 @@
 import { apiFetch } from "./client";
 import type {
-  AugmontCancellationQuote, AugmontEmiSchedule, AugmontReceipt, BackendUser, CancelOrderRequest,
-  CustomerRegisterStartInput, OrderResponse, OrderStatus, Paged, PlaceOrderRequest,
+  AugmontCancellationQuote,
+  AugmontEmiSchedule,
+  AugmontReceipt,
+  BackendUser,
+  CancelOrderRequest,
+  CustomerRegisterStartInput,
+  OrderResponse,
+  OrderStatus,
+  Paged,
+  PlaceOrderRequest,
 } from "./types";
 
 /** Step 1 — creates (or resumes) a pending account and emails an OTP. */
@@ -56,7 +64,9 @@ export function getOrder(orderId: number): Promise<OrderResponse> {
 
 /** Pulls Augmont's own live status for one of the customer's own orders. */
 export function refreshOrderStatus(orderId: number): Promise<OrderResponse> {
-  return apiFetch<OrderResponse>(`/api/v1/customer/orders/${orderId}/refresh-status`, { method: "POST" });
+  return apiFetch<OrderResponse>(`/api/v1/customer/orders/${orderId}/refresh-status`, {
+    method: "POST",
+  });
 }
 
 /** EMI schedule for one of the customer's own orders. */
@@ -81,7 +91,9 @@ export function getOrderEmiReceipt(orderId: number, emiId: number): Promise<Augm
 
 /** Cancellation price/eligibility quote — step 1, shown before the customer confirms. */
 export function getOrderCancellationQuote(orderId: number): Promise<AugmontCancellationQuote> {
-  return apiFetch<AugmontCancellationQuote>(`/api/v1/customer/orders/${orderId}/cancellation-quote`);
+  return apiFetch<AugmontCancellationQuote>(
+    `/api/v1/customer/orders/${orderId}/cancellation-quote`,
+  );
 }
 
 /** Confirms cancellation — step 2. Only the customer who placed the order may cancel it. */

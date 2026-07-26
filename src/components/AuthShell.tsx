@@ -19,11 +19,17 @@ export function AuthShell({
       {/* Left — brand panel */}
       <aside className="relative bg-emerald-deep text-paper p-10 lg:p-14 flex flex-col justify-between min-h-[40vh] lg:h-screen overflow-hidden">
         <div className="absolute inset-0 opacity-[0.08]" aria-hidden>
-          <div className="absolute -right-20 -bottom-20 font-display text-[40rem] leading-none">+</div>
+          <div className="absolute -right-20 -bottom-20 font-display text-[40rem] leading-none">
+            +
+          </div>
         </div>
         <Link to="/" className="relative flex items-center gap-2.5 z-10 w-fit">
-          <span className="grid place-items-center h-9 w-9 rounded-full bg-paper text-emerald-deep font-display">2</span>
-          <span className="font-display text-xl"><span className="text-gold">+</span> Fortune Alliances</span>
+          <span className="grid place-items-center h-9 w-9 rounded-full bg-paper text-emerald-deep font-display">
+            2
+          </span>
+          <span className="font-display text-xl">
+            <span className="text-gold">+</span> Fortune Alliances
+          </span>
         </Link>
 
         <div className="relative z-10 max-w-md">
@@ -53,11 +59,15 @@ export function AuthShell({
           normally. */}
       <section className="lg:h-screen lg:overflow-y-auto p-6 sm:p-10 lg:p-14 flex flex-col">
         <div className="flex justify-between items-center shrink-0">
-          <Link to="/" className="text-sm text-muted-foreground hover:text-ink">← Back to site</Link>
+          <Link to="/" className="text-sm text-muted-foreground hover:text-ink">
+            ← Back to site
+          </Link>
           <span className="text-xs text-muted-foreground">{eyebrow}</span>
         </div>
         <div className="max-w-md w-full mx-auto my-auto">
-          <h1 className="font-display text-3xl md:text-4xl text-ink leading-[1.05] mb-3">{title}</h1>
+          <h1 className="font-display text-3xl md:text-4xl text-ink leading-[1.05] mb-3">
+            {title}
+          </h1>
           {subtitle && <p className="text-muted-foreground mb-6 text-sm">{subtitle}</p>}
           {children}
         </div>
@@ -87,7 +97,10 @@ export function AuthField({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="eyebrow block mb-2 text-[0.65rem]">{label}{required && " *"}</label>
+      <label htmlFor={name} className="eyebrow block mb-2 text-[0.65rem]">
+        {label}
+        {required && " *"}
+      </label>
       <input
         id={name}
         name={name}
@@ -98,10 +111,16 @@ export function AuthField({
         inputMode={inputMode}
         maxLength={maxLength}
         className={`w-full bg-paper border px-4 py-3 rounded-sm focus:outline-none transition-colors ${
-          error ? "border-destructive focus:border-destructive" : "border-line focus:border-emerald-deep"
+          error
+            ? "border-destructive focus:border-destructive"
+            : "border-line focus:border-emerald-deep"
         }`}
       />
-      {error && <p className="mt-1.5 text-xs text-destructive" role="alert">{error}</p>}
+      {error && (
+        <p className="mt-1.5 text-xs text-destructive" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

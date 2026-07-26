@@ -7,7 +7,11 @@ export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Contact 2+ Fortune Alliances" },
-      { name: "description", content: "Reach 2 Plus Fortune Alliances Pvt Ltd — Hyderabad headquarters, partnership and customer enquiries." },
+      {
+        name: "description",
+        content:
+          "Reach 2 Plus Fortune Alliances Pvt Ltd — Hyderabad headquarters, partnership and customer enquiries.",
+      },
       { property: "og:title", content: "Contact 2+ Fortune Alliances" },
       { property: "og:description", content: "We look forward to working with you." },
     ],
@@ -22,7 +26,11 @@ function Page() {
     <PageShell>
       <PageHero
         eyebrow="Contact"
-        title={<>We look forward to <em className="text-emerald-deep">working with you.</em></>}
+        title={
+          <>
+            We look forward to <em className="text-emerald-deep">working with you.</em>
+          </>
+        }
         lede="Whether you're a brand looking for rural reach, a financial institution looking for product depth, or a customer with a question — we'd love to hear from you."
       />
 
@@ -33,19 +41,34 @@ function Page() {
             <p className="eyebrow mb-4">Headquarters</p>
             <div className="flex gap-3 items-start text-base">
               <MapPin className="h-5 w-5 text-emerald-deep shrink-0 mt-1" />
-              <p>504, 5th Floor, Nami Shree Infratech,<br />T19 Towers, MG Road, Rani Ganj,<br />Hyderabad — 500003</p>
+              <p>
+                504, 5th Floor, Nami Shree Infratech,
+                <br />
+                T19 Towers, MG Road, Rani Ganj,
+                <br />
+                Hyderabad — 500003
+              </p>
             </div>
           </div>
           <div data-reveal="rise-soft" style={{ animationDelay: "80ms" }}>
             <p className="eyebrow mb-4">Direct</p>
             <div className="space-y-2">
-              <a href="tel:+919966161616" className="flex gap-3 items-center hover:text-emerald-deep transition-colors">
+              <a
+                href="tel:+919966161616"
+                className="flex gap-3 items-center hover:text-emerald-deep transition-colors"
+              >
                 <Phone className="h-4 w-4" /> +91 9966 16 1616
               </a>
-              <a href="tel:+917306969696" className="flex gap-3 items-center hover:text-emerald-deep transition-colors">
+              <a
+                href="tel:+917306969696"
+                className="flex gap-3 items-center hover:text-emerald-deep transition-colors"
+              >
                 <Phone className="h-4 w-4" /> +91 7306 96 9696
               </a>
-              <a href="mailto:srikanth.pagolu@2plusfortunealliances.com" className="flex gap-3 items-center hover:text-emerald-deep transition-colors text-sm">
+              <a
+                href="mailto:srikanth.pagolu@2plusfortunealliances.com"
+                className="flex gap-3 items-center hover:text-emerald-deep transition-colors text-sm"
+              >
                 <Mail className="h-4 w-4" /> srikanth.pagolu@2plusfortunealliances.com
               </a>
             </div>
@@ -57,14 +80,14 @@ function Page() {
             </a>
           </div>
           {/* Support Team Portrait Card */}
-          <div 
-            data-reveal="rise" 
+          <div
+            data-reveal="rise"
             style={{ animationDelay: "240ms" }}
             className="relative rounded-2xl overflow-hidden shadow-xl border border-line aspect-[4/3] group bg-stone mt-8"
           >
-            <img 
-              src={`${import.meta.env.BASE_URL}images/support_team.png`} 
-              alt="2+ Fortune Alliances Premium Customer Support Team collaborating" 
+            <img
+              src={`${import.meta.env.BASE_URL}images/support_team.png`}
+              alt="2+ Fortune Alliances Premium Customer Support Team collaborating"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-emerald-deep/20 via-transparent to-transparent pointer-events-none" />
@@ -110,7 +133,11 @@ function Page() {
               </div>
               <div className="mb-6">
                 <label className="eyebrow block mb-2 text-xs">Message</label>
-                <textarea rows={5} required className="w-full bg-paper border border-line px-4 py-3 rounded-sm focus:outline-none focus:border-emerald-deep transition-colors" />
+                <textarea
+                  rows={5}
+                  required
+                  className="w-full bg-paper border border-line px-4 py-3 rounded-sm focus:outline-none focus:border-emerald-deep transition-colors"
+                />
               </div>
               <button type="submit" className="btn-primary">
                 Send message <ArrowUpRight className="h-4 w-4" />
@@ -123,10 +150,23 @@ function Page() {
   );
 }
 
-function Field({ label, name, type = "text", required = false }: { label: string; name: string; type?: string; required?: boolean }) {
+function Field({
+  label,
+  name,
+  type = "text",
+  required = false,
+}: {
+  label: string;
+  name: string;
+  type?: string;
+  required?: boolean;
+}) {
   return (
     <div>
-      <label className="eyebrow block mb-2 text-xs" htmlFor={name}>{label}{required && " *"}</label>
+      <label className="eyebrow block mb-2 text-xs" htmlFor={name}>
+        {label}
+        {required && " *"}
+      </label>
       <input
         id={name}
         name={name}

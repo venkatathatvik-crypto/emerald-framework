@@ -9,7 +9,13 @@ import { ArrowLeft, Boxes, CheckCircle2, AlertTriangle } from "lucide-react";
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
 import { useAugmontStates, useAugmontCities } from "@/hooks/use-location-data";
-import { getProductDetails, getSubCategoryImage, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
+import {
+  getProductDetails,
+  getSubCategoryImage,
+  getProductPriceTier,
+  getProductThumbnail,
+  formatInr,
+} from "@/lib/api/augmont";
 import { placeOrder } from "@/lib/api/customer";
 import { ApiError } from "@/lib/api/types";
 import type { AugmontProductPriceTier, PlaceOrderRequest, OrderResponse } from "@/lib/api/types";
@@ -17,10 +23,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Form, FormField, FormItem, FormLabel, FormControl, FormMessage,
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
 } from "@/components/ui/form";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 
 export const Route = createFileRoute("/customer/shop/$productId")({
@@ -40,10 +55,26 @@ const TENURE_LABELS: Record<Tenure, string> = {
 function pricingFor(tier: AugmontProductPriceTier | null, tenure: Tenure) {
   if (!tier) return { dueToday: undefined, monthly: undefined, months: 0 };
   switch (tenure) {
-    case "spot": return { dueToday: tier.finalProductPrice, monthly: undefined, months: 0 };
-    case "three": return { dueToday: tier.initialPaymentThree, monthly: tier.paymentAmountPerMonthThree, months: 3 };
-    case "six": return { dueToday: tier.initialPaymentSix, monthly: tier.paymentAmountPerMonthSix, months: 6 };
-    case "nine": return { dueToday: tier.initialPaymentNine, monthly: tier.paymentAmountPerMonthNine, months: 9 };
+    case "spot":
+      return { dueToday: tier.finalProductPrice, monthly: undefined, months: 0 };
+    case "three":
+      return {
+        dueToday: tier.initialPaymentThree,
+        monthly: tier.paymentAmountPerMonthThree,
+        months: 3,
+      };
+    case "six":
+      return {
+        dueToday: tier.initialPaymentSix,
+        monthly: tier.paymentAmountPerMonthSix,
+        months: 6,
+      };
+    case "nine":
+      return {
+        dueToday: tier.initialPaymentNine,
+        monthly: tier.paymentAmountPerMonthNine,
+        months: 9,
+      };
   }
 }
 
@@ -70,12 +101,19 @@ function taxBreakdown(total: number | undefined, gstPercent: number | string | u
 }
 
 const buySchema = z.object({
-  panCardNumber: z.string().trim().toUpperCase().regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "Enter a valid PAN, e.g. ABCDE1234F"),
+  panCardNumber: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "Enter a valid PAN, e.g. ABCDE1234F"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   addressLine: z.string().trim().min(1, "Address is required"),
   state: z.string().trim().min(1, "Select a state"),
   city: z.string().trim().min(1, "Select a city"),
-  pincode: z.string().trim().regex(/^\d{6}$/, "Enter a valid 6-digit pincode"),
+  pincode: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "Enter a valid 6-digit pincode"),
 });
 
 type BuyFormValues = z.infer<typeof buySchema>;
@@ -89,7 +127,11 @@ function Page() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [placedOrder, setPlacedOrder] = useState<OrderResponse | null>(null);
 
-  const { data: product, isLoading, isError } = useQuery({
+  const {
+    data: product,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["augmont", "product", id],
     queryFn: () => getProductDetails(id),
     enabled: ready && Number.isFinite(id),
@@ -106,7 +148,14 @@ function Page() {
 
   const form = useForm<BuyFormValues>({
     resolver: zodResolver(buySchema),
-    defaultValues: { panCardNumber: "", dateOfBirth: "", addressLine: "", state: "", city: "", pincode: "" },
+    defaultValues: {
+      panCardNumber: "",
+      dateOfBirth: "",
+      addressLine: "",
+      state: "",
+      city: "",
+      pincode: "",
+    },
   });
   const stateValue = form.watch("state");
   const { data: states } = useAugmontStates();
@@ -149,7 +198,9 @@ function Page() {
           form.setError(field as keyof BuyFormValues, { message });
         }
       } else {
-        setSubmitError(err instanceof ApiError ? err.message : "Failed to place this order. Please try again.");
+        setSubmitError(
+          err instanceof ApiError ? err.message : "Failed to place this order. Please try again.",
+        );
       }
     }
   }
@@ -179,7 +230,8 @@ function Page() {
               </p>
               {!confirmed && (
                 <p className="text-sm text-muted-foreground mt-1">
-                  This isn't lost — it's saved to your account. Our team has been notified and will follow up once it's resolved.
+                  This isn't lost — it's saved to your account. Our team has been notified and will
+                  follow up once it's resolved.
                 </p>
               )}
             </div>
@@ -199,12 +251,19 @@ function Page() {
 
   return (
     <DashboardShell role="customer" title="Product details">
-      <Link to="/customer/shop" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink mb-4">
+      <Link
+        to="/customer/shop"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink mb-4"
+      >
         <ArrowLeft className="h-3.5 w-3.5" /> Back to shop
       </Link>
 
-      {isLoading && <p className="text-sm text-muted-foreground py-10 text-center">Loading product…</p>}
-      {isError && <p className="text-sm text-destructive py-10 text-center">Failed to load this product.</p>}
+      {isLoading && (
+        <p className="text-sm text-muted-foreground py-10 text-center">Loading product…</p>
+      )}
+      {isError && (
+        <p className="text-sm text-destructive py-10 text-center">Failed to load this product.</p>
+      )}
 
       {product && (
         <Form {...form}>
@@ -214,74 +273,137 @@ function Page() {
               <div className="space-y-6 min-w-0">
                 <Panel title="Identity verification">
                   <div className="grid sm:grid-cols-2 gap-4">
-                    <FormField control={form.control} name="panCardNumber" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>PAN number</FormLabel>
-                        <FormControl><Input className="h-11" placeholder="ABCDE1234F" maxLength={10} {...field} /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
-                    <FormField control={form.control} name="dateOfBirth" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Date of birth</FormLabel>
-                        <FormControl><Input className="h-11" type="date" {...field} /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
+                    <FormField
+                      control={form.control}
+                      name="panCardNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>PAN number</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="h-11"
+                              placeholder="ABCDE1234F"
+                              maxLength={10}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="dateOfBirth"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Date of birth</FormLabel>
+                          <FormControl>
+                            <Input className="h-11" type="date" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                 </Panel>
 
                 <Panel title="Shipping address">
                   <div className="space-y-4">
-                    <FormField control={form.control} name="addressLine" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Delivery address</FormLabel>
-                        <FormControl><Input className="h-11" {...field} /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
+                    <FormField
+                      control={form.control}
+                      name="addressLine"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Delivery address</FormLabel>
+                          <FormControl>
+                            <Input className="h-11" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
                     <div className="grid sm:grid-cols-[2fr_2fr_1.2fr] gap-4">
-                      <FormField control={form.control} name="state" render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>State</FormLabel>
-                          <Select
-                            value={field.value}
-                            onValueChange={(v) => { field.onChange(v); form.setValue("city", ""); }}
-                          >
+                      <FormField
+                        control={form.control}
+                        name="state"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>State</FormLabel>
+                            <Select
+                              value={field.value}
+                              onValueChange={(v) => {
+                                field.onChange(v);
+                                form.setValue("city", "");
+                              }}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="h-11">
+                                  <SelectValue placeholder="Select state" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {states?.map((s) => (
+                                  <SelectItem key={s.id} value={s.name}>
+                                    {s.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>City</FormLabel>
+                            <Select
+                              value={field.value}
+                              onValueChange={field.onChange}
+                              disabled={!stateValue}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="h-11">
+                                  <SelectValue
+                                    placeholder={
+                                      stateValue ? "Select city" : "Select a state first"
+                                    }
+                                  />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {cities?.map((c) => (
+                                  <SelectItem key={c.id} value={c.name}>
+                                    {c.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="pincode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Pincode</FormLabel>
                             <FormControl>
-                              <SelectTrigger className="h-11"><SelectValue placeholder="Select state" /></SelectTrigger>
+                              <Input
+                                className="h-11"
+                                inputMode="numeric"
+                                maxLength={6}
+                                {...field}
+                              />
                             </FormControl>
-                            <SelectContent>
-                              {states?.map((s) => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )} />
-                      <FormField control={form.control} name="city" render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>City</FormLabel>
-                          <Select value={field.value} onValueChange={field.onChange} disabled={!stateValue}>
-                            <FormControl>
-                              <SelectTrigger className="h-11">
-                                <SelectValue placeholder={stateValue ? "Select city" : "Select a state first"} />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {cities?.map((c) => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )} />
-                      <FormField control={form.control} name="pincode" render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Pincode</FormLabel>
-                          <FormControl><Input className="h-11" inputMode="numeric" maxLength={6} {...field} /></FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )} />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
                   </div>
                 </Panel>
@@ -293,17 +415,27 @@ function Page() {
                   <div className="flex items-center gap-3 pb-5 mb-5 border-b border-line">
                     <div className="h-16 w-16 shrink-0 rounded-md border border-line overflow-hidden bg-stone grid place-items-center">
                       {thumb ? (
-                        <img src={thumb} alt={product.productName} className="w-full h-full object-cover" />
+                        <img
+                          src={thumb}
+                          alt={product.productName}
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <Boxes className="h-6 w-6 text-muted-foreground" />
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-display text-base text-ink truncate">{product.productName}</p>
+                      <p className="font-display text-base text-ink truncate">
+                        {product.productName}
+                      </p>
                       <p className="text-xs text-muted-foreground mt-0.5">SKU: {product.sku}</p>
                       <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
-                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{product.weight}g</Badge>
-                        {product.isEmiAvailable && <Badge className="text-[10px] px-1.5 py-0">EMI</Badge>}
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                          {product.weight}g
+                        </Badge>
+                        {product.isEmiAvailable && (
+                          <Badge className="text-[10px] px-1.5 py-0">EMI</Badge>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -312,14 +444,22 @@ function Page() {
                   {availableTenures.length > 0 ? (
                     <div className="flex gap-2 flex-wrap mb-5">
                       {(["spot", "three", "six", "nine"] as Tenure[])
-                        .filter((t) => t === "spot" || availableTenures.includes(t === "three" ? "3" : t === "six" ? "6" : "9"))
+                        .filter(
+                          (t) =>
+                            t === "spot" ||
+                            availableTenures.includes(
+                              t === "three" ? "3" : t === "six" ? "6" : "9",
+                            ),
+                        )
                         .map((t) => (
                           <button
                             key={t}
                             type="button"
                             onClick={() => setTenure(t)}
                             className={`px-3.5 py-1.5 rounded-full text-xs font-medium border transition-colors ${
-                              tenure === t ? "bg-emerald-deep text-paper border-emerald-deep" : "border-line text-ink hover:border-emerald-deep"
+                              tenure === t
+                                ? "bg-emerald-deep text-paper border-emerald-deep"
+                                : "border-line text-ink hover:border-emerald-deep"
                             }`}
                           >
                             {TENURE_LABELS[t]}
@@ -341,7 +481,9 @@ function Page() {
                     </div>
                     <div className="flex items-center justify-between pt-2 mt-1 border-t border-line">
                       <span className="font-medium text-ink">Total amount</span>
-                      <span className="font-display text-xl text-ink">{formatInr(breakdown.total)}</span>
+                      <span className="font-display text-xl text-ink">
+                        {formatInr(breakdown.total)}
+                      </span>
                     </div>
                   </div>
 
@@ -352,7 +494,9 @@ function Page() {
                         <span className="font-medium text-ink">{formatInr(price.dueToday)}</span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Then, per month × {price.months}</span>
+                        <span className="text-muted-foreground">
+                          Then, per month × {price.months}
+                        </span>
                         <span className="font-medium text-ink">{formatInr(price.monthly)}</span>
                       </div>
                       {tier?.productInitialPaymentPer != null && (
@@ -364,7 +508,9 @@ function Page() {
                   )}
 
                   {submitError && (
-                    <p className="text-sm text-destructive text-center mt-4" role="alert">{submitError}</p>
+                    <p className="text-sm text-destructive text-center mt-4" role="alert">
+                      {submitError}
+                    </p>
                   )}
 
                   <Button

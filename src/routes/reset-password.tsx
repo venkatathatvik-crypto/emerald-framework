@@ -42,9 +42,18 @@ function Page() {
     }
     let cancelled = false;
     validateResetToken(token)
-      .then((res) => { if (!cancelled) { setEmail(res.email); setTokenStatus("valid"); } })
-      .catch(() => { if (!cancelled) setTokenStatus("invalid"); });
-    return () => { cancelled = true; };
+      .then((res) => {
+        if (!cancelled) {
+          setEmail(res.email);
+          setTokenStatus("valid");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setTokenStatus("invalid");
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -72,7 +81,9 @@ function Page() {
       if (err instanceof ApiError && err.fieldErrors) {
         setFieldErrors(err.fieldErrors as FieldErrors);
       } else {
-        setGeneralError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+        setGeneralError(
+          err instanceof ApiError ? err.message : "Something went wrong. Please try again.",
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -95,7 +106,9 @@ function Page() {
           <p className="text-muted-foreground mb-6">
             This link is invalid or has expired. Request a new one to continue.
           </p>
-          <Link to="/forgot-password" className="btn-primary">Request a new link</Link>
+          <Link to="/forgot-password" className="btn-primary">
+            Request a new link
+          </Link>
         </div>
       </AuthShell>
     );
@@ -106,8 +119,12 @@ function Page() {
       <AuthShell eyebrow="New password" title={<>Password updated.</>}>
         <div className="text-center py-6">
           <CheckCircle2 className="h-12 w-12 text-emerald-deep mx-auto mb-4" />
-          <p className="text-muted-foreground mb-6">Your password has been changed. You can now sign in.</p>
-          <button onClick={() => navigate({ to: "/login" })} className="btn-primary">Continue to sign in</button>
+          <p className="text-muted-foreground mb-6">
+            Your password has been changed. You can now sign in.
+          </p>
+          <button onClick={() => navigate({ to: "/login" })} className="btn-primary">
+            Continue to sign in
+          </button>
         </div>
       </AuthShell>
     );
@@ -116,21 +133,51 @@ function Page() {
   return (
     <AuthShell
       eyebrow="New password"
-      title={<>Set a new <em className="text-emerald-deep">password.</em></>}
+      title={
+        <>
+          Set a new <em className="text-emerald-deep">password.</em>
+        </>
+      }
       subtitle={email ? `Setting a new password for ${email}.` : "Use at least 8 characters."}
     >
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
-        <AuthField label="New password" type="password" name="password" required error={fieldErrors.password} />
-        <AuthField label="Confirm new password" type="password" name="confirm" required error={fieldErrors.confirm} />
+        <AuthField
+          label="New password"
+          type="password"
+          name="password"
+          required
+          error={fieldErrors.password}
+        />
+        <AuthField
+          label="Confirm new password"
+          type="password"
+          name="confirm"
+          required
+          error={fieldErrors.confirm}
+        />
         {generalError && (
-          <p className="text-sm text-destructive" role="alert">{generalError}</p>
+          <p className="text-sm text-destructive" role="alert">
+            {generalError}
+          </p>
         )}
-        <button type="submit" disabled={isSubmitting} className="btn-primary w-full justify-center disabled:opacity-60">
-          {isSubmitting ? "Updating…" : <>Update password <ArrowUpRight className="h-4 w-4" /></>}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="btn-primary w-full justify-center disabled:opacity-60"
+        >
+          {isSubmitting ? (
+            "Updating…"
+          ) : (
+            <>
+              Update password <ArrowUpRight className="h-4 w-4" />
+            </>
+          )}
         </button>
       </form>
       <p className="mt-8 text-sm text-muted-foreground">
-        <Link to="/login" className="link-underline">← Back to sign in</Link>
+        <Link to="/login" className="link-underline">
+          ← Back to sign in
+        </Link>
       </p>
     </AuthShell>
   );

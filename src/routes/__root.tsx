@@ -20,12 +20,16 @@ function NotFoundComponent() {
       <div className="text-center max-w-md">
         <p className="eyebrow mb-6">Error · 404</p>
         <h1 className="font-display text-7xl md:text-8xl text-ink leading-none">
-          Off the<br /><em className="text-emerald-deep">map.</em>
+          Off the
+          <br />
+          <em className="text-emerald-deep">map.</em>
         </h1>
         <p className="mt-6 text-muted-foreground">
           The page you're looking for has moved, or never existed in the first place.
         </p>
-        <Link to="/" className="btn-primary mt-8">Return home</Link>
+        <Link to="/" className="btn-primary mt-8">
+          Return home
+        </Link>
       </div>
     </div>
   );
@@ -42,17 +46,21 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     <div className="min-h-screen grid place-items-center bg-paper px-6">
       <div className="text-center max-w-md">
         <p className="eyebrow mb-6">Something went wrong</p>
-        <h1 className="font-display text-5xl md:text-6xl text-ink leading-tight">
-          We hit a snag.
-        </h1>
-        <p className="mt-4 text-muted-foreground">
-          You can try again, or head home.
-        </p>
+        <h1 className="font-display text-5xl md:text-6xl text-ink leading-tight">We hit a snag.</h1>
+        <p className="mt-4 text-muted-foreground">You can try again, or head home.</p>
         <div className="mt-8 flex gap-3 justify-center">
-          <button onClick={() => { router.invalidate(); reset(); }} className="btn-primary">
+          <button
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
+            className="btn-primary"
+          >
             Try again
           </button>
-          <a href="/" className="btn-ghost">Go home</a>
+          <a href="/" className="btn-ghost">
+            Go home
+          </a>
         </div>
       </div>
     </div>
@@ -79,11 +87,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "2+ Fortune Alliances — Onwards & Upwards" },
-      { name: "description", content: "Emerald Legacy Platform is a premium enterprise website and application platform built from scratch." },
-      { property: "og:description", content: "Emerald Legacy Platform is a premium enterprise website and application platform built from scratch." },
-      { name: "twitter:description", content: "Emerald Legacy Platform is a premium enterprise website and application platform built from scratch." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e2ee9ddd-092f-4b74-8557-8f71706d578e/id-preview-80bb17b6--3f5daaff-d970-47e5-8892-3900b90f2524.lovable.app-1782569931016.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e2ee9ddd-092f-4b74-8557-8f71706d578e/id-preview-80bb17b6--3f5daaff-d970-47e5-8892-3900b90f2524.lovable.app-1782569931016.png" },
+      {
+        name: "description",
+        content:
+          "Emerald Legacy Platform is a premium enterprise website and application platform built from scratch.",
+      },
+      {
+        property: "og:description",
+        content:
+          "Emerald Legacy Platform is a premium enterprise website and application platform built from scratch.",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Emerald Legacy Platform is a premium enterprise website and application platform built from scratch.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e2ee9ddd-092f-4b74-8557-8f71706d578e/id-preview-80bb17b6--3f5daaff-d970-47e5-8892-3900b90f2524.lovable.app-1782569931016.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e2ee9ddd-092f-4b74-8557-8f71706d578e/id-preview-80bb17b6--3f5daaff-d970-47e5-8892-3900b90f2524.lovable.app-1782569931016.png",
+      },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
@@ -125,12 +153,17 @@ function RootComponent() {
       { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
     );
     const scan = () => {
-      document.querySelectorAll<HTMLElement>("[data-reveal]:not(.in)").forEach((el) => io.observe(el));
+      document
+        .querySelectorAll<HTMLElement>("[data-reveal]:not(.in)")
+        .forEach((el) => io.observe(el));
     };
     scan();
     const mo = new MutationObserver(scan);
     mo.observe(document.body, { childList: true, subtree: true });
-    return () => { io.disconnect(); mo.disconnect(); };
+    return () => {
+      io.disconnect();
+      mo.disconnect();
+    };
   }, []);
 
   // Motion Framework: Cursor, Parallax, Magnetic hover, Card Glow effects
@@ -189,7 +222,9 @@ function RootComponent() {
     // Scaling the cursor when hovering clickable links
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const interactive = target.closest("a, button, .btn-primary, .btn-ghost, .btn-gold, .magnetic-wrap, [role='button']");
+      const interactive = target.closest(
+        "a, button, .btn-primary, .btn-ghost, .btn-gold, .magnetic-wrap, [role='button']",
+      );
       if (interactive) {
         cursor.style.width = "20px";
         cursor.style.height = "20px";
@@ -252,7 +287,10 @@ function RootComponent() {
         const rect = el.getBoundingClientRect();
         const path = el.querySelector<SVGPathElement>(".svg-draw-path");
         if (path && rect.top < window.innerHeight && rect.bottom > 0) {
-          const visiblePct = Math.min(1, Math.max(0, (window.innerHeight - rect.top) / (window.innerHeight + rect.height)));
+          const visiblePct = Math.min(
+            1,
+            Math.max(0, (window.innerHeight - rect.top) / (window.innerHeight + rect.height)),
+          );
           const length = path.getTotalLength();
           path.style.strokeDashoffset = `${length * (1 - visiblePct)}`;
         }

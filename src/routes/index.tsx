@@ -1,5 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowUpRight, ArrowRight, Package, Zap, ShieldCheck, Globe, Linkedin, Twitter, Facebook, Instagram, Mail, Phone, MapPin } from "lucide-react";
+import {
+  ArrowUpRight,
+  ArrowRight,
+  Package,
+  Zap,
+  ShieldCheck,
+  Globe,
+  Linkedin,
+  Twitter,
+  Facebook,
+  Instagram,
+  Mail,
+  Phone,
+  MapPin,
+} from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { Marquee } from "@/components/Marquee";
 import { Counter } from "@/components/Counter";
@@ -22,17 +36,39 @@ export const Route = createFileRoute("/")({
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 const PARTNER_BRANDS = [
-  "Sugmya Finance", "Vedika Credit Capital", "HESA", "South India Finvest",
-  "Navachethana MFI", "Maximal Finance", "Navodit Foundation", "Investment Trust of India",
-  "Aarthsiddhi", "PJ Aruvi Finance", "Sangamam Foundation", "Utthejana",
-  "Pavagada Souharda", "Suyoga Co-op", "Chhaya Foundation", "Gnanashale",
-  "Anandam Finance", "Jeevan Abhivriddhi",
+  "Sugmya Finance",
+  "Vedika Credit Capital",
+  "HESA",
+  "South India Finvest",
+  "Navachethana MFI",
+  "Maximal Finance",
+  "Navodit Foundation",
+  "Investment Trust of India",
+  "Aarthsiddhi",
+  "PJ Aruvi Finance",
+  "Sangamam Foundation",
+  "Utthejana",
+  "Pavagada Souharda",
+  "Suyoga Co-op",
+  "Chhaya Foundation",
+  "Gnanashale",
+  "Anandam Finance",
+  "Jeevan Abhivriddhi",
 ];
 
 const CATEGORIES = [
-  "Kitchenware", "Home Appliances", "Home Furnishing", "Household Furniture",
-  "Electricals", "Electronics", "White Goods", "Water Purifiers",
-  "Portable Solar", "Mobiles & Accessories", "Health & Hygiene", "FMCG / Commodities",
+  "Kitchenware",
+  "Home Appliances",
+  "Home Furnishing",
+  "Household Furniture",
+  "Electricals",
+  "Electronics",
+  "White Goods",
+  "Water Purifiers",
+  "Portable Solar",
+  "Mobiles & Accessories",
+  "Health & Hygiene",
+  "FMCG / Commodities",
 ];
 
 const PILLARS = [
@@ -91,10 +127,18 @@ const LEADERSHIP = [
 ];
 
 const SOCIAL_LINKS = [
-  { icon: <Linkedin className="h-5 w-5" />, href: "https://linkedin.com/company/2fapl", label: "LinkedIn" },
+  {
+    icon: <Linkedin className="h-5 w-5" />,
+    href: "https://linkedin.com/company/2fapl",
+    label: "LinkedIn",
+  },
   { icon: <Twitter className="h-5 w-5" />, href: "https://twitter.com/2fapl", label: "Twitter" },
   { icon: <Facebook className="h-5 w-5" />, href: "https://facebook.com/2fapl", label: "Facebook" },
-  { icon: <Instagram className="h-5 w-5" />, href: "https://instagram.com/2fapl", label: "Instagram" },
+  {
+    icon: <Instagram className="h-5 w-5" />,
+    href: "https://instagram.com/2fapl",
+    label: "Instagram",
+  },
 ];
 
 const QUICK_LINKS = [
@@ -119,50 +163,67 @@ const COMPANY_INFO = {
 function Home() {
   return (
     <PageShell>
-
       {/* ══════════════════════════════════════════════════════════ */}
       {/* 01 · HERO                                                  */}
       {/* ══════════════════════════════════════════════════════════ */}
       <section className="relative min-h-screen bg-white overflow-hidden flex flex-col">
-
         {/* Background depth */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-          <div className="absolute -top-32 -left-32 w-[700px] h-[700px] rounded-full"
-            style={{ background: "radial-gradient(circle, oklch(0.86 0.07 85 / 0.12) 0%, transparent 70%)" }} />
-          <div className="absolute top-1/3 -right-48 w-[600px] h-[600px] rounded-full"
-            style={{ background: "radial-gradient(circle, oklch(0.55 0.08 160 / 0.07) 0%, transparent 70%)" }} />
-          <svg className="absolute inset-0 w-full h-full opacity-[0.025]" xmlns="http://www.w3.org/2000/svg">
+          <div
+            className="absolute -top-32 -left-32 w-[700px] h-[700px] rounded-full"
+            style={{
+              background: "radial-gradient(circle, oklch(0.86 0.07 85 / 0.12) 0%, transparent 70%)",
+            }}
+          />
+          <div
+            className="absolute top-1/3 -right-48 w-[600px] h-[600px] rounded-full"
+            style={{
+              background:
+                "radial-gradient(circle, oklch(0.55 0.08 160 / 0.07) 0%, transparent 70%)",
+            }}
+          />
+          <svg
+            className="absolute inset-0 w-full h-full opacity-[0.025]"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <defs>
               <pattern id="heroGridBg" width="48" height="48" patternUnits="userSpaceOnUse">
-                <path d="M 48 0 L 0 0 0 48" fill="none" stroke="oklch(0.34 0.07 160)" strokeWidth="0.8"/>
+                <path
+                  d="M 48 0 L 0 0 0 48"
+                  fill="none"
+                  stroke="oklch(0.34 0.07 160)"
+                  strokeWidth="0.8"
+                />
               </pattern>
             </defs>
-            <rect width="100%" height="100%" fill="url(#heroGridBg)"/>
+            <rect width="100%" height="100%" fill="url(#heroGridBg)" />
           </svg>
         </div>
 
         {/* Floating gold particles */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
           {[
-            { l:"8%",t:"20%",d:"0s",dur:"7s" },
-            { l:"15%",t:"70%",d:"1.2s",dur:"9s" },
-            { l:"72%",t:"12%",d:"2.1s",dur:"6s" },
-            { l:"85%",t:"55%",d:"0.6s",dur:"8s" },
-            { l:"50%",t:"80%",d:"3s",dur:"10s" },
-            { l:"32%",t:"40%",d:"1.8s",dur:"7s" },
-            { l:"91%",t:"30%",d:"0.3s",dur:"9s" },
+            { l: "8%", t: "20%", d: "0s", dur: "7s" },
+            { l: "15%", t: "70%", d: "1.2s", dur: "9s" },
+            { l: "72%", t: "12%", d: "2.1s", dur: "6s" },
+            { l: "85%", t: "55%", d: "0.6s", dur: "8s" },
+            { l: "50%", t: "80%", d: "3s", dur: "10s" },
+            { l: "32%", t: "40%", d: "1.8s", dur: "7s" },
+            { l: "91%", t: "30%", d: "0.3s", dur: "9s" },
           ].map((p, i) => (
-            <div key={i} className="hero-particle" style={{ left: p.l, top: p.t, animationDelay: p.d, animationDuration: p.dur }} />
+            <div
+              key={i}
+              className="hero-particle"
+              style={{ left: p.l, top: p.t, animationDelay: p.d, animationDuration: p.dur }}
+            />
           ))}
         </div>
 
         {/* Two-column layout */}
         <div className="container-edge flex-1 flex items-center">
           <div className="w-full grid lg:grid-cols-[1fr_1fr] gap-12 xl:gap-20 items-center pt-28 pb-16 md:pt-32 md:pb-20">
-
             {/* Left: Content */}
             <div className="flex flex-col order-2 lg:order-1">
-
               {/* Tagline pill */}
               <div className="hero-enter" style={{ animationDelay: "100ms" }}>
                 <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-line bg-stone/60 backdrop-blur-sm mb-8 shadow-sm">
@@ -179,47 +240,69 @@ function Home() {
                   <span key={word} className="hero-word-wrap">
                     <span className="hero-word" style={{ animationDelay: `${200 + i * 80}ms` }}>
                       {word === "India." ? (
-                        <>{word.slice(0, -1)}<em className="text-emerald-deep not-italic">.</em></>
+                        <>
+                          {word.slice(0, -1)}
+                          <em className="text-emerald-deep not-italic">.</em>
+                        </>
                       ) : i === 1 || i === 2 ? (
                         <em className="text-emerald-deep not-italic">{word}</em>
-                      ) : word}{" "}
+                      ) : (
+                        word
+                      )}{" "}
                     </span>
                   </span>
                 ))}
               </h1>
 
               {/* Paragraph */}
-              <p className="hero-enter text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg mb-10"
-                style={{ animationDelay: "700ms" }}>
-                2+ Fortune Alliances connects 18 NBFC & MFI partners, 30+ premium brands, and 1,00,000+ households across 20+ Indian states.
+              <p
+                className="hero-enter text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg mb-10"
+                style={{ animationDelay: "700ms" }}
+              >
+                2+ Fortune Alliances connects 18 NBFC & MFI partners, 30+ premium brands, and
+                1,00,000+ households across 20+ Indian states.
               </p>
 
               {/* CTAs */}
-              <div className="hero-enter flex flex-wrap gap-3 mb-12" style={{ animationDelay: "900ms" }}>
+              <div
+                className="hero-enter flex flex-wrap gap-3 mb-12"
+                style={{ animationDelay: "900ms" }}
+              >
                 <div className="magnetic-wrap">
-                  <Link to="/business-model" className="btn-primary btn-premium-lift magnetic-btn shadow-sm shadow-emerald-deep/20" aria-label="Learn how our business model works">
+                  <Link
+                    to="/business-model"
+                    className="btn-primary btn-premium-lift magnetic-btn shadow-sm shadow-emerald-deep/20"
+                    aria-label="Learn how our business model works"
+                  >
                     How It Works <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
                 </div>
                 <div className="magnetic-wrap">
-                  <Link to="/contact" className="btn-ghost btn-premium-lift magnetic-btn" aria-label="Become a partner">
+                  <Link
+                    to="/contact"
+                    className="btn-ghost btn-premium-lift magnetic-btn"
+                    aria-label="Become a partner"
+                  >
                     Become a Partner <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
                 </div>
               </div>
 
               {/* Animated stats */}
-              <div className="hero-enter grid grid-cols-2 sm:grid-cols-4 gap-5 border-t border-line pt-8"
-                style={{ animationDelay: "1100ms" }}>
+              <div
+                className="hero-enter grid grid-cols-2 sm:grid-cols-4 gap-5 border-t border-line pt-8"
+                style={{ animationDelay: "1100ms" }}
+              >
                 {[
-                  { value: 4,   suffix: "",   label: "Years" },
-                  { value: 30,  suffix: "+",  label: "Brands" },
-                  { value: 18,  suffix: "",   label: "Partners" },
+                  { value: 4, suffix: "", label: "Years" },
+                  { value: 30, suffix: "+", label: "Brands" },
+                  { value: 18, suffix: "", label: "Partners" },
                   { value: 100, suffix: "K+", label: "Households" },
                 ].map((s) => (
                   <div key={s.label} className="flex flex-col gap-1">
                     <span className="font-display text-3xl md:text-4xl text-ink leading-none">
-                      <Counter to={s.value} duration={2000} />{s.suffix}
+                      <Counter to={s.value} duration={2000} />
+                      {s.suffix}
                     </span>
                     <span className="eyebrow text-muted-foreground">{s.label}</span>
                   </div>
@@ -229,10 +312,20 @@ function Home() {
 
             {/* Right: Visual */}
             <div className="relative order-1 lg:order-2 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-3xl pointer-events-none"
-                style={{ background: "radial-gradient(ellipse at 50% 50%, oklch(0.74 0.12 80 / 0.12) 0%, oklch(0.55 0.08 160 / 0.08) 40%, transparent 70%)", filter: "blur(32px)", transform: "scale(1.15)" }} />
+              <div
+                className="absolute inset-0 rounded-3xl pointer-events-none"
+                style={{
+                  background:
+                    "radial-gradient(ellipse at 50% 50%, oklch(0.74 0.12 80 / 0.12) 0%, oklch(0.55 0.08 160 / 0.08) 40%, transparent 70%)",
+                  filter: "blur(32px)",
+                  transform: "scale(1.15)",
+                }}
+              />
 
-              <div className="hero-image-wrap relative w-full max-w-xl aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl shadow-ink/10 border border-white/80 mouse-parallax" data-parallax-factor="0.015">
+              <div
+                className="hero-image-wrap relative w-full max-w-xl aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl shadow-ink/10 border border-white/80 mouse-parallax"
+                data-parallax-factor="0.015"
+              >
                 <img
                   src={`${import.meta.env.BASE_URL}images/hero_rural_bridge.png`}
                   alt="2+ Fortune Alliances distribution network bridging premium brands to rural & semi-urban India"
@@ -240,9 +333,12 @@ function Home() {
                   loading="eager"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-transparent" />
-                
+
                 {/* Floating stat card */}
-                <div className="absolute bottom-6 left-6 right-6 hero-float-card" style={{ animationDelay: "1.5s" }}>
+                <div
+                  className="absolute bottom-6 left-6 right-6 hero-float-card"
+                  style={{ animationDelay: "1.5s" }}
+                >
                   <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-4 shadow-lg border border-white/60 flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-emerald-deep flex items-center justify-center shrink-0">
                       <TrendingUp className="h-5 w-5 text-paper" />
@@ -259,7 +355,10 @@ function Home() {
                 </div>
 
                 {/* Floating badge */}
-                <div className="absolute top-5 right-5 hero-float-badge" style={{ animationDelay: "0.8s" }}>
+                <div
+                  className="absolute top-5 right-5 hero-float-badge"
+                  style={{ animationDelay: "0.8s" }}
+                >
                   <div className="bg-white/90 backdrop-blur-xl rounded-full px-4 py-2 shadow border border-white/60 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
                     <span className="text-xs font-medium text-ink">20+ States</span>
@@ -269,23 +368,41 @@ function Home() {
 
               {/* Decorative rings */}
               <div className="absolute -bottom-6 -right-6 w-32 h-32 rounded-full border border-gold/20 hero-spin-slow pointer-events-none" />
-              <div className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full border border-emerald-soft/10 hero-spin-slow pointer-events-none" style={{ animationDirection: "reverse" }} />
+              <div
+                className="absolute -bottom-10 -right-10 w-48 h-48 rounded-full border border-emerald-soft/10 hero-spin-slow pointer-events-none"
+                style={{ animationDirection: "reverse" }}
+              />
             </div>
           </div>
         </div>
 
         {/* Scroll indicator */}
         <div className="relative z-10 pb-8 flex flex-col items-center gap-2" aria-hidden="true">
-          <span className="text-xs tracking-[0.2em] uppercase text-muted-foreground opacity-60">Scroll</span>
-          <div className="hero-scroll-indicator"><div className="hero-scroll-dot" /></div>
+          <span className="text-xs tracking-[0.2em] uppercase text-muted-foreground opacity-60">
+            Scroll
+          </span>
+          <div className="hero-scroll-indicator">
+            <div className="hero-scroll-dot" />
+          </div>
         </div>
 
         {/* Trust strip */}
         <div className="border-t border-line bg-stone/40 backdrop-blur-sm relative z-10">
           <div className="container-edge py-4 flex items-center gap-6 text-xs text-muted-foreground overflow-x-auto">
             <span className="eyebrow text-ink shrink-0">Operational presence</span>
-            {["Ranchi", "Patna", "Punjab", "Chandigarh", "Cochin", "Visakhapatnam", "Varanasi", "Bhubaneswar"].map(s => (
-              <span key={s} className="shrink-0 whitespace-nowrap">· {s}</span>
+            {[
+              "Ranchi",
+              "Patna",
+              "Punjab",
+              "Chandigarh",
+              "Cochin",
+              "Visakhapatnam",
+              "Varanasi",
+              "Bhubaneswar",
+            ].map((s) => (
+              <span key={s} className="shrink-0 whitespace-nowrap">
+                · {s}
+              </span>
             ))}
           </div>
         </div>
@@ -297,11 +414,15 @@ function Home() {
       <section className="section-y bg-glow-gold border-t border-line">
         <div className="container-edge">
           <div className="grid lg:grid-cols-[1.1fr_1.5fr] gap-16 lg:gap-24 items-center">
-
             {/* Left */}
             <div>
-              <p className="eyebrow mb-6" data-reveal="rise-soft">02 — Our Story</p>
-              <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl xl:text-7xl text-ink leading-[0.95] mb-8">
+              <p className="eyebrow mb-6" data-reveal="rise-soft">
+                02 — Our Story
+              </p>
+              <h2
+                data-reveal="rise"
+                className="font-display text-5xl md:text-6xl xl:text-7xl text-ink leading-[0.95] mb-8"
+              >
                 Built on the belief that every family deserves better.
               </h2>
               <div
@@ -329,12 +450,16 @@ function Home() {
             <div className="space-y-12">
               <div data-reveal="rise-soft">
                 <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                  Founded 30 June 2022 in Hyderabad, 2 Plus Fortune Alliances Pvt Ltd was created with a single conviction — that rural and semi-urban Indian families should have access to premium consumer goods at fair, structured prices.
+                  Founded 30 June 2022 in Hyderabad, 2 Plus Fortune Alliances Pvt Ltd was created
+                  with a single conviction — that rural and semi-urban Indian families should have
+                  access to premium consumer goods at fair, structured prices.
                 </p>
               </div>
               <div data-reveal="rise-soft" style={{ animationDelay: "100ms" }}>
                 <p className="text-base text-muted-foreground leading-relaxed">
-                  Our aggregator model bridges the gap between manufacturers and the last mile — enabling NBFC and MFI partners to offer aspirational products directly to households that traditional retail never reached.
+                  Our aggregator model bridges the gap between manufacturers and the last mile —
+                  enabling NBFC and MFI partners to offer aspirational products directly to
+                  households that traditional retail never reached.
                 </p>
               </div>
 
@@ -343,7 +468,10 @@ function Home() {
                 <p className="eyebrow mb-5">12 Consumer Categories</p>
                 <div className="flex flex-wrap gap-2.5">
                   {CATEGORIES.map((c) => (
-                    <span key={c} className="px-4 py-2 rounded-full border border-line bg-paper text-sm hover:border-emerald-deep hover:text-emerald-deep transition-all duration-300 cursor-default">
+                    <span
+                      key={c}
+                      className="px-4 py-2 rounded-full border border-line bg-paper text-sm hover:border-emerald-deep hover:text-emerald-deep transition-all duration-300 cursor-default"
+                    >
                       {c}
                     </span>
                   ))}
@@ -351,14 +479,20 @@ function Home() {
               </div>
 
               {/* Key figures */}
-              <div data-reveal="rise" style={{ animationDelay: "300ms" }} className="grid grid-cols-3 gap-6 border-t border-line pt-10">
+              <div
+                data-reveal="rise"
+                style={{ animationDelay: "300ms" }}
+                className="grid grid-cols-3 gap-6 border-t border-line pt-10"
+              >
                 {[
                   { v: "₹5.24 Cr", l: "FY 2024-25 Turnover" },
                   { v: "20+", l: "States" },
                   { v: "100K+", l: "Households impacted" },
                 ].map((s) => (
                   <div key={s.l}>
-                    <p className="font-display text-3xl md:text-4xl text-emerald-deep leading-none mb-1">{s.v}</p>
+                    <p className="font-display text-3xl md:text-4xl text-emerald-deep leading-none mb-1">
+                      {s.v}
+                    </p>
                     <p className="text-xs text-muted-foreground">{s.l}</p>
                   </div>
                 ))}
@@ -375,9 +509,18 @@ function Home() {
         <div className="container-edge mb-12">
           <div className="flex items-end justify-between gap-6 flex-wrap">
             <div>
-              <p className="eyebrow mb-5" data-reveal="rise-soft">03 — Trusted Network</p>
-              <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl text-ink leading-[1.0] max-w-2xl">
-                NBFC's, MFI's, Cooperatives,<br />Sec-8 Co's, Trust's, NGO's & B2C.<br /><em className="text-emerald-deep">One unified network.</em>
+              <p className="eyebrow mb-5" data-reveal="rise-soft">
+                03 — Trusted Network
+              </p>
+              <h2
+                data-reveal="rise"
+                className="font-display text-5xl md:text-6xl text-ink leading-[1.0] max-w-2xl"
+              >
+                NBFC's, MFI's, Cooperatives,
+                <br />
+                Sec-8 Co's, Trust's, NGO's & B2C.
+                <br />
+                <em className="text-emerald-deep">One unified network.</em>
               </h2>
             </div>
             <Link to="/brands" className="link-underline text-sm shrink-0" data-reveal="fade">
@@ -390,7 +533,10 @@ function Home() {
         <div className="overflow-hidden" data-reveal="fade">
           <Marquee>
             {PARTNER_BRANDS.map((b) => (
-              <span key={b} className="mx-4 px-6 py-3 bg-paper rounded-xl border border-line select-none font-sans text-sm font-medium text-muted-foreground hover:text-ink hover:border-emerald-deep transition-all duration-300 shrink-0 whitespace-nowrap">
+              <span
+                key={b}
+                className="mx-4 px-6 py-3 bg-paper rounded-xl border border-line select-none font-sans text-sm font-medium text-muted-foreground hover:text-ink hover:border-emerald-deep transition-all duration-300 shrink-0 whitespace-nowrap"
+              >
                 {b}
               </span>
             ))}
@@ -399,14 +545,37 @@ function Home() {
 
         {/* Manufacturing brand row */}
         <div className="container-edge mt-10">
-          <p className="eyebrow mb-5" data-reveal="rise-soft">Associated Brands</p>
+          <p className="eyebrow mb-5" data-reveal="rise-soft">
+            Associated Brands
+          </p>
           <div data-reveal="rise-soft" className="flex flex-wrap gap-2.5">
-            {["Third Wave Power (JUGNU)", "Orient", "Whirlpool", "Haier", "Crompton", "Tharun Sha", "United", "Prestige", "Pigeon", "Bajaj", "Luminous", "Samsung", "D.light", "Vivo"].map((b) => (
-              <span key={b} className="px-4 py-2 rounded-xl bg-paper border border-line text-sm text-ink hover:border-gold hover:text-gold-soft transition-all duration-300">
+            {[
+              "Third Wave Power (JUGNU)",
+              "Orient",
+              "Whirlpool",
+              "Haier",
+              "Crompton",
+              "Tharun Sha",
+              "United",
+              "Prestige",
+              "Pigeon",
+              "Bajaj",
+              "Luminous",
+              "Samsung",
+              "D.light",
+              "Vivo",
+            ].map((b) => (
+              <span
+                key={b}
+                className="px-4 py-2 rounded-xl bg-paper border border-line text-sm text-ink hover:border-gold hover:text-gold-soft transition-all duration-300"
+              >
                 {b}
               </span>
             ))}
-            <Link to="/brands" className="px-4 py-2 rounded-xl bg-emerald-deep text-paper text-sm font-medium hover:bg-ink transition-colors duration-300 flex items-center gap-1.5">
+            <Link
+              to="/brands"
+              className="px-4 py-2 rounded-xl bg-emerald-deep text-paper text-sm font-medium hover:bg-ink transition-colors duration-300 flex items-center gap-1.5"
+            >
               + Others <ArrowUpRight className="h-3 w-3" />
             </Link>
           </div>
@@ -418,40 +587,57 @@ function Home() {
       {/* ══════════════════════════════════════════════════════════ */}
       <section className="section-y border-t border-line bg-glow-emerald">
         <div className="container-edge">
-
           {/* Leadership */}
           <div className="mb-24">
             <div className="grid lg:grid-cols-[1fr_2fr] gap-12 lg:gap-28 mb-14">
               <div>
-                <p className="eyebrow mb-5" data-reveal="rise-soft">04 — Leadership</p>
-                <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl text-ink leading-[0.97]">
+                <p className="eyebrow mb-5" data-reveal="rise-soft">
+                  04 — Leadership
+                </p>
+                <h2
+                  data-reveal="rise"
+                  className="font-display text-5xl md:text-6xl text-ink leading-[0.97]"
+                >
                   Led by experience.
                 </h2>
               </div>
-              <p data-reveal="rise-soft" className="text-base text-muted-foreground leading-relaxed lg:mt-12 max-w-lg">
-                Our team brings banking, MFI, and consumer-finance expertise — translating deep market knowledge into a partner-first distribution strategy.
+              <p
+                data-reveal="rise-soft"
+                className="text-base text-muted-foreground leading-relaxed lg:mt-12 max-w-lg"
+              >
+                Our team brings banking, MFI, and consumer-finance expertise — translating deep
+                market knowledge into a partner-first distribution strategy.
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-5 stagger-children" data-reveal="rise">
               {LEADERSHIP.map((l) => (
                 <div key={l.name} className="card-premium p-8 group">
-                  <div className={`w-14 h-14 rounded-2xl ${l.color} flex items-center justify-center mb-6`}>
+                  <div
+                    className={`w-14 h-14 rounded-2xl ${l.color} flex items-center justify-center mb-6`}
+                  >
                     <span className="font-display text-lg text-paper">{l.initials}</span>
                   </div>
-                  <h3 className="font-display text-2xl text-ink mb-1 group-hover:text-emerald-deep transition-colors duration-300">{l.name}</h3>
+                  <h3 className="font-display text-2xl text-ink mb-1 group-hover:text-emerald-deep transition-colors duration-300">
+                    {l.name}
+                  </h3>
                   <p className="eyebrow text-emerald-deep mb-3">{l.title}</p>
                   <p className="text-xs text-muted-foreground">{l.note}</p>
                 </div>
               ))}
             </div>
             <div className="mt-8 text-center" data-reveal="fade">
-              <Link to="/leadership" className="link-underline text-sm">Full leadership profiles <ArrowRight className="h-4 w-4" /></Link>
+              <Link to="/leadership" className="link-underline text-sm">
+                Full leadership profiles <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </div>
 
           {/* Final CTA */}
-          <div className="bg-ink rounded-3xl p-12 md:p-20 relative overflow-hidden" data-reveal="rise">
+          <div
+            className="bg-ink rounded-3xl p-12 md:p-20 relative overflow-hidden"
+            data-reveal="rise"
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-deep/20 via-transparent to-gold/10 pointer-events-none rounded-3xl" />
             <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-gold/10 blur-3xl" />
 
@@ -459,12 +645,17 @@ function Home() {
               <div>
                 <p className="eyebrow text-gold mb-6">Let's build together</p>
                 <h2 className="font-display text-4xl md:text-6xl text-paper leading-[0.97] mb-6">
-                  Ready to become<br />a <em className="text-gold">2+ Fortune Alliances partner?</em>
+                  Ready to become
+                  <br />a <em className="text-gold">2+ Fortune Alliances partner?</em>
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-6 text-sm text-paper/60">
                   <div>
                     <p className="text-paper/40 eyebrow mb-2">Headquarters</p>
-                    <p>504, 5th Floor, Nami Shree Infratech,<br />T19 Towers, MG Road, Hyderabad — 500003</p>
+                    <p>
+                      504, 5th Floor, Nami Shree Infratech,
+                      <br />
+                      T19 Towers, MG Road, Hyderabad — 500003
+                    </p>
                   </div>
                   <div>
                     <p className="text-paper/40 eyebrow mb-2">Direct</p>
@@ -475,12 +666,20 @@ function Home() {
               </div>
               <div className="flex flex-col gap-3 shrink-0">
                 <div className="magnetic-wrap">
-                  <Link to="/contact" className="btn-gold btn-premium-lift magnetic-btn shadow-lg shadow-gold/20 whitespace-nowrap" aria-label="Partner with 2+ Fortune Alliances">
+                  <Link
+                    to="/contact"
+                    className="btn-gold btn-premium-lift magnetic-btn shadow-lg shadow-gold/20 whitespace-nowrap"
+                    aria-label="Partner with 2+ Fortune Alliances"
+                  >
                     Partner With Us <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
                 </div>
                 <div className="magnetic-wrap">
-                  <Link to="/business-model" className="btn-ghost btn-premium-lift magnetic-btn border-paper/20 text-paper hover:bg-paper/10 whitespace-nowrap" aria-label="Learn how 2+ Fortune Alliances works">
+                  <Link
+                    to="/business-model"
+                    className="btn-ghost btn-premium-lift magnetic-btn border-paper/20 text-paper hover:bg-paper/10 whitespace-nowrap"
+                    aria-label="Learn how 2+ Fortune Alliances works"
+                  >
                     Learn How It Works
                   </Link>
                 </div>
@@ -496,7 +695,6 @@ function Home() {
       <footer className="border-t border-line bg-stone/50" role="contentinfo">
         <div className="container-edge py-16">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-            
             {/* Company Info */}
             <div className="space-y-4">
               <h3 className="font-display text-xl text-ink mb-4">{COMPANY_INFO.name}</h3>
@@ -507,13 +705,19 @@ function Home() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="h-4 w-4 shrink-0 text-emerald-deep" />
-                  <a href={`tel:${COMPANY_INFO.phone.replace(/\s/g, '')}`} className="hover:text-emerald-deep transition-colors">
+                  <a
+                    href={`tel:${COMPANY_INFO.phone.replace(/\s/g, "")}`}
+                    className="hover:text-emerald-deep transition-colors"
+                  >
                     {COMPANY_INFO.phone}
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="h-4 w-4 shrink-0 text-emerald-deep" />
-                  <a href={`mailto:${COMPANY_INFO.email}`} className="hover:text-emerald-deep transition-colors">
+                  <a
+                    href={`mailto:${COMPANY_INFO.email}`}
+                    className="hover:text-emerald-deep transition-colors"
+                  >
                     {COMPANY_INFO.email}
                   </a>
                 </div>
@@ -527,7 +731,10 @@ function Home() {
               <ul className="space-y-2">
                 {QUICK_LINKS.map((link) => (
                   <li key={link.href}>
-                    <Link to={link.href} className="text-sm text-muted-foreground hover:text-emerald-deep transition-colors inline-flex items-center gap-2 group">
+                    <Link
+                      to={link.href}
+                      className="text-sm text-muted-foreground hover:text-emerald-deep transition-colors inline-flex items-center gap-2 group"
+                    >
                       {link.label}
                       <ArrowRight className="h-3 w-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                     </Link>
@@ -554,12 +761,12 @@ function Home() {
               <div className="flex gap-3 mb-4">
                 {SOCIAL_LINKS.map((social) => (
                   <a
-                     key={social.label}
-                     href={social.href}
-                     target="_blank"
-                     rel="noopener noreferrer"
-                     aria-label={social.label}
-                     className="w-10 h-10 rounded-full border border-line bg-paper flex items-center justify-center text-muted-foreground hover:bg-emerald-deep hover:text-paper hover:border-emerald-deep transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-deep focus:ring-offset-2"
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.label}
+                    className="w-10 h-10 rounded-full border border-line bg-paper flex items-center justify-center text-muted-foreground hover:bg-emerald-deep hover:text-paper hover:border-emerald-deep transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-deep focus:ring-offset-2"
                   >
                     {social.icon}
                   </a>
@@ -577,13 +784,16 @@ function Home() {
               © {new Date().getFullYear()} {COMPANY_INFO.name}. All rights reserved.
             </p>
             <div className="flex gap-6 text-xs text-muted-foreground">
-              <a href="#" className="hover:text-emerald-deep transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-emerald-deep transition-colors">Terms of Service</a>
+              <a href="#" className="hover:text-emerald-deep transition-colors">
+                Privacy Policy
+              </a>
+              <a href="#" className="hover:text-emerald-deep transition-colors">
+                Terms of Service
+              </a>
             </div>
           </div>
         </div>
       </footer>
-
     </PageShell>
   );
 }

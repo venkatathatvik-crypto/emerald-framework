@@ -1,7 +1,16 @@
 import { apiFetch } from "./client";
 import type {
-  Agent, AgentCreateRequest, AugmontEmiSchedule, AugmontReceipt, Branch, BranchCreateRequest, BranchUpdateRequest,
-  CustomerResponse, OrderResponse, Paged, PartnerResponse,
+  Agent,
+  AgentCreateRequest,
+  AugmontEmiSchedule,
+  AugmontReceipt,
+  Branch,
+  BranchCreateRequest,
+  BranchUpdateRequest,
+  CustomerResponse,
+  OrderResponse,
+  Paged,
+  PartnerResponse,
 } from "./types";
 
 /** The caller's own company — including its referral code, for sharing with prospective customers. */
@@ -109,7 +118,9 @@ export function getOrder(orderId: number): Promise<OrderResponse> {
 
 /** Pulls Augmont's own live status for an order placed anywhere in the caller's company. */
 export function refreshOrderStatus(orderId: number): Promise<OrderResponse> {
-  return apiFetch<OrderResponse>(`/api/v1/partner/orders/${orderId}/refresh-status`, { method: "POST" });
+  return apiFetch<OrderResponse>(`/api/v1/partner/orders/${orderId}/refresh-status`, {
+    method: "POST",
+  });
 }
 
 /** EMI schedule for an order placed anywhere in the caller's company. */
@@ -140,7 +151,9 @@ export interface ListPartnerCustomersParams {
 }
 
 /** Customers attributed to the caller's company, across all its branches. */
-export function listCustomers(params: ListPartnerCustomersParams = {}): Promise<Paged<CustomerResponse>> {
+export function listCustomers(
+  params: ListPartnerCustomersParams = {},
+): Promise<Paged<CustomerResponse>> {
   return apiFetch<Paged<CustomerResponse>>("/api/v1/partner/customers", {
     query: {
       branchId: params.branchId,

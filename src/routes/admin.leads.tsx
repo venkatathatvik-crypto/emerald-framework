@@ -10,14 +10,29 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
-  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter,
-  AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { ConvertLeadDialog } from "@/components/admin/ConvertLeadDialog";
 
@@ -112,19 +127,27 @@ function Page() {
             <Input
               placeholder="Search company, contact, email…"
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(0);
+              }}
               className="w-64"
             />
             <Select
               value={status}
-              onValueChange={(v) => { setStatus(v as LeadStatus | "ALL"); setPage(0); }}
+              onValueChange={(v) => {
+                setStatus(v as LeadStatus | "ALL");
+                setPage(0);
+              }}
             >
               <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {STATUS_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -174,9 +197,7 @@ function Page() {
                     <p>{lead.email}</p>
                     <p className="text-xs text-muted-foreground">{lead.phone}</p>
                   </TableCell>
-                  <TableCell>
-                    {[lead.city, lead.state].filter(Boolean).join(", ") || "—"}
-                  </TableCell>
+                  <TableCell>{[lead.city, lead.state].filter(Boolean).join(", ") || "—"}</TableCell>
                   <TableCell>
                     <Badge variant={STATUS_VARIANT[lead.status]}>{lead.status}</Badge>
                   </TableCell>
@@ -209,7 +230,11 @@ function Page() {
                         </Button>
                       </>
                     )}
-                    <Button size="sm" variant="pillDestructive" onClick={() => setDeletingLead(lead)}>
+                    <Button
+                      size="sm"
+                      variant="pillDestructive"
+                      onClick={() => setDeletingLead(lead)}
+                    >
                       Delete
                     </Button>
                   </TableCell>
@@ -250,18 +275,28 @@ function Page() {
         <ConvertLeadDialog
           lead={convertingLead}
           open={!!convertingLead}
-          onOpenChange={(open) => { if (!open) setConvertingLead(null); }}
+          onOpenChange={(open) => {
+            if (!open) setConvertingLead(null);
+          }}
           onConverted={handleConverted}
         />
       )}
 
-      <AlertDialog open={!!deletingLead} onOpenChange={(open) => { if (!open) setDeletingLead(null); }}>
+      <AlertDialog
+        open={!!deletingLead}
+        onOpenChange={(open) => {
+          if (!open) setDeletingLead(null);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete this lead?</AlertDialogTitle>
             <AlertDialogDescription>
               {deletingLead && (
-                <>This permanently deletes the lead from <strong>{deletingLead.companyName}</strong>. This cannot be undone.</>
+                <>
+                  This permanently deletes the lead from <strong>{deletingLead.companyName}</strong>
+                  . This cannot be undone.
+                </>
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>

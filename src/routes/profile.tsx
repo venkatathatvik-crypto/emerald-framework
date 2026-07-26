@@ -13,10 +13,19 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import {
-  Form, FormField, FormItem, FormLabel, FormControl, FormMessage,
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
 } from "@/components/ui/form";
 
 export const Route = createFileRoute("/profile")({
@@ -43,18 +52,25 @@ const ROLE_LABEL: Record<string, string> = {
 const profileSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required").max(100),
   lastName: z.string().trim().max(100).optional(),
-  mobile: z.string().trim().regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number").optional().or(z.literal("")),
+  mobile: z
+    .string()
+    .trim()
+    .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number")
+    .optional()
+    .or(z.literal("")),
 });
 type ProfileValues = z.infer<typeof profileSchema>;
 
-const passwordSchema = z.object({
-  currentPassword: z.string().min(1, "Current password is required"),
-  newPassword: z.string().min(8, "New password must be at least 8 characters"),
-  confirmPassword: z.string().min(1, "Confirm your new password"),
-}).refine((v) => v.newPassword === v.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+const passwordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z.string().min(8, "New password must be at least 8 characters"),
+    confirmPassword: z.string().min(1, "Confirm your new password"),
+  })
+  .refine((v) => v.newPassword === v.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 type PasswordValues = z.infer<typeof passwordSchema>;
 
 function Page() {
@@ -68,7 +84,13 @@ function Page() {
 
   const profileForm = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
-    values: user ? { firstName: user.firstName ?? "", lastName: user.lastName ?? "", mobile: user.mobile ?? "" } : undefined,
+    values: user
+      ? {
+          firstName: user.firstName ?? "",
+          lastName: user.lastName ?? "",
+          mobile: user.mobile ?? "",
+        }
+      : undefined,
   });
 
   const passwordForm = useForm<PasswordValues>({
@@ -84,11 +106,17 @@ function Page() {
     setProfileError(null);
     setProfileSaved(false);
     try {
-      const updated = await updateProfile(values.firstName, values.lastName, values.mobile || undefined);
+      const updated = await updateProfile(
+        values.firstName,
+        values.lastName,
+        values.mobile || undefined,
+      );
       setUser(updated);
       setProfileSaved(true);
     } catch (err) {
-      setProfileError(err instanceof ApiError ? err.message : "Failed to update profile. Please try again.");
+      setProfileError(
+        err instanceof ApiError ? err.message : "Failed to update profile. Please try again.",
+      );
     }
   }
 
@@ -99,7 +127,9 @@ function Page() {
       passwordForm.reset({ currentPassword: "", newPassword: "", confirmPassword: "" });
       setPasswordOpen(false);
     } catch (err) {
-      setPasswordError(err instanceof ApiError ? err.message : "Failed to change password. Please try again.");
+      setPasswordError(
+        err instanceof ApiError ? err.message : "Failed to change password. Please try again.",
+      );
     }
   }
 
@@ -113,29 +143,50 @@ function Page() {
           <div className="flex items-center justify-between mb-5">
             <Badge variant="outline">{ROLE_LABEL[user.role] ?? user.role}</Badge>
             {canChangePassword && (
-              <Button type="button" variant="pillOutline" size="sm" onClick={() => setPasswordOpen(true)}>
+              <Button
+                type="button"
+                variant="pillOutline"
+                size="sm"
+                onClick={() => setPasswordOpen(true)}
+              >
                 Change password
               </Button>
             )}
           </div>
 
           <Form {...profileForm}>
-            <form onSubmit={profileForm.handleSubmit(onSaveProfile)} noValidate className="space-y-4">
+            <form
+              onSubmit={profileForm.handleSubmit(onSaveProfile)}
+              noValidate
+              className="space-y-4"
+            >
               <div className="grid sm:grid-cols-2 gap-4">
-                <FormField control={profileForm.control} name="firstName" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First name</FormLabel>
-                    <FormControl><Input {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={profileForm.control} name="lastName" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last name</FormLabel>
-                    <FormControl><Input {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
+                <FormField
+                  control={profileForm.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={profileForm.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
@@ -143,23 +194,34 @@ function Page() {
                   <label className="text-sm font-medium">Email</label>
                   <p className="text-sm text-muted-foreground mt-2">{user.email || "—"}</p>
                 </div>
-                <FormField control={profileForm.control} name="mobile" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mobile</FormLabel>
-                    <FormControl><Input inputMode="tel" maxLength={10} {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
+                <FormField
+                  control={profileForm.control}
+                  name="mobile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile</FormLabel>
+                      <FormControl>
+                        <Input inputMode="tel" maxLength={10} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               <p className="text-xs text-muted-foreground">
-                Email is your login and can't be changed here — contact an admin if it needs to update.
+                Email is your login and can't be changed here — contact an admin if it needs to
+                update.
               </p>
 
               {profileError && (
-                <p className="text-sm text-destructive" role="alert">{profileError}</p>
+                <p className="text-sm text-destructive" role="alert">
+                  {profileError}
+                </p>
               )}
               {profileSaved && (
-                <p className="text-sm text-emerald-deep" role="status">Profile updated.</p>
+                <p className="text-sm text-emerald-deep" role="status">
+                  Profile updated.
+                </p>
               )}
 
               <Button type="submit" variant="pill" disabled={profileForm.formState.isSubmitting}>
@@ -170,37 +232,67 @@ function Page() {
         </Panel>
       </div>
 
-      <Dialog open={passwordOpen} onOpenChange={(open) => { setPasswordOpen(open); if (!open) setPasswordError(null); }}>
+      <Dialog
+        open={passwordOpen}
+        onOpenChange={(open) => {
+          setPasswordOpen(open);
+          if (!open) setPasswordError(null);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Change password</DialogTitle>
           </DialogHeader>
           <Form {...passwordForm}>
-            <form onSubmit={passwordForm.handleSubmit(onChangePassword)} noValidate className="space-y-4">
-              <FormField control={passwordForm.control} name="currentPassword" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Current password</FormLabel>
-                  <FormControl><Input type="password" {...field} /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={passwordForm.control} name="newPassword" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>New password</FormLabel>
-                  <FormControl><Input type="password" {...field} /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <FormField control={passwordForm.control} name="confirmPassword" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm new password</FormLabel>
-                  <FormControl><Input type="password" {...field} /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
+            <form
+              onSubmit={passwordForm.handleSubmit(onChangePassword)}
+              noValidate
+              className="space-y-4"
+            >
+              <FormField
+                control={passwordForm.control}
+                name="currentPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Current password</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={passwordForm.control}
+                name="newPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New password</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={passwordForm.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm new password</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               {passwordError && (
-                <p className="text-sm text-destructive" role="alert">{passwordError}</p>
+                <p className="text-sm text-destructive" role="alert">
+                  {passwordError}
+                </p>
               )}
 
               <DialogFooter>

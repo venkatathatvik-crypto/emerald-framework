@@ -10,7 +10,12 @@ import { EditPartnerDialog } from "@/components/admin/EditPartnerDialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 
 export const Route = createFileRoute("/admin/partners/$partnerId")({
@@ -27,13 +32,22 @@ function Page() {
 
   const enabled = ready && Number.isFinite(id);
 
-  const { data: partner, isLoading: partnerLoading, isError: partnerError, refetch } = useQuery({
+  const {
+    data: partner,
+    isLoading: partnerLoading,
+    isError: partnerError,
+    refetch,
+  } = useQuery({
     queryKey: ["admin", "partner", id],
     queryFn: () => getPartner(id),
     enabled,
   });
 
-  const { data: branches, isLoading: branchesLoading, isError: branchesError } = useQuery({
+  const {
+    data: branches,
+    isLoading: branchesLoading,
+    isError: branchesError,
+  } = useQuery({
     queryKey: ["admin", "partner", id, "branches"],
     queryFn: () => getPartnerBranches(id, { size: 50 }),
     enabled,
@@ -48,25 +62,38 @@ function Page() {
 
   return (
     <DashboardShell role="admin" title="Partner details">
-      <Link to="/admin/partners" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink mb-4">
+      <Link
+        to="/admin/partners"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink mb-4"
+      >
         <ArrowLeft className="h-3.5 w-3.5" /> Back to partners
       </Link>
 
-      {partnerLoading && <p className="text-sm text-muted-foreground py-10 text-center">Loading partner…</p>}
-      {partnerError && <p className="text-sm text-destructive py-10 text-center">Failed to load this partner.</p>}
+      {partnerLoading && (
+        <p className="text-sm text-muted-foreground py-10 text-center">Loading partner…</p>
+      )}
+      {partnerError && (
+        <p className="text-sm text-destructive py-10 text-center">Failed to load this partner.</p>
+      )}
 
       {partner && (
         <div className="space-y-6">
           <Panel
             title={partner.name}
-            action={<Button size="sm" variant="pillOutline" onClick={() => setEditOpen(true)}>Edit</Button>}
+            action={
+              <Button size="sm" variant="pillOutline" onClick={() => setEditOpen(true)}>
+                Edit
+              </Button>
+            }
           >
             <div className="flex items-center gap-2 mb-4">
               <Badge variant={partner.active ? "default" : "destructive"}>
                 {partner.active ? "Active" : "Deactivated"}
               </Badge>
               <Badge variant="outline">{partner.type}</Badge>
-              {partner.registrationNumber && <Badge variant="outline">{partner.registrationNumber}</Badge>}
+              {partner.registrationNumber && (
+                <Badge variant="outline">{partner.registrationNumber}</Badge>
+              )}
             </div>
             <div className="grid sm:grid-cols-4 gap-4 text-sm">
               <div>
@@ -85,14 +112,19 @@ function Page() {
               </div>
               <div>
                 <p className="text-muted-foreground">Network</p>
-                <p>{branchItems.length} branch{branchItems.length === 1 ? "" : "es"} · {totalAgents} agent{totalAgents === 1 ? "" : "s"}</p>
+                <p>
+                  {branchItems.length} branch{branchItems.length === 1 ? "" : "es"} · {totalAgents}{" "}
+                  agent{totalAgents === 1 ? "" : "s"}
+                </p>
               </div>
             </div>
           </Panel>
 
           <Panel title="Branches">
             {branchesError && (
-              <p className="text-sm text-destructive py-6">Failed to load branches. Please try again.</p>
+              <p className="text-sm text-destructive py-6">
+                Failed to load branches. Please try again.
+              </p>
             )}
 
             {!branchesError && (
@@ -126,7 +158,9 @@ function Page() {
                     <TableRow key={branch.id}>
                       <TableCell>
                         <p className="font-medium text-ink">{branch.name}</p>
-                        {branch.code && <p className="text-xs text-muted-foreground">{branch.code}</p>}
+                        {branch.code && (
+                          <p className="text-xs text-muted-foreground">{branch.code}</p>
+                        )}
                       </TableCell>
                       <TableCell>
                         <p>{branch.contactEmail || "—"}</p>

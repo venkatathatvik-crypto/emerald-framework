@@ -30,10 +30,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     authApi
       .me()
-      .then((u) => { if (!cancelled) setUser(u); })
-      .catch(() => { if (!cancelled) setUser(null); })
-      .finally(() => { if (!cancelled) setIsLoading(false); });
-    return () => { cancelled = true; };
+      .then((u) => {
+        if (!cancelled) setUser(u);
+      })
+      .catch(() => {
+        if (!cancelled) setUser(null);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function login(identifier: string, password: string) {

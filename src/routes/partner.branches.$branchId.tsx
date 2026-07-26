@@ -12,11 +12,22 @@ import type { Agent } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
-  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter,
-  AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/partner/branches/$branchId")({
@@ -38,13 +49,21 @@ function Page() {
 
   const enabled = ready && Number.isFinite(id);
 
-  const { data: branch, isLoading: branchLoading, isError: branchError } = useQuery({
+  const {
+    data: branch,
+    isLoading: branchLoading,
+    isError: branchError,
+  } = useQuery({
     queryKey: ["partner", "branch", id],
     queryFn: () => getBranch(id),
     enabled,
   });
 
-  const { data: agents, isLoading: agentsLoading, isError: agentsError } = useQuery({
+  const {
+    data: agents,
+    isLoading: agentsLoading,
+    isError: agentsError,
+  } = useQuery({
     queryKey: ["partner", "branch", id, "agents"],
     queryFn: () => listAgents(id),
     enabled,
@@ -78,16 +97,30 @@ function Page() {
 
   return (
     <DashboardShell role="partner" title="Branch details">
-      <Link to="/partner/branches" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink mb-4">
+      <Link
+        to="/partner/branches"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink mb-4"
+      >
         <ArrowLeft className="h-3.5 w-3.5" /> Back to branches
       </Link>
 
-      {branchLoading && <p className="text-sm text-muted-foreground py-10 text-center">Loading branch…</p>}
-      {branchError && <p className="text-sm text-destructive py-10 text-center">Failed to load this branch.</p>}
+      {branchLoading && (
+        <p className="text-sm text-muted-foreground py-10 text-center">Loading branch…</p>
+      )}
+      {branchError && (
+        <p className="text-sm text-destructive py-10 text-center">Failed to load this branch.</p>
+      )}
 
       {branch && (
         <div className="space-y-6">
-          <Panel title={branch.name} action={<Button size="sm" variant="pillOutline" onClick={() => setEditOpen(true)}>Edit</Button>}>
+          <Panel
+            title={branch.name}
+            action={
+              <Button size="sm" variant="pillOutline" onClick={() => setEditOpen(true)}>
+                Edit
+              </Button>
+            }
+          >
             <div className="flex items-center gap-2 mb-4">
               <Badge variant={branch.active ? "default" : "destructive"}>
                 {branch.active ? "Active" : "Deactivated"}
@@ -115,13 +148,17 @@ function Page() {
           <Panel
             title="Agents"
             action={
-              branch.active
-                ? <Button variant="pill" onClick={() => setAddAgentOpen(true)}>Add Agent</Button>
-                : undefined
+              branch.active ? (
+                <Button variant="pill" onClick={() => setAddAgentOpen(true)}>
+                  Add Agent
+                </Button>
+              ) : undefined
             }
           >
             {agentsError && (
-              <p className="text-sm text-destructive py-6">Failed to load agents. Please try again.</p>
+              <p className="text-sm text-destructive py-6">
+                Failed to load agents. Please try again.
+              </p>
             )}
 
             {!agentsError && (
@@ -197,7 +234,9 @@ function Page() {
         branchId={id}
         open={addAgentOpen}
         onOpenChange={setAddAgentOpen}
-        onCreated={() => queryClient.invalidateQueries({ queryKey: ["partner", "branch", id, "agents"] })}
+        onCreated={() =>
+          queryClient.invalidateQueries({ queryKey: ["partner", "branch", id, "agents"] })
+        }
       />
 
       {branch && (
@@ -209,7 +248,12 @@ function Page() {
         />
       )}
 
-      <AlertDialog open={!!deactivatingAgent} onOpenChange={(open) => { if (!open) setDeactivatingAgent(null); }}>
+      <AlertDialog
+        open={!!deactivatingAgent}
+        onOpenChange={(open) => {
+          if (!open) setDeactivatingAgent(null);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Deactivate this agent?</AlertDialogTitle>
@@ -217,7 +261,11 @@ function Page() {
               {deactivatingAgent && (
                 <>
                   This blocks{" "}
-                  <strong>{[deactivatingAgent.firstName, deactivatingAgent.lastName].filter(Boolean).join(" ")}</strong>
+                  <strong>
+                    {[deactivatingAgent.firstName, deactivatingAgent.lastName]
+                      .filter(Boolean)
+                      .join(" ")}
+                  </strong>
                   {"'"}s login immediately. Nothing is deleted — this can be reversed later.
                 </>
               )}

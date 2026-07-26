@@ -2,7 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { getMyBranch, listOrders as listBranchOrders, listCustomers as listBranchCustomers } from "@/lib/api/branch";
+import {
+  getMyBranch,
+  listOrders as listBranchOrders,
+  listCustomers as listBranchCustomers,
+} from "@/lib/api/branch";
 import { ReferralCodeCard } from "@/components/ReferralCodeCard";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { formatInr } from "@/lib/api/augmont";
@@ -46,20 +50,47 @@ function Page() {
         <ReferralCodeCard code={branch?.referralCode} />
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard label="Total orders" value={ordersLoading ? "—" : String(orders?.totalItems ?? 0)} sub="All time" />
-        <StatCard label="Confirmed" value={ordersLoading ? "—" : String(confirmedOrders.length)} sub="Confirmed with Augmont" />
-        <StatCard label="Customers" value={customers ? String(customers.totalItems) : "—"} sub="Attributed to this branch" accent />
-        <StatCard label="Needs attention" value={ordersLoading ? "—" : String(needsAttention)} sub="Pending resolution" />
+        <StatCard
+          label="Total orders"
+          value={ordersLoading ? "—" : String(orders?.totalItems ?? 0)}
+          sub="All time"
+        />
+        <StatCard
+          label="Confirmed"
+          value={ordersLoading ? "—" : String(confirmedOrders.length)}
+          sub="Confirmed with Augmont"
+        />
+        <StatCard
+          label="Customers"
+          value={customers ? String(customers.totalItems) : "—"}
+          sub="Attributed to this branch"
+          accent
+        />
+        <StatCard
+          label="Needs attention"
+          value={ordersLoading ? "—" : String(needsAttention)}
+          sub="Pending resolution"
+        />
       </div>
 
       <Panel
         title="Recent orders"
-        action={<Link to="/branch/orders" className="text-xs link-underline">View all</Link>}
+        action={
+          <Link to="/branch/orders" className="text-xs link-underline">
+            View all
+          </Link>
+        }
       >
-        {ordersLoading && <p className="text-sm text-muted-foreground py-10 text-center">Loading orders…</p>}
+        {ordersLoading && (
+          <p className="text-sm text-muted-foreground py-10 text-center">Loading orders…</p>
+        )}
         {!ordersLoading && recentOrders.length === 0 && (
           <p className="text-sm text-muted-foreground py-10 text-center">
-            No orders yet — <Link to="/branch/place-order" className="link-underline">place one for a customer</Link>.
+            No orders yet —{" "}
+            <Link to="/branch/place-order" className="link-underline">
+              place one for a customer
+            </Link>
+            .
           </p>
         )}
         {!ordersLoading && recentOrders.length > 0 && (
@@ -79,8 +110,12 @@ function Page() {
                   <td className="py-3 font-medium">{order.customerName}</td>
                   <td>{order.productName}</td>
                   <td className="text-muted-foreground">{order.createdByName}</td>
-                  <td><OrderStatusBadge status={order.status} /></td>
-                  <td className="text-right font-display">{formatInr(order.finalOrderPrice ?? undefined)}</td>
+                  <td>
+                    <OrderStatusBadge status={order.status} />
+                  </td>
+                  <td className="text-right font-display">
+                    {formatInr(order.finalOrderPrice ?? undefined)}
+                  </td>
                 </tr>
               ))}
             </tbody>

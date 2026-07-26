@@ -13,7 +13,10 @@ export function me(): Promise<BackendUser> {
 }
 
 /** Sends a 6-digit OTP to the identifier's email for the given purpose (default LOGIN). */
-export function sendOtp(identifier: string, purpose: "LOGIN" | "EMAIL_VERIFY" | "PASSWORD_RESET" = "LOGIN"): Promise<void> {
+export function sendOtp(
+  identifier: string,
+  purpose: "LOGIN" | "EMAIL_VERIFY" | "PASSWORD_RESET" = "LOGIN",
+): Promise<void> {
   return apiFetch<void>("/api/v1/auth/otp/send", {
     method: "POST",
     body: { identifier, purpose },
@@ -33,7 +36,11 @@ export function logout(): Promise<void> {
 }
 
 /** Updates the caller's own display name and mobile. Email isn't editable here — it's the login identifier. */
-export function updateProfile(firstName: string, lastName?: string, mobile?: string): Promise<BackendUser> {
+export function updateProfile(
+  firstName: string,
+  lastName?: string,
+  mobile?: string,
+): Promise<BackendUser> {
   return apiFetch<BackendUser>("/api/v1/auth/me", {
     method: "PATCH",
     body: { firstName, lastName, mobile },

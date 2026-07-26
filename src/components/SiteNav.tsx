@@ -16,7 +16,11 @@ const NAV_GROUPS = [
   {
     label: "Solutions",
     items: [
-      { label: "Business Model", to: "/business-model", desc: "How our distribution network works" },
+      {
+        label: "Business Model",
+        to: "/business-model",
+        desc: "How our distribution network works",
+      },
       { label: "Products", to: "/products", desc: "12 consumer categories, 30+ brands" },
       { label: "Buy Digital Gold", to: "/buy-gold", desc: "Invest in 24K gold starting from ₹1" },
       { label: "Gold EMI", to: "/gold-emi", desc: "Premium gold financing solutions" },
@@ -64,7 +68,9 @@ export function SiteNav() {
   // Lock body scroll when mobile menu open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [mobileOpen]);
 
   const handleGroupEnter = (label: string) => {
@@ -79,7 +85,7 @@ export function SiteNav() {
     }, 280); // 280ms forgiving delay
   };
 
-  const isGroupActive = (group: typeof NAV_GROUPS[number]) =>
+  const isGroupActive = (group: (typeof NAV_GROUPS)[number]) =>
     group.items.some((item) => pathname.startsWith(item.to.split("#")[0]));
 
   return (
@@ -93,9 +99,12 @@ export function SiteNav() {
         onMouseLeave={handleGroupLeave}
       >
         <div className="container-edge flex items-center justify-between h-14 md:h-[4.2rem]">
-
           {/* Logo - Increased size by 20-25% */}
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label="2+ Fortune Alliances home">
+          <Link
+            to="/"
+            className="flex items-center gap-2.5 group shrink-0"
+            aria-label="2+ Fortune Alliances home"
+          >
             <img
               src={`${import.meta.env.BASE_URL}images/logo.png`}
               alt="2+ Fortune Alliances"
@@ -105,12 +114,8 @@ export function SiteNav() {
 
           {/* ── Desktop nav ── */}
           <nav className="hidden xl:flex items-center gap-0.5 text-sm" role="navigation">
-
             {/* Home link */}
-            <div 
-              className="nav-item-container"
-              onMouseEnter={() => handleGroupLeave()}
-            >
+            <div className="nav-item-container" onMouseEnter={() => handleGroupLeave()}>
               <Link
                 to="/"
                 className={`nav-link ${pathname === "/" ? "nav-link--active" : ""}`}
@@ -139,7 +144,7 @@ export function SiteNav() {
                 </button>
 
                 {/* Dropdown panel */}
-                <div 
+                <div
                   className={`nav-dropdown ${activeGroup === group.label ? "nav-dropdown--open" : ""}`}
                   onMouseEnter={() => handleGroupEnter(group.label)}
                   onMouseLeave={handleGroupLeave}
@@ -148,10 +153,10 @@ export function SiteNav() {
                     {group.items.map((item) => {
                       const isHashLink = item.to.includes("#");
                       const Component = isHashLink ? "a" : Link;
-                      const linkProps = isHashLink 
+                      const linkProps = isHashLink
                         ? { href: item.to, onClick: () => setActiveGroup(null) }
                         : { to: item.to, onClick: () => setActiveGroup(null) };
-                      
+
                       return (
                         <Component
                           key={item.to}
@@ -163,7 +168,9 @@ export function SiteNav() {
                             <p className="nav-dropdown-item-label">{item.label}</p>
                             <p className="nav-dropdown-item-desc">{item.desc}</p>
                           </div>
-                          {!isHashLink && <ArrowUpRight className="nav-dropdown-item-arrow h-3.5 w-3.5" />}
+                          {!isHashLink && (
+                            <ArrowUpRight className="nav-dropdown-item-arrow h-3.5 w-3.5" />
+                          )}
                         </Component>
                       );
                     })}
@@ -175,17 +182,20 @@ export function SiteNav() {
 
           {/* ── Right actions ── */}
           <div className="flex items-center gap-2 shrink-0">
-            <Link
-              to="/portal/partner"
-              className="hidden lg:inline-flex nav-link text-sm"
-            >
+            <Link to="/portal/partner" className="hidden lg:inline-flex nav-link text-sm">
               Partner Console
             </Link>
-            <Link to="/login" className="hidden md:inline-flex btn-ghost btn-premium-lift text-sm py-2 px-4">
+            <Link
+              to="/login"
+              className="hidden md:inline-flex btn-ghost btn-premium-lift text-sm py-2 px-4"
+            >
               Sign In
             </Link>
             <div className="magnetic-wrap hidden md:inline-flex">
-              <Link to="/contact" className="btn-primary btn-premium-lift magnetic-btn text-sm py-2 px-4 shadow-sm shadow-emerald-deep/20">
+              <Link
+                to="/contact"
+                className="btn-primary btn-premium-lift magnetic-btn text-sm py-2 px-4 shadow-sm shadow-emerald-deep/20"
+              >
                 Partner With Us
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </Link>
@@ -213,10 +223,17 @@ export function SiteNav() {
       </header>
 
       {/* ── Mobile Menu ── */}
-      <div className={`mobile-menu ${mobileOpen ? "mobile-menu--open" : ""}`} aria-hidden={!mobileOpen}>
+      <div
+        className={`mobile-menu ${mobileOpen ? "mobile-menu--open" : ""}`}
+        aria-hidden={!mobileOpen}
+      >
         {/* Mobile header */}
         <div className="container-edge flex items-center justify-between h-16">
-          <img src={`${import.meta.env.BASE_URL}images/logo.png`} alt="2+ Fortune Alliances" className="h-9 w-auto object-contain" />
+          <img
+            src={`${import.meta.env.BASE_URL}images/logo.png`}
+            alt="2+ Fortune Alliances"
+            className="h-9 w-auto object-contain"
+          />
           <button
             onClick={() => setMobileOpen(false)}
             aria-label="Close menu"
@@ -249,15 +266,15 @@ export function SiteNav() {
               </button>
 
               {/* Accordion children */}
-              <div className={`mobile-accordion ${mobileGroup === group.label ? "mobile-accordion--open" : ""}`}>
+              <div
+                className={`mobile-accordion ${mobileGroup === group.label ? "mobile-accordion--open" : ""}`}
+              >
                 <div className="pb-4 pl-4 flex flex-col gap-1">
                   {group.items.map((item) => {
                     const isHashLink = item.to.includes("#");
                     const Component = isHashLink ? "a" : Link;
-                    const linkProps = isHashLink 
-                      ? { href: item.to }
-                      : { to: item.to };
-                    
+                    const linkProps = isHashLink ? { href: item.to } : { to: item.to };
+
                     return (
                       <Component
                         key={item.to}
@@ -265,7 +282,9 @@ export function SiteNav() {
                         className="py-2.5 px-3 rounded-xl text-base text-muted-foreground hover:text-ink hover:bg-stone transition-all duration-200 flex items-center justify-between group"
                       >
                         <span>{item.label}</span>
-                        {!isHashLink && <ArrowUpRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-60 transition-opacity" />}
+                        {!isHashLink && (
+                          <ArrowUpRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-60 transition-opacity" />
+                        )}
                       </Component>
                     );
                   })}
@@ -282,7 +301,10 @@ export function SiteNav() {
             <Link to="/login" className="btn-ghost text-center py-3">
               Sign In
             </Link>
-            <Link to="/contact" className="btn-primary text-center py-3 flex items-center justify-center gap-2">
+            <Link
+              to="/contact"
+              className="btn-primary text-center py-3 flex items-center justify-center gap-2"
+            >
               Partner With Us <ArrowUpRight className="h-4 w-4" />
             </Link>
           </div>

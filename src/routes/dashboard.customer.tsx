@@ -42,10 +42,27 @@ function Page() {
         />
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard label="Total orders" value={isLoading ? "—" : String(orders?.totalItems ?? 0)} sub="All time" />
-        <StatCard label="Confirmed" value={isLoading ? "—" : String(confirmedOrders.length)} sub="Confirmed with Augmont" />
-        <StatCard label="Total spent" value={isLoading ? "—" : formatInr(totalSpent)} sub="Across confirmed orders" accent />
-        <StatCard label="Needs attention" value={isLoading ? "—" : String(needsAttention)} sub="We're following up" />
+        <StatCard
+          label="Total orders"
+          value={isLoading ? "—" : String(orders?.totalItems ?? 0)}
+          sub="All time"
+        />
+        <StatCard
+          label="Confirmed"
+          value={isLoading ? "—" : String(confirmedOrders.length)}
+          sub="Confirmed with Augmont"
+        />
+        <StatCard
+          label="Total spent"
+          value={isLoading ? "—" : formatInr(totalSpent)}
+          sub="Across confirmed orders"
+          accent
+        />
+        <StatCard
+          label="Needs attention"
+          value={isLoading ? "—" : String(needsAttention)}
+          sub="We're following up"
+        />
       </div>
 
       {/* Gold Investment CTA */}
@@ -59,7 +76,9 @@ function Page() {
             />
             <div>
               <h3 className="font-display text-xl text-ink mb-1">Shop gold, on your terms</h3>
-              <p className="text-sm text-muted-foreground">Browse real Augmont products and EMI pricing</p>
+              <p className="text-sm text-muted-foreground">
+                Browse real Augmont products and EMI pricing
+              </p>
             </div>
           </div>
           <Link to="/customer/shop" className="btn-gold text-sm">
@@ -68,11 +87,24 @@ function Page() {
         </div>
       </div>
 
-      <Panel title="Recent orders" action={<Link to="/customer/orders" className="text-xs link-underline">View all</Link>}>
-        {isLoading && <p className="text-sm text-muted-foreground py-10 text-center">Loading orders…</p>}
+      <Panel
+        title="Recent orders"
+        action={
+          <Link to="/customer/orders" className="text-xs link-underline">
+            View all
+          </Link>
+        }
+      >
+        {isLoading && (
+          <p className="text-sm text-muted-foreground py-10 text-center">Loading orders…</p>
+        )}
         {!isLoading && recentOrders.length === 0 && (
           <p className="text-sm text-muted-foreground py-10 text-center">
-            You haven't placed any orders yet — <Link to="/customer/shop" className="link-underline">browse the shop</Link>.
+            You haven't placed any orders yet —{" "}
+            <Link to="/customer/shop" className="link-underline">
+              browse the shop
+            </Link>
+            .
           </p>
         )}
         {!isLoading && recentOrders.length > 0 && (
@@ -91,8 +123,12 @@ function Page() {
                     <p className="font-medium">{order.productName}</p>
                     <p className="text-xs text-muted-foreground">{order.productWeight}g</p>
                   </td>
-                  <td><OrderStatusBadge status={order.status} /></td>
-                  <td className="text-right font-display">{formatInr(order.finalOrderPrice ?? undefined)}</td>
+                  <td>
+                    <OrderStatusBadge status={order.status} />
+                  </td>
+                  <td className="text-right font-display">
+                    {formatInr(order.finalOrderPrice ?? undefined)}
+                  </td>
                 </tr>
               ))}
             </tbody>

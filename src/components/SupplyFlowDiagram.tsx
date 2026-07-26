@@ -17,7 +17,7 @@ export function SupplyFlowDiagram() {
           <polygon points="0 0, 10 3.5, 0 7" fill="#10b981" fillOpacity="0.4" />
         </marker>
       </defs>
-      
+
       {/* Flow path */}
       <path
         d="M50 200 Q200 100 400 200 T750 200"
@@ -27,33 +27,95 @@ export function SupplyFlowDiagram() {
         markerEnd="url(#arrowhead)"
         strokeDasharray="8 4"
       />
-      
+
       {/* Nodes */}
       <circle cx="50" cy="200" r="12" fill="#10b981" fillOpacity="0.3" />
       <circle cx="50" cy="200" r="6" fill="#10b981" />
-      
+
       <circle cx="225" cy="150" r="10" fill="#d4af37" fillOpacity="0.3" />
       <circle cx="225" cy="150" r="5" fill="#d4af37" />
-      
+
       <circle cx="400" cy="200" r="12" fill="#10b981" fillOpacity="0.3" />
       <circle cx="400" cy="200" r="6" fill="#10b981" />
-      
+
       <circle cx="575" cy="250" r="10" fill="#d4af37" fillOpacity="0.3" />
       <circle cx="575" cy="250" r="5" fill="#d4af37" />
-      
+
       <circle cx="750" cy="200" r="12" fill="#10b981" fillOpacity="0.3" />
       <circle cx="750" cy="200" r="6" fill="#10b981" />
-      
+
       {/* Connection lines */}
-      <line x1="50" y1="200" x2="225" y2="150" stroke="#10b981" strokeWidth="1" strokeOpacity="0.2" />
-      <line x1="225" y1="150" x2="400" y2="200" stroke="#10b981" strokeWidth="1" strokeOpacity="0.2" />
-      <line x1="400" y1="200" x2="575" y2="250" stroke="#10b981" strokeWidth="1" strokeOpacity="0.2" />
-      <line x1="575" y1="250" x2="750" y2="200" stroke="#10b981" strokeWidth="1" strokeOpacity="0.2" />
-      
+      <line
+        x1="50"
+        y1="200"
+        x2="225"
+        y2="150"
+        stroke="#10b981"
+        strokeWidth="1"
+        strokeOpacity="0.2"
+      />
+      <line
+        x1="225"
+        y1="150"
+        x2="400"
+        y2="200"
+        stroke="#10b981"
+        strokeWidth="1"
+        strokeOpacity="0.2"
+      />
+      <line
+        x1="400"
+        y1="200"
+        x2="575"
+        y2="250"
+        stroke="#10b981"
+        strokeWidth="1"
+        strokeOpacity="0.2"
+      />
+      <line
+        x1="575"
+        y1="250"
+        x2="750"
+        y2="200"
+        stroke="#10b981"
+        strokeWidth="1"
+        strokeOpacity="0.2"
+      />
+
       {/* Decorative elements */}
-      <rect x="180" y="120" width="90" height="60" rx="4" stroke="#d4af37" strokeWidth="1" strokeOpacity="0.15" fill="none" />
-      <rect x="355" y="170" width="90" height="60" rx="4" stroke="#10b981" strokeWidth="1" strokeOpacity="0.15" fill="none" />
-      <rect x="530" y="220" width="90" height="60" rx="4" stroke="#d4af37" strokeWidth="1" strokeOpacity="0.15" fill="none" />
+      <rect
+        x="180"
+        y="120"
+        width="90"
+        height="60"
+        rx="4"
+        stroke="#d4af37"
+        strokeWidth="1"
+        strokeOpacity="0.15"
+        fill="none"
+      />
+      <rect
+        x="355"
+        y="170"
+        width="90"
+        height="60"
+        rx="4"
+        stroke="#10b981"
+        strokeWidth="1"
+        strokeOpacity="0.15"
+        fill="none"
+      />
+      <rect
+        x="530"
+        y="220"
+        width="90"
+        height="60"
+        rx="4"
+        stroke="#d4af37"
+        strokeWidth="1"
+        strokeOpacity="0.15"
+        fill="none"
+      />
     </svg>
   );
 }

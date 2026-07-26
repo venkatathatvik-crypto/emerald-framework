@@ -11,14 +11,29 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
-  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter,
-  AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/admin/partners/")({
@@ -95,19 +110,27 @@ function Page() {
             <Input
               placeholder="Search name, contact email…"
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(0);
+              }}
               className="w-64"
             />
             <Select
               value={activeFilter}
-              onValueChange={(v) => { setActiveFilter(v); setPage(0); }}
+              onValueChange={(v) => {
+                setActiveFilter(v);
+                setPage(0);
+              }}
             >
               <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {ACTIVE_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -115,7 +138,9 @@ function Page() {
         }
       >
         {isError && (
-          <p className="text-sm text-destructive py-6">Failed to load partners. Please try again.</p>
+          <p className="text-sm text-destructive py-6">
+            Failed to load partners. Please try again.
+          </p>
         )}
 
         {!isError && (
@@ -172,15 +197,26 @@ function Page() {
                   </TableCell>
                   <TableCell className="text-right space-x-2">
                     <Button size="sm" variant="pill" asChild>
-                      <Link to="/admin/partners/$partnerId" params={{ partnerId: String(partner.id) }}>
+                      <Link
+                        to="/admin/partners/$partnerId"
+                        params={{ partnerId: String(partner.id) }}
+                      >
                         View
                       </Link>
                     </Button>
-                    <Button size="sm" variant="pillOutline" onClick={() => setEditingPartner(partner)}>
+                    <Button
+                      size="sm"
+                      variant="pillOutline"
+                      onClick={() => setEditingPartner(partner)}
+                    >
                       Edit
                     </Button>
                     {partner.active ? (
-                      <Button size="sm" variant="pillDestructive" onClick={() => setDeactivatingPartner(partner)}>
+                      <Button
+                        size="sm"
+                        variant="pillDestructive"
+                        onClick={() => setDeactivatingPartner(partner)}
+                      >
                         Deactivate
                       </Button>
                     ) : (
@@ -231,21 +267,28 @@ function Page() {
         <EditPartnerDialog
           partner={editingPartner}
           open={!!editingPartner}
-          onOpenChange={(open) => { if (!open) setEditingPartner(null); }}
+          onOpenChange={(open) => {
+            if (!open) setEditingPartner(null);
+          }}
           onUpdated={() => queryClient.invalidateQueries({ queryKey: ["admin", "partners"] })}
         />
       )}
 
-      <AlertDialog open={!!deactivatingPartner} onOpenChange={(open) => { if (!open) setDeactivatingPartner(null); }}>
+      <AlertDialog
+        open={!!deactivatingPartner}
+        onOpenChange={(open) => {
+          if (!open) setDeactivatingPartner(null);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Deactivate this partner?</AlertDialogTitle>
             <AlertDialogDescription>
               {deactivatingPartner && (
                 <>
-                  This deactivates <strong>{deactivatingPartner.name}</strong> and blocks their login immediately.
-                  Nothing is deleted — you can see deactivated partners via the status filter, and this can be
-                  reversed later.
+                  This deactivates <strong>{deactivatingPartner.name}</strong> and blocks their
+                  login immediately. Nothing is deleted — you can see deactivated partners via the
+                  status filter, and this can be reversed later.
                 </>
               )}
             </AlertDialogDescription>

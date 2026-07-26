@@ -1,6 +1,12 @@
 import { apiFetch } from "./client";
 import type {
-  AgentPlaceOrderRequest, AugmontEmiSchedule, AugmontReceipt, Branch, CustomerResponse, OrderResponse, Paged,
+  AgentPlaceOrderRequest,
+  AugmontEmiSchedule,
+  AugmontReceipt,
+  Branch,
+  CustomerResponse,
+  OrderResponse,
+  Paged,
 } from "./types";
 
 /** The caller's own branch — including its referral code, for sharing with walk-in customers. */
@@ -42,7 +48,9 @@ export function getOrder(orderId: number): Promise<OrderResponse> {
 
 /** Pulls Augmont's own live status for an order placed at the caller's own branch. */
 export function refreshOrderStatus(orderId: number): Promise<OrderResponse> {
-  return apiFetch<OrderResponse>(`/api/v1/branch/orders/${orderId}/refresh-status`, { method: "POST" });
+  return apiFetch<OrderResponse>(`/api/v1/branch/orders/${orderId}/refresh-status`, {
+    method: "POST",
+  });
 }
 
 /** EMI schedule for an order placed at the caller's own branch. */
@@ -72,7 +80,9 @@ export interface ListBranchCustomersParams {
 }
 
 /** Customers attributed to the caller's own branch. */
-export function listCustomers(params: ListBranchCustomersParams = {}): Promise<Paged<CustomerResponse>> {
+export function listCustomers(
+  params: ListBranchCustomersParams = {},
+): Promise<Paged<CustomerResponse>> {
   return apiFetch<Paged<CustomerResponse>>("/api/v1/branch/customers", {
     query: {
       q: params.q,

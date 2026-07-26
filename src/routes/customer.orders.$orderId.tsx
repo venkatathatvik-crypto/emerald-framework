@@ -5,15 +5,29 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect, useRef, useState } from "react";
 import {
-  ArrowLeft, RefreshCcw, FileText, Receipt, XCircle, Boxes,
-  CheckCircle2, Circle, AlertTriangle, PackageX,
+  ArrowLeft,
+  RefreshCcw,
+  FileText,
+  Receipt,
+  XCircle,
+  Boxes,
+  CheckCircle2,
+  Circle,
+  AlertTriangle,
+  PackageX,
 } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
 import {
-  getOrder, refreshOrderStatus, getOrderEmiSchedule, getOrderContractReceipt,
-  getOrderProformaInvoiceReceipt, getOrderEmiReceipt, getOrderCancellationQuote, cancelOrder,
+  getOrder,
+  refreshOrderStatus,
+  getOrderEmiSchedule,
+  getOrderContractReceipt,
+  getOrderProformaInvoiceReceipt,
+  getOrderEmiReceipt,
+  getOrderCancellationQuote,
+  cancelOrder,
 } from "@/lib/api/customer";
 import { getProductDetails, getProductThumbnail, formatInr } from "@/lib/api/augmont";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
@@ -23,13 +37,27 @@ import type { OrderResponse, OrderStatus } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import {
-  Form, FormField, FormItem, FormLabel, FormControl, FormMessage,
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
 } from "@/components/ui/form";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 
 export const Route = createFileRoute("/customer/orders/$orderId")({
@@ -74,7 +102,11 @@ function StatusDisplay({ order, isRefreshing }: { order: OrderResponse; isRefres
     return <span className="text-sm text-muted-foreground">Checking with Augmont…</span>;
   }
   if (order.augmontStatusName) {
-    return <Badge variant="outline" className="capitalize">{order.augmontStatusName}</Badge>;
+    return (
+      <Badge variant="outline" className="capitalize">
+        {order.augmontStatusName}
+      </Badge>
+    );
   }
   return <span className="text-sm text-muted-foreground">Not synced yet</span>;
 }
@@ -92,7 +124,9 @@ function OrderProgressStepper({ status }: { status: OrderStatus }) {
     return (
       <div className="flex items-center gap-2.5 text-gold">
         <AlertTriangle className="h-5 w-5" />
-        <span className="text-sm font-medium">Needs attention — couldn't be confirmed with our gold partner</span>
+        <span className="text-sm font-medium">
+          Needs attention — couldn't be confirmed with our gold partner
+        </span>
       </div>
     );
   }
@@ -118,17 +152,23 @@ function OrderProgressStepper({ status }: { status: OrderStatus }) {
               ) : (
                 <Circle className="h-6 w-6 text-line" />
               )}
-              <span className={`text-xs whitespace-nowrap ${step.done || step.current ? "text-ink font-medium" : "text-muted-foreground"}`}>
+              <span
+                className={`text-xs whitespace-nowrap ${step.done || step.current ? "text-ink font-medium" : "text-muted-foreground"}`}
+              >
                 {step.label}
               </span>
             </div>
             {i < steps.length - 1 && (
-              <div className={`h-0.5 flex-1 mx-2 mb-5 ${steps[i + 1].done ? "bg-emerald-deep" : "bg-line"}`} />
+              <div
+                className={`h-0.5 flex-1 mx-2 mb-5 ${steps[i + 1].done ? "bg-emerald-deep" : "bg-line"}`}
+              />
             )}
           </div>
         ))}
       </div>
-      <p className="text-xs text-muted-foreground mt-3">Shipping and delivery tracking isn't available yet.</p>
+      <p className="text-xs text-muted-foreground mt-3">
+        Shipping and delivery tracking isn't available yet.
+      </p>
     </div>
   );
 }
@@ -146,7 +186,11 @@ function Page() {
   const [cancelError, setCancelError] = useState<string | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
-  const { data: order, isLoading, isError } = useQuery({
+  const {
+    data: order,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["customer", "order", id],
     queryFn: () => getOrder(id),
     enabled,
@@ -180,7 +224,11 @@ function Page() {
     enabled: enabled && canSyncAugmont,
   });
 
-  const { data: quote, isLoading: quoteLoading, isError: quoteError } = useQuery({
+  const {
+    data: quote,
+    isLoading: quoteLoading,
+    isError: quoteError,
+  } = useQuery({
     queryKey: ["customer", "order", id, "cancellation-quote"],
     queryFn: () => getOrderCancellationQuote(id),
     enabled: enabled && cancelStep === "quote",
@@ -224,7 +272,9 @@ function Page() {
       setCancelStep("closed");
       await queryClient.invalidateQueries({ queryKey: ["customer", "order", id] });
     } catch (err) {
-      setCancelError(err instanceof ApiError ? err.message : "Couldn't cancel this order. Please try again.");
+      setCancelError(
+        err instanceof ApiError ? err.message : "Couldn't cancel this order. Please try again.",
+      );
     } finally {
       setIsCancelling(false);
     }
@@ -234,7 +284,10 @@ function Page() {
     <DashboardShell role="customer" title="Order details">
       {/* ── Header bar ─────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <Link to="/customer/orders" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
+        <Link
+          to="/customer/orders"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink"
+        >
           <ArrowLeft className="h-3.5 w-3.5" /> Back to orders
         </Link>
         {order && canSyncAugmont && (
@@ -245,8 +298,12 @@ function Page() {
         )}
       </div>
 
-      {isLoading && <p className="text-sm text-muted-foreground py-10 text-center">Loading order…</p>}
-      {isError && <p className="text-sm text-destructive py-10 text-center">Failed to load this order.</p>}
+      {isLoading && (
+        <p className="text-sm text-muted-foreground py-10 text-center">Loading order…</p>
+      )}
+      {isError && (
+        <p className="text-sm text-destructive py-10 text-center">Failed to load this order.</p>
+      )}
 
       {order && (
         <div className="space-y-6">
@@ -257,7 +314,11 @@ function Page() {
                 <div className="flex items-center gap-4 mb-6">
                   <div className="h-16 w-16 shrink-0 rounded-md border border-line overflow-hidden bg-stone grid place-items-center">
                     {thumb ? (
-                      <img src={thumb} alt={order.productName} className="w-full h-full object-cover" />
+                      <img
+                        src={thumb}
+                        alt={order.productName}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <Boxes className="h-6 w-6 text-muted-foreground" />
                     )}
@@ -282,16 +343,24 @@ function Page() {
                 <OrderProgressStepper status={order.status} />
 
                 {order.status === "AUGMONT_FAILED" && order.failureReason && (
-                  <p className="text-sm text-destructive mt-4">Augmont error: {order.failureReason}</p>
+                  <p className="text-sm text-destructive mt-4">
+                    Augmont error: {order.failureReason}
+                  </p>
                 )}
               </Panel>
 
               {canSyncAugmont && (
                 <Panel title="EMI schedule">
-                  {scheduleLoading && <p className="text-sm text-muted-foreground py-8 text-center">Loading schedule…</p>}
+                  {scheduleLoading && (
+                    <p className="text-sm text-muted-foreground py-8 text-center">
+                      Loading schedule…
+                    </p>
+                  )}
                   {!scheduleLoading && (!schedule || schedule.orderemidetails.length === 0) && (
                     <p className="text-sm text-muted-foreground py-8 text-center">
-                      {order.paymentTypeId === 4 ? "This was a spot order — no EMI schedule." : "No EMI schedule found."}
+                      {order.paymentTypeId === 4
+                        ? "This was a spot order — no EMI schedule."
+                        : "No EMI schedule found."}
                     </p>
                   )}
                   {!scheduleLoading && schedule && schedule.orderemidetails.length > 0 && (
@@ -309,15 +378,21 @@ function Page() {
                         {schedule.orderemidetails.map((emi) => (
                           <TableRow key={emi.emiId}>
                             <TableCell className="py-4">{emi.paymentDescription}</TableCell>
-                            <TableCell className="py-4">{new Date(emi.dueDate).toLocaleDateString()}</TableCell>
+                            <TableCell className="py-4">
+                              {new Date(emi.dueDate).toLocaleDateString()}
+                            </TableCell>
                             <TableCell className="py-4">{formatInr(emi.emiAmount)}</TableCell>
-                            <TableCell className="py-4 capitalize">{emi.orderemistatus?.statusName ?? "—"}</TableCell>
+                            <TableCell className="py-4 capitalize">
+                              {emi.orderemistatus?.statusName ?? "—"}
+                            </TableCell>
                             <TableCell className="py-4 text-right">
                               {emi.paymentRecievedDate ? (
                                 <Button
                                   variant="pillOutline"
                                   size="sm"
-                                  onClick={() => openReceipt(() => getOrderEmiReceipt(id, emi.emiId))}
+                                  onClick={() =>
+                                    openReceipt(() => getOrderEmiReceipt(id, emi.emiId))
+                                  }
                                 >
                                   <Receipt className="h-3.5 w-3.5" /> Receipt
                                 </Button>
@@ -351,7 +426,9 @@ function Page() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Order value</span>
-                    <span className="text-ink">{formatInr(order.finalOrderPrice ?? undefined)}</span>
+                    <span className="text-ink">
+                      {formatInr(order.finalOrderPrice ?? undefined)}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">
@@ -367,7 +444,9 @@ function Page() {
                   )}
                   <div className="flex items-center justify-between pt-2 mt-1 border-t border-line">
                     <span className="text-muted-foreground">Placed on</span>
-                    <span className="text-ink">{new Date(order.createdAt).toLocaleDateString()}</span>
+                    <span className="text-ink">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Reference</span>
@@ -416,7 +495,8 @@ function Page() {
           {order.status === "CONFIRMED" && (
             <div className="flex items-center justify-between border border-line rounded-md px-5 py-4">
               <p className="text-sm text-muted-foreground">
-                Cancelling stops future EMIs and refunds any eligible balance, minus applicable charges.
+                Cancelling stops future EMIs and refunds any eligible balance, minus applicable
+                charges.
               </p>
               <Button
                 variant="pillOutline"
@@ -431,7 +511,12 @@ function Page() {
         </div>
       )}
 
-      <Dialog open={cancelStep !== "closed"} onOpenChange={(open) => { if (!open) setCancelStep("closed"); }}>
+      <Dialog
+        open={cancelStep !== "closed"}
+        onOpenChange={(open) => {
+          if (!open) setCancelStep("closed");
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Cancel order</DialogTitle>
@@ -439,18 +524,39 @@ function Page() {
 
           {cancelStep === "quote" && (
             <div className="space-y-4">
-              {quoteLoading && <p className="text-sm text-muted-foreground py-6 text-center">Checking cancellation eligibility…</p>}
-              {quoteError && <p className="text-sm text-destructive py-6 text-center">Couldn't fetch cancellation details. Please try again.</p>}
+              {quoteLoading && (
+                <p className="text-sm text-muted-foreground py-6 text-center">
+                  Checking cancellation eligibility…
+                </p>
+              )}
+              {quoteError && (
+                <p className="text-sm text-destructive py-6 text-center">
+                  Couldn't fetch cancellation details. Please try again.
+                </p>
+              )}
               {quote && (
                 <div className="bg-stone rounded-lg p-4 text-sm space-y-1.5">
-                  <div className="flex justify-between"><span className="text-muted-foreground">Total paid so far</span><span>₹{quote.totalAmountPaid}</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Cancellation charges</span><span>₹{quote.totalCancelationCharges}</span></div>
-                  <div className="flex justify-between font-medium"><span>Payable to you</span><span>₹{quote.payableToCustomer}</span></div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Total paid so far</span>
+                    <span>₹{quote.totalAmountPaid}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Cancellation charges</span>
+                    <span>₹{quote.totalCancelationCharges}</span>
+                  </div>
+                  <div className="flex justify-between font-medium">
+                    <span>Payable to you</span>
+                    <span>₹{quote.payableToCustomer}</span>
+                  </div>
                 </div>
               )}
               <DialogFooter>
-                <Button variant="pillOutline" onClick={() => setCancelStep("closed")}>Back</Button>
-                <Button variant="pill" disabled={!quote} onClick={() => setCancelStep("form")}>Continue</Button>
+                <Button variant="pillOutline" onClick={() => setCancelStep("closed")}>
+                  Back
+                </Button>
+                <Button variant="pill" disabled={!quote} onClick={() => setCancelStep("form")}>
+                  Continue
+                </Button>
               </DialogFooter>
             </div>
           )}
@@ -458,39 +564,69 @@ function Page() {
           {cancelStep === "form" && (
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleCancelSubmit)} className="space-y-4">
-                <FormField control={form.control} name="reason" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Reason for cancelling</FormLabel>
-                    <FormControl><Input {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="customerBankName" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bank name</FormLabel>
-                    <FormControl><Input {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
+                <FormField
+                  control={form.control}
+                  name="reason"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Reason for cancelling</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="customerBankName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bank name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="grid grid-cols-2 gap-4">
-                  <FormField control={form.control} name="customerAccountNo" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Account number</FormLabel>
-                      <FormControl><Input {...field} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField control={form.control} name="ifscCode" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>IFSC code</FormLabel>
-                      <FormControl><Input {...field} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
+                  <FormField
+                    control={form.control}
+                    name="customerAccountNo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Account number</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="ifscCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>IFSC code</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 {cancelError && <p className="text-sm text-destructive">{cancelError}</p>}
                 <DialogFooter>
-                  <Button type="button" variant="pillOutline" onClick={() => setCancelStep("quote")}>Back</Button>
+                  <Button
+                    type="button"
+                    variant="pillOutline"
+                    onClick={() => setCancelStep("quote")}
+                  >
+                    Back
+                  </Button>
                   <Button type="submit" variant="pill" disabled={isCancelling}>
                     {isCancelling ? "Cancelling…" : "Confirm cancellation"}
                   </Button>

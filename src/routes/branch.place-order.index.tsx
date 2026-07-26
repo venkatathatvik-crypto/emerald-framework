@@ -5,11 +5,22 @@ import { Boxes } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { getShopCategories, getSubCategoryImage, getProductsBySubCategory, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
+import {
+  getShopCategories,
+  getSubCategoryImage,
+  getProductsBySubCategory,
+  getProductPriceTier,
+  getProductThumbnail,
+  formatInr,
+} from "@/lib/api/augmont";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -37,7 +48,11 @@ function Page() {
     }
   }, [categories, categoryId]);
 
-  const { data: products, isLoading: productsLoading, isError } = useQuery({
+  const {
+    data: products,
+    isLoading: productsLoading,
+    isError,
+  } = useQuery({
     queryKey: ["augmont", "products", categoryId],
     queryFn: () => getProductsBySubCategory({ subCategoryId: categoryId! }),
     enabled: categoryId !== null,
@@ -54,8 +69,8 @@ function Page() {
     return null;
   }
 
-  const filtered = (products ?? []).filter((p) =>
-    !search || p.productName.toLowerCase().includes(search.toLowerCase()),
+  const filtered = (products ?? []).filter(
+    (p) => !search || p.productName.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -90,7 +105,9 @@ function Page() {
         }
       >
         {isError && (
-          <p className="text-sm text-destructive py-6">Failed to load products. Please try again.</p>
+          <p className="text-sm text-destructive py-6">
+            Failed to load products. Please try again.
+          </p>
         )}
 
         {!isError && (productsLoading || categoriesLoading) && (
@@ -110,22 +127,37 @@ function Page() {
                 <Card
                   key={product.id}
                   className="cursor-pointer hover:shadow-md transition-shadow overflow-hidden"
-                  onClick={() => navigate({ to: "/branch/place-order/$productId", params: { productId: String(product.id) } })}
+                  onClick={() =>
+                    navigate({
+                      to: "/branch/place-order/$productId",
+                      params: { productId: String(product.id) },
+                    })
+                  }
                 >
                   <div className="aspect-square bg-stone flex items-center justify-center overflow-hidden">
                     {thumb ? (
-                      <img src={thumb} alt={product.productName} className="w-full h-full object-cover" />
+                      <img
+                        src={thumb}
+                        alt={product.productName}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <Boxes className="h-10 w-10 text-muted-foreground" />
                     )}
                   </div>
                   <CardContent className="p-4 space-y-1.5">
-                    <p className="font-medium text-ink text-sm line-clamp-2">{product.productName}</p>
+                    <p className="font-medium text-ink text-sm line-clamp-2">
+                      {product.productName}
+                    </p>
                     <p className="text-xs text-muted-foreground">{product.weight}g</p>
                     <div className="flex items-center justify-between pt-1">
-                      <span className="font-display text-lg">{formatInr(tier?.finalProductPrice)}</span>
+                      <span className="font-display text-lg">
+                        {formatInr(tier?.finalProductPrice)}
+                      </span>
                       {product.isEmiAvailable && (
-                        <Badge variant="secondary" className="text-[10px]">EMI</Badge>
+                        <Badge variant="secondary" className="text-[10px]">
+                          EMI
+                        </Badge>
                       )}
                     </div>
                   </CardContent>

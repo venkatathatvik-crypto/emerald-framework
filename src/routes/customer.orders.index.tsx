@@ -5,7 +5,11 @@ import { Boxes, ChevronRight, FileText, Receipt } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { listMyOrders, getOrderContractReceipt, getOrderProformaInvoiceReceipt } from "@/lib/api/customer";
+import {
+  listMyOrders,
+  getOrderContractReceipt,
+  getOrderProformaInvoiceReceipt,
+} from "@/lib/api/customer";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { formatInr } from "@/lib/api/augmont";
 import type { OrderResponse, OrderStatus } from "@/lib/api/types";
@@ -13,10 +17,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 
 export const Route = createFileRoute("/customer/orders/")({
@@ -51,7 +64,9 @@ async function openReceipt(fetcher: () => Promise<{ url: string }>) {
  */
 function StatusCell({ order }: { order: OrderResponse }) {
   if (order.status !== "CONFIRMED") {
-    return <OrderStatusBadge status={order.status} className="rounded-full text-[11px] px-2 py-0" />;
+    return (
+      <OrderStatusBadge status={order.status} className="rounded-full text-[11px] px-2 py-0" />
+    );
   }
   if (order.augmontStatusName) {
     return (
@@ -74,13 +89,14 @@ function Page() {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["customer", "orders", { status, from, to, page }],
-    queryFn: () => listMyOrders({
-      status: status === "ALL" ? undefined : (status as OrderStatus),
-      from: from || undefined,
-      to: to || undefined,
-      page,
-      size: PAGE_SIZE,
-    }),
+    queryFn: () =>
+      listMyOrders({
+        status: status === "ALL" ? undefined : (status as OrderStatus),
+        from: from || undefined,
+        to: to || undefined,
+        page,
+        size: PAGE_SIZE,
+      }),
     enabled: ready,
   });
 
@@ -96,25 +112,51 @@ function Page() {
         title="Order history"
         action={
           <div className="flex items-center gap-3 flex-wrap">
-            <Select value={status} onValueChange={(v) => { setStatus(v); setPage(0); }}>
+            <Select
+              value={status}
+              onValueChange={(v) => {
+                setStatus(v);
+                setPage(0);
+              }}
+            >
               <SelectTrigger className="w-44">
                 <SelectValue placeholder="All statuses" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ALL">All statuses</SelectItem>
                 {STATUS_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Input type="date" value={from} onChange={(e) => { setFrom(e.target.value); setPage(0); }} className="w-40" />
+            <Input
+              type="date"
+              value={from}
+              onChange={(e) => {
+                setFrom(e.target.value);
+                setPage(0);
+              }}
+              className="w-40"
+            />
             <span className="text-sm text-muted-foreground">to</span>
-            <Input type="date" value={to} onChange={(e) => { setTo(e.target.value); setPage(0); }} className="w-40" />
+            <Input
+              type="date"
+              value={to}
+              onChange={(e) => {
+                setTo(e.target.value);
+                setPage(0);
+              }}
+              className="w-40"
+            />
           </div>
         }
       >
         {isError && (
-          <p className="text-sm text-destructive py-6">Failed to load your orders. Please try again.</p>
+          <p className="text-sm text-destructive py-6">
+            Failed to load your orders. Please try again.
+          </p>
         )}
 
         {!isError && (
@@ -154,7 +196,12 @@ function Page() {
                   <TableRow
                     key={order.id}
                     className="cursor-pointer hover:bg-stone/60"
-                    onClick={() => navigate({ to: "/customer/orders/$orderId", params: { orderId: String(order.id) } })}
+                    onClick={() =>
+                      navigate({
+                        to: "/customer/orders/$orderId",
+                        params: { orderId: String(order.id) },
+                      })
+                    }
                   >
                     <TableCell className="py-5">
                       {/* Order history doesn't carry a per-order image (only the shop/detail
@@ -164,12 +211,18 @@ function Page() {
                         <Boxes className="h-4 w-4 text-muted-foreground" />
                       </div>
                     </TableCell>
-                    <TableCell className="py-5 text-sm text-muted-foreground">#{order.id}</TableCell>
+                    <TableCell className="py-5 text-sm text-muted-foreground">
+                      #{order.id}
+                    </TableCell>
                     <TableCell className="py-5">
                       <p className="font-semibold text-ink">{order.productName}</p>
-                      <p className="text-xs text-muted-foreground/80 font-light mt-0.5">{order.productWeight}g</p>
+                      <p className="text-xs text-muted-foreground/80 font-light mt-0.5">
+                        {order.productWeight}g
+                      </p>
                     </TableCell>
-                    <TableCell className="py-5">{formatInr(order.finalOrderPrice ?? undefined)}</TableCell>
+                    <TableCell className="py-5">
+                      {formatInr(order.finalOrderPrice ?? undefined)}
+                    </TableCell>
                     <TableCell className="py-5">
                       <StatusCell order={order} />
                     </TableCell>
@@ -178,7 +231,10 @@ function Page() {
                     </TableCell>
                     <TableCell className="py-5">
                       {hasAugmontOrder ? (
-                        <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                        <div
+                          className="flex items-center gap-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <button
                             title="Download contract"
                             onClick={() => openReceipt(() => getOrderContractReceipt(order.id))}
@@ -188,7 +244,9 @@ function Page() {
                           </button>
                           <button
                             title="Download proforma invoice"
-                            onClick={() => openReceipt(() => getOrderProformaInvoiceReceipt(order.id))}
+                            onClick={() =>
+                              openReceipt(() => getOrderProformaInvoiceReceipt(order.id))
+                            }
                             className="h-8 w-8 grid place-items-center rounded-md text-muted-foreground hover:text-emerald-deep hover:bg-stone transition-colors"
                           >
                             <Receipt className="h-4 w-4" />

@@ -11,14 +11,29 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
-  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter,
-  AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/partner/branches/")({
@@ -96,28 +111,40 @@ function Page() {
             <Input
               placeholder="Search name, code…"
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(0);
+              }}
               className="w-64"
             />
             <Select
               value={activeFilter}
-              onValueChange={(v) => { setActiveFilter(v); setPage(0); }}
+              onValueChange={(v) => {
+                setActiveFilter(v);
+                setPage(0);
+              }}
             >
               <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {ACTIVE_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Button variant="pill" onClick={() => setCreateOpen(true)}>Create Branch</Button>
+            <Button variant="pill" onClick={() => setCreateOpen(true)}>
+              Create Branch
+            </Button>
           </div>
         }
       >
         {isError && (
-          <p className="text-sm text-destructive py-6">Failed to load branches. Please try again.</p>
+          <p className="text-sm text-destructive py-6">
+            Failed to load branches. Please try again.
+          </p>
         )}
 
         {!isError && (
@@ -170,11 +197,18 @@ function Page() {
                   </TableCell>
                   <TableCell className="text-right space-x-2">
                     <Button size="sm" variant="pill" asChild>
-                      <Link to="/partner/branches/$branchId" params={{ branchId: String(branch.id) }}>
+                      <Link
+                        to="/partner/branches/$branchId"
+                        params={{ branchId: String(branch.id) }}
+                      >
                         View
                       </Link>
                     </Button>
-                    <Button size="sm" variant="pillOutline" onClick={() => setEditingBranch(branch)}>
+                    <Button
+                      size="sm"
+                      variant="pillOutline"
+                      onClick={() => setEditingBranch(branch)}
+                    >
                       Edit
                     </Button>
                     {branch.active ? (
@@ -239,12 +273,19 @@ function Page() {
         <CreateBranchDialog
           branch={editingBranch}
           open={!!editingBranch}
-          onOpenChange={(open) => { if (!open) setEditingBranch(null); }}
+          onOpenChange={(open) => {
+            if (!open) setEditingBranch(null);
+          }}
           onSaved={() => queryClient.invalidateQueries({ queryKey: ["partner", "branches"] })}
         />
       )}
 
-      <AlertDialog open={!!deactivatingBranch} onOpenChange={(open) => { if (!open) setDeactivatingBranch(null); }}>
+      <AlertDialog
+        open={!!deactivatingBranch}
+        onOpenChange={(open) => {
+          if (!open) setDeactivatingBranch(null);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Deactivate this branch?</AlertDialogTitle>

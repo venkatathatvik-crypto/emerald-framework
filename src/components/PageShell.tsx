@@ -28,9 +28,7 @@ export function PageHero({
   dark?: boolean;
 }) {
   return (
-    <section
-      className={`relative overflow-hidden ${dark ? "bg-ink text-paper" : "bg-white"}`}
-    >
+    <section className={`relative overflow-hidden ${dark ? "bg-ink text-paper" : "bg-white"}`}>
       {/* Subtle background glow */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -68,7 +66,9 @@ export function PageHero({
       </div>
 
       {/* Bottom hairline */}
-      <div className={`absolute bottom-0 left-0 right-0 h-px ${dark ? "bg-paper/10" : "bg-line"}`} />
+      <div
+        className={`absolute bottom-0 left-0 right-0 h-px ${dark ? "bg-paper/10" : "bg-line"}`}
+      />
     </section>
   );
 }

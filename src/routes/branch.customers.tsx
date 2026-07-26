@@ -9,7 +9,12 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 
 export const Route = createFileRoute("/branch/customers")({
@@ -45,13 +50,18 @@ function Page() {
           <Input
             placeholder="Search name, email, mobile…"
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(0);
+            }}
             className="w-64"
           />
         }
       >
         {isError && (
-          <p className="text-sm text-destructive py-6">Failed to load customers. Please try again.</p>
+          <p className="text-sm text-destructive py-6">
+            Failed to load customers. Please try again.
+          </p>
         )}
 
         {!isError && (

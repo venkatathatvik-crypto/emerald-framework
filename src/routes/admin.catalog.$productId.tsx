@@ -5,10 +5,20 @@ import { ArrowLeft, Boxes } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { getProductDetails, getProductPriceTier, getProductThumbnail, formatInr } from "@/lib/api/augmont";
+import {
+  getProductDetails,
+  getProductPriceTier,
+  getProductThumbnail,
+  formatInr,
+} from "@/lib/api/augmont";
 import { Badge } from "@/components/ui/badge";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 
 export const Route = createFileRoute("/admin/catalog/$productId")({
@@ -23,7 +33,11 @@ function Page() {
   const id = Number(productId);
   const [activeImage, setActiveImage] = useState<string | null>(null);
 
-  const { data: product, isLoading, isError } = useQuery({
+  const {
+    data: product,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["augmont", "product", id],
     queryFn: () => getProductDetails(id),
     enabled: ready && Number.isFinite(id),
@@ -35,24 +49,36 @@ function Page() {
 
   const tier = product ? getProductPriceTier(product) : null;
   const thumb = product ? getProductThumbnail(product) : null;
-  const gallery = product?.productImages?.map((img) => img.url ?? img.URL).filter((u): u is string => !!u) ?? [];
+  const gallery =
+    product?.productImages?.map((img) => img.url ?? img.URL).filter((u): u is string => !!u) ?? [];
   const displayImage = activeImage ?? thumb;
 
   return (
     <DashboardShell role="admin" title="Product details">
-      <Link to="/admin/catalog" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink mb-4">
+      <Link
+        to="/admin/catalog"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink mb-4"
+      >
         <ArrowLeft className="h-3.5 w-3.5" /> Back to catalogue
       </Link>
 
-      {isLoading && <p className="text-sm text-muted-foreground py-10 text-center">Loading product…</p>}
-      {isError && <p className="text-sm text-destructive py-10 text-center">Failed to load this product.</p>}
+      {isLoading && (
+        <p className="text-sm text-muted-foreground py-10 text-center">Loading product…</p>
+      )}
+      {isError && (
+        <p className="text-sm text-destructive py-10 text-center">Failed to load this product.</p>
+      )}
 
       {product && (
         <div className="grid lg:grid-cols-2 gap-6">
           <Panel title="Images">
             <div className="aspect-square bg-stone rounded-md flex items-center justify-center overflow-hidden mb-3">
               {displayImage ? (
-                <img src={displayImage} alt={product.productName} className="w-full h-full object-cover" />
+                <img
+                  src={displayImage}
+                  alt={product.productName}
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <Boxes className="h-16 w-16 text-muted-foreground" />
               )}
@@ -83,7 +109,8 @@ function Page() {
                 <Badge variant="secondary">{product.weight}g</Badge>
                 {product.subCategory?.category?.metalType && (
                   <Badge variant="outline">
-                    {product.subCategory.category.metalType.metalType} · {product.subCategory.category.metalType.metalFitness}
+                    {product.subCategory.category.metalType.metalType} ·{" "}
+                    {product.subCategory.category.metalType.metalFitness}
                   </Badge>
                 )}
                 {product.isEmiAvailable && <Badge>EMI Available</Badge>}
@@ -103,50 +130,55 @@ function Page() {
                 </div>
               </div>
 
-              {tier && (tier.paymentAmountPerMonthThree || tier.paymentAmountPerMonthSix || tier.paymentAmountPerMonthNine) && (
-                <div className="border-t border-line pt-4">
-                  <p className="eyebrow mb-2">EMI tenures</p>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Tenure</TableHead>
-                        <TableHead>Initial payment</TableHead>
-                        <TableHead>Per month</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {tier.initialPaymentThree || tier.paymentAmountPerMonthThree ? (
+              {tier &&
+                (tier.paymentAmountPerMonthThree ||
+                  tier.paymentAmountPerMonthSix ||
+                  tier.paymentAmountPerMonthNine) && (
+                  <div className="border-t border-line pt-4">
+                    <p className="eyebrow mb-2">EMI tenures</p>
+                    <Table>
+                      <TableHeader>
                         <TableRow>
-                          <TableCell>3 months</TableCell>
-                          <TableCell>{formatInr(tier.initialPaymentThree)}</TableCell>
-                          <TableCell>{formatInr(tier.paymentAmountPerMonthThree)}</TableCell>
+                          <TableHead>Tenure</TableHead>
+                          <TableHead>Initial payment</TableHead>
+                          <TableHead>Per month</TableHead>
                         </TableRow>
-                      ) : null}
-                      {tier.initialPaymentSix || tier.paymentAmountPerMonthSix ? (
-                        <TableRow>
-                          <TableCell>6 months</TableCell>
-                          <TableCell>{formatInr(tier.initialPaymentSix)}</TableCell>
-                          <TableCell>{formatInr(tier.paymentAmountPerMonthSix)}</TableCell>
-                        </TableRow>
-                      ) : null}
-                      {tier.initialPaymentNine || tier.paymentAmountPerMonthNine ? (
-                        <TableRow>
-                          <TableCell>9 months</TableCell>
-                          <TableCell>{formatInr(tier.initialPaymentNine)}</TableCell>
-                          <TableCell>{formatInr(tier.paymentAmountPerMonthNine)}</TableCell>
-                        </TableRow>
-                      ) : null}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+                      </TableHeader>
+                      <TableBody>
+                        {tier.initialPaymentThree || tier.paymentAmountPerMonthThree ? (
+                          <TableRow>
+                            <TableCell>3 months</TableCell>
+                            <TableCell>{formatInr(tier.initialPaymentThree)}</TableCell>
+                            <TableCell>{formatInr(tier.paymentAmountPerMonthThree)}</TableCell>
+                          </TableRow>
+                        ) : null}
+                        {tier.initialPaymentSix || tier.paymentAmountPerMonthSix ? (
+                          <TableRow>
+                            <TableCell>6 months</TableCell>
+                            <TableCell>{formatInr(tier.initialPaymentSix)}</TableCell>
+                            <TableCell>{formatInr(tier.paymentAmountPerMonthSix)}</TableCell>
+                          </TableRow>
+                        ) : null}
+                        {tier.initialPaymentNine || tier.paymentAmountPerMonthNine ? (
+                          <TableRow>
+                            <TableCell>9 months</TableCell>
+                            <TableCell>{formatInr(tier.initialPaymentNine)}</TableCell>
+                            <TableCell>{formatInr(tier.paymentAmountPerMonthNine)}</TableCell>
+                          </TableRow>
+                        ) : null}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
 
               {product.paymentData && product.paymentData.length > 0 && (
                 <div className="border-t border-line pt-4">
                   <p className="eyebrow mb-2">Payment options</p>
                   <div className="flex gap-2 flex-wrap">
                     {product.paymentData.map((pt) => (
-                      <Badge key={pt.paymentTypeId} variant="outline">{pt.paymentType}</Badge>
+                      <Badge key={pt.paymentTypeId} variant="outline">
+                        {pt.paymentType}
+                      </Badge>
                     ))}
                   </div>
                 </div>

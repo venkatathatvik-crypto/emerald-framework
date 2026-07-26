@@ -6,14 +6,23 @@ import { ArrowLeft, RefreshCcw, FileText, Receipt } from "lucide-react";
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
 import {
-  getOrder, refreshOrderStatus, getOrderEmiSchedule, getOrderContractReceipt,
-  getOrderProformaInvoiceReceipt, getOrderEmiReceipt,
+  getOrder,
+  refreshOrderStatus,
+  getOrderEmiSchedule,
+  getOrderContractReceipt,
+  getOrderProformaInvoiceReceipt,
+  getOrderEmiReceipt,
 } from "@/lib/api/branch";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { formatInr } from "@/lib/api/augmont";
 import { Button } from "@/components/ui/button";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 
 export const Route = createFileRoute("/branch/orders/$orderId")({
@@ -30,7 +39,11 @@ function Page() {
   const enabled = ready && Number.isFinite(id);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const { data: order, isLoading, isError } = useQuery({
+  const {
+    data: order,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["branch", "order", id],
     queryFn: () => getOrder(id),
     enabled,
@@ -71,12 +84,19 @@ function Page() {
 
   return (
     <DashboardShell role="branch" title="Order details">
-      <Link to="/branch/orders" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink mb-4">
+      <Link
+        to="/branch/orders"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink mb-4"
+      >
         <ArrowLeft className="h-3.5 w-3.5" /> Back to orders
       </Link>
 
-      {isLoading && <p className="text-sm text-muted-foreground py-10 text-center">Loading order…</p>}
-      {isError && <p className="text-sm text-destructive py-10 text-center">Failed to load this order.</p>}
+      {isLoading && (
+        <p className="text-sm text-muted-foreground py-10 text-center">Loading order…</p>
+      )}
+      {isError && (
+        <p className="text-sm text-destructive py-10 text-center">Failed to load this order.</p>
+      )}
 
       {order && (
         <div className="space-y-6">
@@ -84,7 +104,12 @@ function Page() {
             title={order.productName}
             action={
               canSyncAugmont && (
-                <Button variant="pillOutline" size="sm" onClick={handleRefresh} disabled={isRefreshing}>
+                <Button
+                  variant="pillOutline"
+                  size="sm"
+                  onClick={handleRefresh}
+                  disabled={isRefreshing}
+                >
                   <RefreshCcw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
                   {isRefreshing ? "Refreshing…" : "Refresh status"}
                 </Button>
@@ -96,7 +121,8 @@ function Page() {
               {order.augmontStatusName && (
                 <span className="text-xs text-muted-foreground">
                   Augmont: {order.augmontStatusName}
-                  {order.augmontStatusSyncedAt && ` · synced ${new Date(order.augmontStatusSyncedAt).toLocaleString()}`}
+                  {order.augmontStatusSyncedAt &&
+                    ` · synced ${new Date(order.augmontStatusSyncedAt).toLocaleString()}`}
                 </span>
               )}
             </div>
@@ -143,10 +169,18 @@ function Page() {
           {canSyncAugmont && (
             <Panel title="Documents">
               <div className="flex flex-wrap gap-3">
-                <Button variant="pillOutline" size="sm" onClick={() => openReceipt(() => getOrderContractReceipt(id))}>
+                <Button
+                  variant="pillOutline"
+                  size="sm"
+                  onClick={() => openReceipt(() => getOrderContractReceipt(id))}
+                >
                   <FileText className="h-3.5 w-3.5" /> Contract
                 </Button>
-                <Button variant="pillOutline" size="sm" onClick={() => openReceipt(() => getOrderProformaInvoiceReceipt(id))}>
+                <Button
+                  variant="pillOutline"
+                  size="sm"
+                  onClick={() => openReceipt(() => getOrderProformaInvoiceReceipt(id))}
+                >
                   <FileText className="h-3.5 w-3.5" /> Proforma invoice
                 </Button>
               </div>
@@ -155,10 +189,14 @@ function Page() {
 
           {canSyncAugmont && (
             <Panel title="EMI schedule">
-              {scheduleLoading && <p className="text-sm text-muted-foreground py-6 text-center">Loading schedule…</p>}
+              {scheduleLoading && (
+                <p className="text-sm text-muted-foreground py-6 text-center">Loading schedule…</p>
+              )}
               {!scheduleLoading && (!schedule || schedule.orderemidetails.length === 0) && (
                 <p className="text-sm text-muted-foreground py-6 text-center">
-                  {order.paymentTypeId === 4 ? "This was a spot order — no EMI schedule." : "No EMI schedule found."}
+                  {order.paymentTypeId === 4
+                    ? "This was a spot order — no EMI schedule."
+                    : "No EMI schedule found."}
                 </p>
               )}
               {!scheduleLoading && schedule && schedule.orderemidetails.length > 0 && (
@@ -178,7 +216,9 @@ function Page() {
                         <TableCell>{emi.paymentDescription}</TableCell>
                         <TableCell>{new Date(emi.dueDate).toLocaleDateString()}</TableCell>
                         <TableCell>{formatInr(emi.emiAmount)}</TableCell>
-                        <TableCell className="capitalize">{emi.orderemistatus?.statusName ?? "—"}</TableCell>
+                        <TableCell className="capitalize">
+                          {emi.orderemistatus?.statusName ?? "—"}
+                        </TableCell>
                         <TableCell className="text-right">
                           {emi.paymentRecievedDate ? (
                             <Button
