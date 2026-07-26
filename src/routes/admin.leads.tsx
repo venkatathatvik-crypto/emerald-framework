@@ -9,6 +9,9 @@ import type { LeadStatus, PartnerLead } from "@/lib/api/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -66,6 +69,8 @@ function Page() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<LeadStatus | "ALL">("ALL");
   const [page, setPage] = useState(0);
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [convertingLead, setConvertingLead] = useState<PartnerLead | null>(null);
   const [deletingLead, setDeletingLead] = useState<PartnerLead | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -87,7 +92,51 @@ function Page() {
     return null;
   }
 
-  const leads = data?.items ?? [];
+  const rawLeads = data?.items ?? [];
+
+  const leads = [...rawLeads].sort((a, b) => {
+    if (!sortField) return 0;
+    const valA: unknown = (a as Record<string, unknown>)[sortField];
+    const valB: unknown = (b as Record<string, unknown>)[sortField];
+
+    if (valA == null) return 1;
+    if (valB == null) return -1;
+
+    if (typeof valA === "number" && typeof valB === "number") {
+      return sortDir === "asc" ? valA - valB : valB - valA;
+    }
+
+    const strA = String(valA).toLowerCase();
+    const strB = String(valB).toLowerCase();
+
+    if (strA < strB) return sortDir === "asc" ? -1 : 1;
+    if (strA > strB) return sortDir === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const toggleSort = (field: string) => {
+    if (sortField === field) {
+      if (sortDir === "asc") setSortDir("desc");
+      else {
+        setSortField(null);
+        setSortDir("asc");
+      }
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
+
+  const renderSortIcon = (field: string) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0 ml-1.5" />;
+    }
+    return sortDir === "asc" ? (
+      <ArrowUp className="h-3.5 w-3.5 text-primary shrink-0 ml-1.5" />
+    ) : (
+      <ArrowDown className="h-3.5 w-3.5 text-primary shrink-0 ml-1.5" />
+    );
+  };
 
   function handleConverted() {
     queryClient.invalidateQueries({ queryKey: ["admin", "leads"] });
@@ -162,12 +211,60 @@ function Page() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Company</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Email / Phone</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Applied</TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("companyName")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Company</span>
+                    {renderSortIcon("companyName")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("contactPerson")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Contact</span>
+                    {renderSortIcon("contactPerson")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("email")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Email / Phone</span>
+                    {renderSortIcon("email")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("city")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Location</span>
+                    {renderSortIcon("city")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("status")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Status</span>
+                    {renderSortIcon("status")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("createdAt")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Applied</span>
+                    {renderSortIcon("createdAt")}
+                  </button>
+                </TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -199,7 +296,7 @@ function Page() {
                   </TableCell>
                   <TableCell>{[lead.city, lead.state].filter(Boolean).join(", ") || "—"}</TableCell>
                   <TableCell>
-                    <Badge variant={STATUS_VARIANT[lead.status]}>{lead.status}</Badge>
+                    <StatusBadge status={lead.status} />
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {new Date(lead.createdAt).toLocaleDateString()}
@@ -282,32 +379,19 @@ function Page() {
         />
       )}
 
-      <AlertDialog
+      <ConfirmDialog
         open={!!deletingLead}
         onOpenChange={(open) => {
           if (!open) setDeletingLead(null);
         }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete this lead?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {deletingLead && (
-                <>
-                  This permanently deletes the lead from <strong>{deletingLead.companyName}</strong>
-                  . This cannot be undone.
-                </>
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction disabled={isDeleting} onClick={handleDelete}>
-              {isDeleting ? "Deleting…" : "Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title="Delete Partner Lead"
+        description={`This permanently deletes the lead from ${deletingLead?.companyName || "this partner lead"}. This action cannot be undone.`}
+        confirmText="Delete Lead"
+        cancelText="Cancel"
+        variant="destructive"
+        isLoading={isDeleting}
+        onConfirm={handleDelete}
+      />
     </DashboardShell>
   );
 }

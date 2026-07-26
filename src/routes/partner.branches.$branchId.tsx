@@ -8,9 +8,12 @@ import { useRequireRole } from "@/hooks/use-require-role";
 import { getBranch, listAgents, deactivateAgent, reactivateAgent } from "@/lib/api/partner";
 import { CreateAgentDialog } from "@/components/partner/CreateAgentDialog";
 import { CreateBranchDialog } from "@/components/partner/CreateBranchDialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import type { Agent } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -46,6 +49,8 @@ function Page() {
   const [deactivatingAgent, setDeactivatingAgent] = useState<Agent | null>(null);
   const [isDeactivating, setIsDeactivating] = useState(false);
   const [reactivatingId, setReactivatingId] = useState<number | null>(null);
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
   const enabled = ready && Number.isFinite(id);
 
@@ -60,7 +65,7 @@ function Page() {
   });
 
   const {
-    data: agents,
+    data: rawAgents,
     isLoading: agentsLoading,
     isError: agentsError,
   } = useQuery({
@@ -72,6 +77,55 @@ function Page() {
   if (!ready) {
     return null;
   }
+
+  const agents = [...(rawAgents ?? [])].sort((a, b) => {
+    if (!sortField) return 0;
+    let valA: unknown = (a as Record<string, unknown>)[sortField];
+    let valB: unknown = (b as Record<string, unknown>)[sortField];
+
+    if (sortField === "name") {
+      valA = [a.firstName, a.lastName].filter(Boolean).join(" ");
+      valB = [b.firstName, b.lastName].filter(Boolean).join(" ");
+    }
+
+    if (valA == null) return 1;
+    if (valB == null) return -1;
+
+    if (typeof valA === "number" && typeof valB === "number") {
+      return sortDir === "asc" ? valA - valB : valB - valA;
+    }
+
+    const strA = String(valA).toLowerCase();
+    const strB = String(valB).toLowerCase();
+
+    if (strA < strB) return sortDir === "asc" ? -1 : 1;
+    if (strA > strB) return sortDir === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const toggleSort = (field: string) => {
+    if (sortField === field) {
+      if (sortDir === "asc") setSortDir("desc");
+      else {
+        setSortField(null);
+        setSortDir("asc");
+      }
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
+
+  const renderSortIcon = (field: string) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0 ml-1.5" />;
+    }
+    return sortDir === "asc" ? (
+      <ArrowUp className="h-3.5 w-3.5 text-primary shrink-0 ml-1.5" />
+    ) : (
+      <ArrowDown className="h-3.5 w-3.5 text-primary shrink-0 ml-1.5" />
+    );
+  };
 
   async function handleDeactivateAgent() {
     if (!deactivatingAgent) return;
@@ -165,10 +219,42 @@ function Page() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Mobile</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>
+                      <button
+                        onClick={() => toggleSort("name")}
+                        className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                      >
+                        <span>Name</span>
+                        {renderSortIcon("name")}
+                      </button>
+                    </TableHead>
+                    <TableHead>
+                      <button
+                        onClick={() => toggleSort("email")}
+                        className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                      >
+                        <span>Email</span>
+                        {renderSortIcon("email")}
+                      </button>
+                    </TableHead>
+                    <TableHead>
+                      <button
+                        onClick={() => toggleSort("mobile")}
+                        className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                      >
+                        <span>Mobile</span>
+                        {renderSortIcon("mobile")}
+                      </button>
+                    </TableHead>
+                    <TableHead>
+                      <button
+                        onClick={() => toggleSort("active")}
+                        className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                      >
+                        <span>Status</span>
+                        {renderSortIcon("active")}
+                      </button>
+                    </TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -197,9 +283,7 @@ function Page() {
                       <TableCell>{agent.email || "—"}</TableCell>
                       <TableCell>{agent.mobile || "—"}</TableCell>
                       <TableCell>
-                        <Badge variant={agent.active ? "default" : "destructive"}>
-                          {agent.active ? "Active" : "Deactivated"}
-                        </Badge>
+                        <StatusBadge status={agent.active ? "ACTIVE" : "DEACTIVATED"} />
                       </TableCell>
                       <TableCell className="text-right">
                         {agent.active ? (
@@ -248,37 +332,19 @@ function Page() {
         />
       )}
 
-      <AlertDialog
+      <ConfirmDialog
         open={!!deactivatingAgent}
         onOpenChange={(open) => {
           if (!open) setDeactivatingAgent(null);
         }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Deactivate this agent?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {deactivatingAgent && (
-                <>
-                  This blocks{" "}
-                  <strong>
-                    {[deactivatingAgent.firstName, deactivatingAgent.lastName]
-                      .filter(Boolean)
-                      .join(" ")}
-                  </strong>
-                  {"'"}s login immediately. Nothing is deleted — this can be reversed later.
-                </>
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeactivating}>Cancel</AlertDialogCancel>
-            <AlertDialogAction disabled={isDeactivating} onClick={handleDeactivateAgent}>
-              {isDeactivating ? "Deactivating…" : "Deactivate"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title="Deactivate Agent"
+        description={`This blocks ${[deactivatingAgent?.firstName, deactivatingAgent?.lastName].filter(Boolean).join(" ") || "this agent"}'s portal access immediately. This can be reversed later.`}
+        confirmText="Deactivate Agent"
+        cancelText="Cancel"
+        variant="destructive"
+        isLoading={isDeactivating}
+        onConfirm={handleDeactivateAgent}
+      />
     </DashboardShell>
   );
 }

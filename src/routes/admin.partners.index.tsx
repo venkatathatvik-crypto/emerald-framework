@@ -7,9 +7,12 @@ import { useRequireRole } from "@/hooks/use-require-role";
 import { listPartners, deactivatePartner, reactivatePartner } from "@/lib/api/admin";
 import type { PartnerResponse } from "@/lib/api/types";
 import { EditPartnerDialog } from "@/components/admin/EditPartnerDialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -56,6 +59,8 @@ function Page() {
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [page, setPage] = useState(0);
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [deactivatingPartner, setDeactivatingPartner] = useState<PartnerResponse | null>(null);
   const [isDeactivating, setIsDeactivating] = useState(false);
   const [reactivatingId, setReactivatingId] = useState<number | null>(null);
@@ -77,7 +82,56 @@ function Page() {
     return null;
   }
 
-  const partners = data?.items ?? [];
+  const rawPartners = data?.items ?? [];
+
+  const partners = [...rawPartners].sort((a, b) => {
+    if (!sortField) return 0;
+    let valA: unknown = (a as Record<string, unknown>)[sortField];
+    let valB: unknown = (b as Record<string, unknown>)[sortField];
+
+    if (sortField === "location") {
+      valA = [a.city, a.state].filter(Boolean).join(", ");
+      valB = [b.city, b.state].filter(Boolean).join(", ");
+    }
+
+    if (valA == null) return 1;
+    if (valB == null) return -1;
+
+    if (typeof valA === "number" && typeof valB === "number") {
+      return sortDir === "asc" ? valA - valB : valB - valA;
+    }
+
+    const strA = String(valA).toLowerCase();
+    const strB = String(valB).toLowerCase();
+
+    if (strA < strB) return sortDir === "asc" ? -1 : 1;
+    if (strA > strB) return sortDir === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const toggleSort = (field: string) => {
+    if (sortField === field) {
+      if (sortDir === "asc") setSortDir("desc");
+      else {
+        setSortField(null);
+        setSortDir("asc");
+      }
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
+
+  const renderSortIcon = (field: string) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0 ml-1.5" />;
+    }
+    return sortDir === "asc" ? (
+      <ArrowUp className="h-3.5 w-3.5 text-primary shrink-0 ml-1.5" />
+    ) : (
+      <ArrowDown className="h-3.5 w-3.5 text-primary shrink-0 ml-1.5" />
+    );
+  };
 
   async function handleDeactivate() {
     if (!deactivatingPartner) return;
@@ -147,12 +201,60 @@ function Page() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Commission</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("name")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Name</span>
+                    {renderSortIcon("name")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("type")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Type</span>
+                    {renderSortIcon("type")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("contactEmail")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Contact</span>
+                    {renderSortIcon("contactEmail")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("location")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Location</span>
+                    {renderSortIcon("location")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("commissionRate")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Commission</span>
+                    {renderSortIcon("commissionRate")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("active")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Status</span>
+                    {renderSortIcon("active")}
+                  </button>
+                </TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -191,9 +293,7 @@ function Page() {
                     {partner.commissionRate != null ? `${partner.commissionRate}%` : "—"}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={partner.active ? "default" : "destructive"}>
-                      {partner.active ? "Active" : "Deactivated"}
-                    </Badge>
+                    <StatusBadge status={partner.active ? "ACTIVE" : "DEACTIVATED"} />
                   </TableCell>
                   <TableCell className="text-right space-x-2">
                     <Button size="sm" variant="pill" asChild>
@@ -274,33 +374,19 @@ function Page() {
         />
       )}
 
-      <AlertDialog
+      <ConfirmDialog
         open={!!deactivatingPartner}
         onOpenChange={(open) => {
           if (!open) setDeactivatingPartner(null);
         }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Deactivate this partner?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {deactivatingPartner && (
-                <>
-                  This deactivates <strong>{deactivatingPartner.name}</strong> and blocks their
-                  login immediately. Nothing is deleted — you can see deactivated partners via the
-                  status filter, and this can be reversed later.
-                </>
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeactivating}>Cancel</AlertDialogCancel>
-            <AlertDialogAction disabled={isDeactivating} onClick={handleDeactivate}>
-              {isDeactivating ? "Deactivating…" : "Deactivate"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title="Deactivate Partner"
+        description={`This deactivates ${deactivatingPartner?.name || "this partner"} and blocks their portal access immediately. This can be reversed later.`}
+        confirmText="Deactivate Partner"
+        cancelText="Cancel"
+        variant="destructive"
+        isLoading={isDeactivating}
+        onConfirm={handleDeactivate}
+      />
     </DashboardShell>
   );
 }

@@ -11,7 +11,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
-import { ChevronLeft, ChevronRight, ArrowUpDown, Search, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Search,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Column<T> {
@@ -163,10 +171,21 @@ export function DataTable<T extends Record<string, unknown>>({
                   {col.sortable ? (
                     <button
                       onClick={() => handleSort(col.key)}
-                      className="inline-flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
+                      className={cn(
+                        "inline-flex items-center gap-1.5 hover:text-foreground transition-colors cursor-pointer select-none",
+                        sortColumn === col.key && "text-foreground font-bold",
+                      )}
                     >
-                      {col.header}
-                      <ArrowUpDown className="h-3 w-3" />
+                      <span>{col.header}</span>
+                      {sortColumn === col.key ? (
+                        sortDirection === "asc" ? (
+                          <ArrowUp className="h-3.5 w-3.5 text-primary shrink-0" />
+                        ) : (
+                          <ArrowDown className="h-3.5 w-3.5 text-primary shrink-0" />
+                        )
+                      ) : (
+                        <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0 hover:text-foreground" />
+                      )}
                     </button>
                   ) : (
                     col.header

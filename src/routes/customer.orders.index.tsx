@@ -1,7 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Boxes, ChevronRight, FileText, Receipt } from "lucide-react";
+import {
+  Boxes,
+  ChevronRight,
+  FileText,
+  Receipt,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
@@ -86,6 +94,8 @@ function Page() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [page, setPage] = useState(0);
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["customer", "orders", { status, from, to, page }],
@@ -104,7 +114,51 @@ function Page() {
     return null;
   }
 
-  const orders = data?.items ?? [];
+  const rawOrders = data?.items ?? [];
+
+  const orders = [...rawOrders].sort((a, b) => {
+    if (!sortField) return 0;
+    const valA: unknown = (a as Record<string, unknown>)[sortField];
+    const valB: unknown = (b as Record<string, unknown>)[sortField];
+
+    if (valA == null) return 1;
+    if (valB == null) return -1;
+
+    if (typeof valA === "number" && typeof valB === "number") {
+      return sortDir === "asc" ? valA - valB : valB - valA;
+    }
+
+    const strA = String(valA).toLowerCase();
+    const strB = String(valB).toLowerCase();
+
+    if (strA < strB) return sortDir === "asc" ? -1 : 1;
+    if (strA > strB) return sortDir === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const toggleSort = (field: string) => {
+    if (sortField === field) {
+      if (sortDir === "asc") setSortDir("desc");
+      else {
+        setSortField(null);
+        setSortDir("asc");
+      }
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
+
+  const renderSortIcon = (field: string) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0 ml-1.5" />;
+    }
+    return sortDir === "asc" ? (
+      <ArrowUp className="h-3.5 w-3.5 text-primary shrink-0 ml-1.5" />
+    ) : (
+      <ArrowDown className="h-3.5 w-3.5 text-primary shrink-0 ml-1.5" />
+    );
+  };
 
   return (
     <DashboardShell role="customer" title="My orders">
@@ -164,11 +218,51 @@ function Page() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-16"></TableHead>
-                <TableHead>Order ID</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("id")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Order ID</span>
+                    {renderSortIcon("id")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("productName")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Product</span>
+                    {renderSortIcon("productName")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("finalOrderPrice")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Amount</span>
+                    {renderSortIcon("finalOrderPrice")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("status")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Status</span>
+                    {renderSortIcon("status")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("createdAt")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Date</span>
+                    {renderSortIcon("createdAt")}
+                  </button>
+                </TableHead>
                 <TableHead>Documents</TableHead>
                 <TableHead className="w-10"></TableHead>
               </TableRow>

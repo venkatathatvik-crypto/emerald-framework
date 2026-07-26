@@ -6,6 +6,8 @@ import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
 import { listCustomers } from "@/lib/api/branch";
 import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +31,8 @@ function Page() {
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["branch", "customers", { search, page }],
@@ -40,7 +44,56 @@ function Page() {
     return null;
   }
 
-  const customers = data?.items ?? [];
+  const rawCustomers = data?.items ?? [];
+
+  const customers = [...rawCustomers].sort((a, b) => {
+    if (!sortField) return 0;
+    let valA: unknown = (a as Record<string, unknown>)[sortField];
+    let valB: unknown = (b as Record<string, unknown>)[sortField];
+
+    if (sortField === "name") {
+      valA = [a.firstName, a.lastName].filter(Boolean).join(" ");
+      valB = [b.firstName, b.lastName].filter(Boolean).join(" ");
+    }
+
+    if (valA == null) return 1;
+    if (valB == null) return -1;
+
+    if (typeof valA === "number" && typeof valB === "number") {
+      return sortDir === "asc" ? valA - valB : valB - valA;
+    }
+
+    const strA = String(valA).toLowerCase();
+    const strB = String(valB).toLowerCase();
+
+    if (strA < strB) return sortDir === "asc" ? -1 : 1;
+    if (strA > strB) return sortDir === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const toggleSort = (field: string) => {
+    if (sortField === field) {
+      if (sortDir === "asc") setSortDir("desc");
+      else {
+        setSortField(null);
+        setSortDir("asc");
+      }
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
+
+  const renderSortIcon = (field: string) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0 ml-1.5" />;
+    }
+    return sortDir === "asc" ? (
+      <ArrowUp className="h-3.5 w-3.5 text-primary shrink-0 ml-1.5" />
+    ) : (
+      <ArrowDown className="h-3.5 w-3.5 text-primary shrink-0 ml-1.5" />
+    );
+  };
 
   return (
     <DashboardShell role="branch" title="Customers">
@@ -68,11 +121,51 @@ function Page() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Mobile</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Joined</TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("name")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Name</span>
+                    {renderSortIcon("name")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("email")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Email</span>
+                    {renderSortIcon("email")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("mobile")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Mobile</span>
+                    {renderSortIcon("mobile")}
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button
+                    onClick={() => toggleSort("active")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Status</span>
+                    {renderSortIcon("active")}
+                  </button>
+                </TableHead>
+                <TableHead className="text-right">
+                  <button
+                    onClick={() => toggleSort("createdAt")}
+                    className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                  >
+                    <span>Joined</span>
+                    {renderSortIcon("createdAt")}
+                  </button>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -98,9 +191,7 @@ function Page() {
                   <TableCell>{customer.email || "—"}</TableCell>
                   <TableCell>{customer.mobile || "—"}</TableCell>
                   <TableCell>
-                    <Badge variant={customer.active ? "default" : "destructive"}>
-                      {customer.active ? "Active" : "Inactive"}
-                    </Badge>
+                    <StatusBadge status={customer.active ? "ACTIVE" : "INACTIVE"} />
                   </TableCell>
                   <TableCell className="text-right text-sm text-muted-foreground">
                     {new Date(customer.createdAt).toLocaleDateString()}
