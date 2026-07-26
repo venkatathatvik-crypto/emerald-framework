@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listAuditLogs } from "@/lib/api/admin";
+import { exportToCsv } from "@/lib/csv-exporter";
 import {
   ShieldAlert,
   Search,
@@ -396,10 +397,25 @@ function Page() {
         open={exportConfirmOpen}
         onOpenChange={setExportConfirmOpen}
         title="Export System Audit Logs?"
-        description="Are you sure you want to download an encrypted CSV dump of all administrative audit logs? This action will be recorded in the security log."
+        description="Download a CSV of all currently-visible audit log rows. This action will be recorded in the security log."
         confirmText="Export CSV"
         onConfirm={() => {
-          alert("Audit log CSV exported successfully.");
+          exportToCsv(
+            "Audit_Logs",
+            ["Log ID", "Timestamp", "Category", "Action", "Details", "Actor Name", "Actor Role", "Target Entity", "IP Address", "Status"],
+            filteredLogs.map((log) => [
+              log.id,
+              new Date(log.timestamp).toISOString(),
+              log.category,
+              log.action,
+              log.details,
+              log.actor.name,
+              log.actor.role,
+              log.targetEntity,
+              log.ipAddress,
+              log.status,
+            ]),
+          );
         }}
       />
     </DashboardShell>

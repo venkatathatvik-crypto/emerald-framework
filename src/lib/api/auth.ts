@@ -35,6 +35,14 @@ export function logout(): Promise<void> {
   return apiFetch<void>("/api/v1/auth/logout", { method: "POST" });
 }
 
+/** Silently extends the current session by rotating the refresh token and issuing a new 15-minute access JWT. */
+export function refreshAuthToken(): Promise<void> {
+  return apiFetch<void>("/api/v1/auth/refresh", { method: "POST" });
+}
+
+/** Alias used by SessionTimeoutModal */
+export const logoutApi = logout;
+
 /** Updates the caller's own display name and mobile. Email isn't editable here — it's the login identifier. */
 export function updateProfile(
   firstName: string,

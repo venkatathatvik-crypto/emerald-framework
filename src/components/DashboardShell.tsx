@@ -24,6 +24,7 @@ import { useAuth } from "@/lib/auth-context";
 import { getNewLeadCount } from "@/lib/api/admin";
 import { NotificationDrawer } from "@/components/notifications/notification-drawer";
 import { CommandPalette } from "@/components/command-palette";
+import { SessionTimeoutModal } from "@/components/SessionTimeoutModal";
 
 export type Role = "customer" | "partner" | "branch" | "admin";
 
@@ -237,6 +238,8 @@ export function DashboardShell({
         </div>
 
         <main className="flex-1 p-4 md:p-8">{children}</main>
+
+        <SessionTimeoutModal />
       </div>
 
       <NotificationDrawer open={notifOpen} onOpenChange={setNotifOpen} />

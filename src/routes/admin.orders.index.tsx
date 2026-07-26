@@ -7,9 +7,10 @@ import { useRequireRole } from "@/hooks/use-require-role";
 import { listOrders, listPartners, getPartnerBranches } from "@/lib/api/admin";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { formatInr } from "@/lib/api/augmont";
-import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { exportToCsv } from "@/lib/csv-exporter";
 import {
   Select,
   SelectContent,
@@ -188,6 +189,30 @@ function Page() {
               }}
               className="w-40"
             />
+            <Button
+              variant="pillOutline"
+              size="sm"
+              onClick={() =>
+                exportToCsv(
+                  "Orders_Report",
+                  ["Customer", "Mobile", "Partner", "Branch", "Product", "Weight", "Created By", "Amount", "Status", "Date"],
+                  orders.map((o) => [
+                    o.customerName,
+                    o.customerMobile,
+                    o.allianceCompanyName || "Direct",
+                    o.branchName || "—",
+                    o.productName,
+                    `${o.productWeight}g`,
+                    o.createdByName,
+                    o.finalOrderPrice ?? "",
+                    o.status,
+                    new Date(o.createdAt).toISOString(),
+                  ]),
+                )
+              }
+            >
+              <Download className="h-3.5 w-3.5 mr-1.5" /> Export CSV
+            </Button>
           </div>
         }
       >

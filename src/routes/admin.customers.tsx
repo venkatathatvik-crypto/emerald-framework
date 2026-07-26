@@ -7,9 +7,10 @@ import { useRequireRole } from "@/hooks/use-require-role";
 import { listCustomers, listPartners, getPartnerBranches } from "@/lib/api/admin";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { exportToCsv } from "@/lib/csv-exporter";
 import {
   Select,
   SelectContent,
@@ -129,6 +130,25 @@ function Page() {
         title="All customers"
         action={
           <div className="flex items-center gap-3 flex-wrap">
+            <Button
+              variant="pillOutline"
+              size="sm"
+              onClick={() =>
+                exportToCsv(
+                  "Customers_List",
+                  ["Name", "Email", "Mobile", "Status", "Joined"],
+                  customers.map((c) => [
+                    [c.firstName, c.lastName].filter(Boolean).join(" ") || "—",
+                    c.email || "—",
+                    c.mobile || "—",
+                    c.active ? "Active" : "Inactive",
+                    new Date(c.createdAt).toISOString(),
+                  ]),
+                )
+              }
+            >
+              <Download className="h-3.5 w-3.5 mr-1.5" /> Export CSV
+            </Button>
             <Input
               placeholder="Search name, email, mobile…"
               value={search}
