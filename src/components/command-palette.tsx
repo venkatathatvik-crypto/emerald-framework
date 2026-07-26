@@ -10,13 +10,11 @@ import {
   ShieldAlert,
   ShoppingBag,
   Bell,
-  Sun,
-  Moon,
   RefreshCcw,
   ArrowRight,
+  X,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 
 interface CommandItem {
   id: string;
@@ -190,41 +188,50 @@ export function CommandPalette({ open, onOpenChange, role = "customer" }: Comman
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl p-0 overflow-hidden shadow-2xl border border-line">
+      <DialogContent className="sm:max-w-xl p-0 overflow-hidden shadow-2xl border border-line [&>button]:hidden">
         <DialogTitle className="sr-only">Command Palette Search</DialogTitle>
         <DialogDescription className="sr-only">
           Search routes, orders, branches, and quick actions across Emerald Portal
         </DialogDescription>
 
-        {/* Input Bar */}
-        <div className="flex items-center px-4 border-b border-line bg-card">
+        {/* Seamless Clean Search Bar (No green focus ring rectangle, no overlap) */}
+        <div className="flex items-center px-4 py-1.5 border-b border-line bg-card">
           <Search className="h-4 w-4 shrink-0 text-muted-foreground mr-3" />
-          <Input
+          <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Type a command or search orders, branches, leads… (press Esc to exit)"
-            className="h-12 border-0 shadow-none focus-visible:ring-0 text-sm bg-transparent px-0 placeholder:text-muted-foreground/60"
+            placeholder="Type a command or search orders, branches, leads…"
+            className="w-full bg-transparent text-sm outline-none border-0 ring-0 focus:outline-none focus:ring-0 shadow-none py-3 placeholder:text-muted-foreground/60 text-ink"
             autoFocus
           />
-          <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border border-line bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
-            ESC
-          </kbd>
+          <div className="flex items-center gap-2 shrink-0 ml-2">
+            <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border border-line bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+              ESC
+            </kbd>
+            <button
+              onClick={() => onOpenChange(false)}
+              className="p-1 rounded-md text-muted-foreground hover:text-ink hover:bg-stone transition-colors"
+              title="Close"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         {/* Results List */}
-        <div className="max-h-96 overflow-y-auto p-2 space-y-4">
+        <div className="max-h-[380px] overflow-y-auto p-3 space-y-4">
           {filtered.length === 0 ? (
             <div className="py-12 text-center text-sm text-muted-foreground">
               No matching commands or entities found for &quot;{query}&quot;
             </div>
           ) : (
-            <div>
+            <div className="space-y-4">
               {Array.from(new Set(filtered.map((i) => i.category))).map((cat) => (
-                <div key={cat} className="mb-3">
-                  <p className="px-3 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                <div key={cat} className="space-y-1">
+                  <p className="px-3 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
                     {cat}
                   </p>
-                  <div className="space-y-0.5">
+                  <div className="space-y-1">
                     {filtered
                       .filter((i) => i.category === cat)
                       .map((item) => {
@@ -262,7 +269,7 @@ export function CommandPalette({ open, onOpenChange, role = "customer" }: Comman
         </div>
 
         {/* Footer shortcuts helper */}
-        <div className="px-4 py-2 bg-stone/50 border-t border-line text-[11px] text-muted-foreground flex items-center justify-between">
+        <div className="px-4 py-2.5 bg-stone/50 border-t border-line text-[11px] text-muted-foreground flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span>
               <kbd className="font-mono bg-paper border border-line px-1 rounded text-[10px]">
