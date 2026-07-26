@@ -17,10 +17,13 @@ import {
   LogOut,
   Sparkles,
   PlusCircle,
+  ShieldAlert,
 } from "lucide-react";
 
 import { useAuth } from "@/lib/auth-context";
 import { getNewLeadCount } from "@/lib/api/admin";
+import { NotificationDrawer } from "@/components/notifications/notification-drawer";
+import { CommandPalette } from "@/components/command-palette";
 
 export type Role = "customer" | "partner" | "branch" | "admin";
 
@@ -50,6 +53,7 @@ const NAV: Record<Role, { to: string; label: string; Icon: typeof LayoutDashboar
     { to: "/admin/partners", label: "Partners", Icon: Building2 },
     { to: "/admin/customers", label: "Customers", Icon: Users },
     { to: "/admin/catalog", label: "Catalogue", Icon: Boxes },
+    { to: "/admin/audit-logs", label: "Audit Logs", Icon: ShieldAlert },
     { to: "/dashboard/admin", label: "Analytics", Icon: BarChart3 },
   ],
 };
@@ -64,9 +68,26 @@ export function DashboardShell({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [cmdOpen, setCmdOpen] = useState(false);
+
   const path = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+
+  useEffect(() => setOpen(false), [path]);
+
+  // Global ⌘K / Ctrl+K keyboard shortcut trigger for Command Palette
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setCmdOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const displayName =
     [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
@@ -172,19 +193,25 @@ export function DashboardShell({
             <span className="text-ink">{title}</span>
           </nav>
           <div className="flex-1" />
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border border-line bg-paper w-72">
-            <Search className="h-3.5 w-3.5 text-muted-foreground" />
-            <input
-              placeholder="Search orders, members, brands… (⌘K)"
-              className="bg-transparent text-sm w-full focus:outline-none"
-            />
-          </div>
           <button
-            className="relative grid place-items-center h-9 w-9 rounded-full border border-line bg-paper"
+            onClick={() => setCmdOpen(true)}
+            className="hidden md:flex items-center justify-between gap-2 px-3 py-1.5 rounded-full border border-line bg-paper w-72 text-left cursor-pointer hover:border-primary/40 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <Search className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground/80">Search orders, branches…</span>
+            </div>
+            <kbd className="font-mono text-[10px] text-muted-foreground bg-stone px-1.5 py-0.5 rounded border border-line">
+              ⌘K
+            </kbd>
+          </button>
+          <button
+            onClick={() => setNotifOpen(true)}
+            className="relative grid place-items-center h-9 w-9 rounded-full border border-line bg-paper hover:bg-stone/80 transition-colors cursor-pointer"
             aria-label="Notifications"
           >
-            <Bell className="h-4 w-4" />
-            <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-gold" />
+            <Bell className="h-4 w-4 text-ink" />
+            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-emerald animate-pulse" />
           </button>
           <div className="flex items-center gap-2 pl-3 border-l border-line">
             <div className="h-9 w-9 rounded-full bg-emerald-deep text-paper grid place-items-center text-sm font-display">
@@ -211,6 +238,9 @@ export function DashboardShell({
 
         <main className="flex-1 p-4 md:p-8">{children}</main>
       </div>
+
+      <NotificationDrawer open={notifOpen} onOpenChange={setNotifOpen} />
+      <CommandPalette open={cmdOpen} onOpenChange={setCmdOpen} role={role} />
     </div>
   );
 }

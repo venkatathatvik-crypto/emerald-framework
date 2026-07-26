@@ -13,6 +13,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ProductsRouteImport } from './routes/products'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LeadershipRouteImport } from './routes/leadership'
 import { Route as GoldEmiRouteImport } from './routes/gold-emi'
@@ -36,6 +37,7 @@ import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as BranchCustomersRouteImport } from './routes/branch.customers'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
+import { Route as AdminAuditLogsRouteImport } from './routes/admin.audit-logs'
 import { Route as PartnerOrdersIndexRouteImport } from './routes/partner.orders.index'
 import { Route as PartnerBranchesIndexRouteImport } from './routes/partner.branches.index'
 import { Route as CustomerShopIndexRouteImport } from './routes/customer.shop.index'
@@ -73,6 +75,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const ProductsRoute = ProductsRouteImport.update({
   id: '/products',
   path: '/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -190,6 +197,11 @@ const AdminCustomersRoute = AdminCustomersRouteImport.update({
   path: '/admin/customers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAuditLogsRoute = AdminAuditLogsRouteImport.update({
+  id: '/admin/audit-logs',
+  path: '/admin/audit-logs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PartnerOrdersIndexRoute = PartnerOrdersIndexRouteImport.update({
   id: '/partner/orders/',
   path: '/partner/orders/',
@@ -294,10 +306,12 @@ export interface FileRoutesByFullPath {
   '/gold-emi': typeof GoldEmiRoute
   '/leadership': typeof LeadershipRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
   '/products': typeof ProductsRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/branch/customers': typeof BranchCustomersRoute
@@ -341,10 +355,12 @@ export interface FileRoutesByTo {
   '/gold-emi': typeof GoldEmiRoute
   '/leadership': typeof LeadershipRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
   '/products': typeof ProductsRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/branch/customers': typeof BranchCustomersRoute
@@ -389,10 +405,12 @@ export interface FileRoutesById {
   '/gold-emi': typeof GoldEmiRoute
   '/leadership': typeof LeadershipRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
   '/products': typeof ProductsRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/branch/customers': typeof BranchCustomersRoute
@@ -438,10 +456,12 @@ export interface FileRouteTypes {
     | '/gold-emi'
     | '/leadership'
     | '/login'
+    | '/notifications'
     | '/products'
     | '/profile'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/admin/audit-logs'
     | '/admin/customers'
     | '/admin/leads'
     | '/branch/customers'
@@ -485,10 +505,12 @@ export interface FileRouteTypes {
     | '/gold-emi'
     | '/leadership'
     | '/login'
+    | '/notifications'
     | '/products'
     | '/profile'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/admin/audit-logs'
     | '/admin/customers'
     | '/admin/leads'
     | '/branch/customers'
@@ -532,10 +554,12 @@ export interface FileRouteTypes {
     | '/gold-emi'
     | '/leadership'
     | '/login'
+    | '/notifications'
     | '/products'
     | '/profile'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/admin/audit-logs'
     | '/admin/customers'
     | '/admin/leads'
     | '/branch/customers'
@@ -580,10 +604,12 @@ export interface RootRouteChildren {
   GoldEmiRoute: typeof GoldEmiRoute
   LeadershipRoute: typeof LeadershipRoute
   LoginRoute: typeof LoginRoute
+  NotificationsRoute: typeof NotificationsRoute
   ProductsRoute: typeof ProductsRoute
   ProfileRoute: typeof ProfileRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AdminAuditLogsRoute: typeof AdminAuditLogsRoute
   AdminCustomersRoute: typeof AdminCustomersRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   BranchCustomersRoute: typeof BranchCustomersRoute
@@ -644,6 +670,13 @@ declare module '@tanstack/react-router' {
       path: '/products'
       fullPath: '/products'
       preLoaderRoute: typeof ProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -807,6 +840,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCustomersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/audit-logs': {
+      id: '/admin/audit-logs'
+      path: '/admin/audit-logs'
+      fullPath: '/admin/audit-logs'
+      preLoaderRoute: typeof AdminAuditLogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/partner/orders/': {
       id: '/partner/orders/'
       path: '/partner/orders'
@@ -948,10 +988,12 @@ const rootRouteChildren: RootRouteChildren = {
   GoldEmiRoute: GoldEmiRoute,
   LeadershipRoute: LeadershipRoute,
   LoginRoute: LoginRoute,
+  NotificationsRoute: NotificationsRoute,
   ProductsRoute: ProductsRoute,
   ProfileRoute: ProfileRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AdminAuditLogsRoute: AdminAuditLogsRoute,
   AdminCustomersRoute: AdminCustomersRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   BranchCustomersRoute: BranchCustomersRoute,
