@@ -8,7 +8,6 @@ import {
   BadgePercent,
   Users,
   Boxes,
-  BarChart3,
   Building2,
   Settings,
   Bell,
@@ -39,7 +38,6 @@ const NAV: Record<Role, { to: string; label: string; Icon: typeof LayoutDashboar
     { to: "/partner/branches", label: "Branches", Icon: Building2 },
     { to: "/partner/orders", label: "Orders", Icon: Truck },
     { to: "/partner/customers", label: "Customers", Icon: Users },
-    { to: "/dashboard/partner", label: "Analytics", Icon: BarChart3 },
   ],
   branch: [
     { to: "/dashboard/branch", label: "Overview", Icon: LayoutDashboard },
@@ -55,7 +53,6 @@ const NAV: Record<Role, { to: string; label: string; Icon: typeof LayoutDashboar
     { to: "/admin/customers", label: "Customers", Icon: Users },
     { to: "/admin/catalog", label: "Catalogue", Icon: Boxes },
     { to: "/admin/audit-logs", label: "Audit Logs", Icon: ShieldAlert },
-    { to: "/dashboard/admin", label: "Analytics", Icon: BarChart3 },
   ],
 };
 

@@ -4,21 +4,6 @@ import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
 import { listPartners, listCustomers, listLeads, getNewLeadCount } from "@/lib/api/admin";
 import { Badge } from "@/components/ui/badge";
-import { exportToCsv } from "@/lib/csv-exporter";
-import { Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
 
 export const Route = createFileRoute("/dashboard/admin")({
   head: () => ({ meta: [{ title: "Admin Dashboard — 2+ Fortune Alliances" }] }),
@@ -31,32 +16,6 @@ const LEAD_STATUS_VARIANT: Record<string, "default" | "secondary" | "outline" | 
   CONVERTED: "outline",
   REJECTED: "destructive",
 };
-
-/** Gold EMI sales growth — synthetic monthly trend data (replace with live API when available) */
-const EMI_GROWTH_DATA = [
-  { month: "Feb", revenue: 148000, orders: 12 },
-  { month: "Mar", revenue: 192000, orders: 16 },
-  { month: "Apr", revenue: 175000, orders: 14 },
-  { month: "May", revenue: 234000, orders: 20 },
-  { month: "Jun", revenue: 268000, orders: 23 },
-  { month: "Jul", revenue: 310000, orders: 27 },
-];
-
-/** Branch commission payout data — replace with live partner/commission API */
-const BRANCH_COMMISSION_DATA = [
-  { branch: "Hyd-01", commission: 18400, orders: 14 },
-  { branch: "Pune-02", commission: 12800, orders: 10 },
-  { branch: "Mum-03", commission: 21600, orders: 18 },
-  { branch: "Del-04", commission: 9200, orders: 7 },
-  { branch: "Blr-05", commission: 15600, orders: 13 },
-];
-
-const formatRupee = (v: number) =>
-  v >= 100000
-    ? `₹${(v / 100000).toFixed(1)}L`
-    : v >= 1000
-      ? `₹${(v / 1000).toFixed(0)}K`
-      : `₹${v}`;
 
 function Page() {
   const { ready } = useRequireRole("ROLE_ADMIN");
@@ -117,93 +76,6 @@ function Page() {
           sub="Awaiting review"
           accent
         />
-      </div>
-
-      {/* Analytics Charts Row */}
-      <div className="grid lg:grid-cols-2 gap-4 mb-6">
-        <Panel
-          title="Gold EMI Revenue Trend"
-          action={
-            <Button
-              variant="pillOutline"
-              size="sm"
-              onClick={() =>
-                exportToCsv(
-                  "Gold_EMI_Revenue_Trend",
-                  ["Month", "Revenue (₹)", "Orders"],
-                  EMI_GROWTH_DATA.map((d) => [d.month, d.revenue, d.orders]),
-                )
-              }
-            >
-              <Download className="h-3.5 w-3.5 mr-1.5" /> Export
-            </Button>
-          }
-        >
-          <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={EMI_GROWTH_DATA} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
-                <defs>
-                  <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#C5973A" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#C5973A" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-line" />
-                <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                <YAxis tickFormatter={formatRupee} tick={{ fontSize: 11 }} width={52} />
-                <Tooltip
-                  formatter={(v: number) => [`₹${v.toLocaleString("en-IN")}`, "Revenue"]}
-                  contentStyle={{ fontSize: 12 }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="#C5973A"
-                  strokeWidth={2}
-                  fill="url(#goldGrad)"
-                  dot={{ r: 3, fill: "#C5973A" }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </Panel>
-
-        <Panel
-          title="Branch Commission Payouts"
-          action={
-            <Button
-              variant="pillOutline"
-              size="sm"
-              onClick={() =>
-                exportToCsv(
-                  "Branch_Commission_Report",
-                  ["Branch", "Commission (₹)", "Orders"],
-                  BRANCH_COMMISSION_DATA.map((d) => [d.branch, d.commission, d.orders]),
-                )
-              }
-            >
-              <Download className="h-3.5 w-3.5 mr-1.5" /> Export
-            </Button>
-          }
-        >
-          <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={BRANCH_COMMISSION_DATA}
-                margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" className="stroke-line" />
-                <XAxis dataKey="branch" tick={{ fontSize: 11 }} />
-                <YAxis tickFormatter={formatRupee} tick={{ fontSize: 11 }} width={52} />
-                <Tooltip
-                  formatter={(v: number) => [`₹${v.toLocaleString("en-IN")}`, "Commission"]}
-                  contentStyle={{ fontSize: 12 }}
-                />
-                <Bar dataKey="commission" fill="#1A3C34" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Panel>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-4">
