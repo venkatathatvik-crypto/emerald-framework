@@ -69,97 +69,6 @@ export interface AuditLogEntry {
   details: string;
 }
 
-const MOCK_AUDIT_LOGS: AuditLogEntry[] = [
-  {
-    id: "LOG-9001",
-    timestamp: new Date(Date.now() - 5 * 60000).toISOString(),
-    category: "AUGMONT_SYNC",
-    action: "Order Sync Triggered",
-    actor: { name: "System Webhook", email: "webhook@augmont.com", role: "System Webhook" },
-    targetEntity: "Order #1024",
-    ipAddress: "34.212.89.12",
-    status: "SUCCESS",
-    details: "Augmont order status refreshed. Unique ID: AUG-88412.",
-  },
-  {
-    id: "LOG-9002",
-    timestamp: new Date(Date.now() - 25 * 60000).toISOString(),
-    category: "ORDER_MUTATION",
-    action: "Assisted Order Placed",
-    actor: { name: "Ramesh Agent", email: "ramesh@branch.com", role: "Branch Agent" },
-    targetEntity: "Order #1025 (Priya Sharma)",
-    ipAddress: "103.44.12.98",
-    status: "SUCCESS",
-    details: "Assisted order placed for 24K Gold Coin (5g). Total: ₹48,500.",
-  },
-  {
-    id: "LOG-9003",
-    timestamp: new Date(Date.now() - 45 * 60000).toISOString(),
-    category: "BRANCH_ACTIONS",
-    action: "New Branch Created",
-    actor: { name: "Suresh Alliance", email: "suresh@nbfc.com", role: "Partner" },
-    targetEntity: "Branch: Koramangala Hub",
-    ipAddress: "115.240.88.4",
-    status: "SUCCESS",
-    details: "Branch created with referral code AUG-PART-12 and manager assigned.",
-  },
-  {
-    id: "LOG-9004",
-    timestamp: new Date(Date.now() - 90 * 60000).toISOString(),
-    category: "AGENT_ACTIONS",
-    action: "Agent Added to Branch",
-    actor: { name: "Branch Manager HSR", email: "manager.hsr@nbfc.com", role: "Branch Agent" },
-    targetEntity: "Agent: Anita Verma",
-    ipAddress: "103.44.12.99",
-    status: "SUCCESS",
-    details: "Added agent Anita Verma to HSR Layout Branch #12.",
-  },
-  {
-    id: "LOG-9005",
-    timestamp: new Date(Date.now() - 120 * 60000).toISOString(),
-    category: "PARTNER_ONBOARDING",
-    action: "Lead Converted to Partner",
-    actor: { name: "Super Admin", email: "admin@augmont.com", role: "Admin" },
-    targetEntity: "Partner: Chola Gold NBFC",
-    ipAddress: "49.207.19.45",
-    status: "SUCCESS",
-    details: "Lead ID #44 converted into active Alliance Partner with 2.5% commission rate.",
-  },
-  {
-    id: "LOG-9006",
-    timestamp: new Date(Date.now() - 180 * 60000).toISOString(),
-    category: "AUTH",
-    action: "Admin Portal Login",
-    actor: { name: "Super Admin", email: "admin@augmont.com", role: "Admin" },
-    targetEntity: "Session Token #8812",
-    ipAddress: "49.207.19.45",
-    status: "SUCCESS",
-    details: "Successful 2FA MFA login to Admin Portal dashboard.",
-  },
-  {
-    id: "LOG-9007",
-    timestamp: new Date(Date.now() - 240 * 60000).toISOString(),
-    category: "AUGMONT_SYNC",
-    action: "Augmont Booking Retry Failed",
-    actor: { name: "System Webhook", email: "cron@augmont.com", role: "System Webhook" },
-    targetEntity: "Order #1021",
-    ipAddress: "34.212.89.12",
-    status: "WARNING",
-    details: "Augmont API timeout during gold rate lock retry. Flagged for manual review.",
-  },
-  {
-    id: "LOG-9008",
-    timestamp: new Date(Date.now() - 360 * 60000).toISOString(),
-    category: "CUSTOMER_ACTIONS",
-    action: "Customer Registration",
-    actor: { name: "Priya Sharma", email: "priya@gmail.com", role: "Customer" },
-    targetEntity: "Customer UUID #c-9912",
-    ipAddress: "157.33.20.11",
-    status: "SUCCESS",
-    details: "Customer completed email OTP verification and onboarded.",
-  },
-];
-
 function Page() {
   const { ready } = useRequireRole("ROLE_ADMIN");
   const [search, setSearch] = useState("");
@@ -188,10 +97,7 @@ function Page() {
 
   if (!ready) return null;
 
-  const isLiveBackend = !!apiData && !isError;
-  const logsToDisplay: AuditLogEntry[] = isLiveBackend
-    ? (apiData.items as AuditLogEntry[])
-    : MOCK_AUDIT_LOGS;
+  const logsToDisplay: AuditLogEntry[] = (apiData?.items as AuditLogEntry[]) ?? [];
 
   const toggleSort = (field: typeof sortField) => {
     if (sortField === field) {
