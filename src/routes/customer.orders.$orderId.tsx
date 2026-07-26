@@ -19,6 +19,7 @@ import {
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
+import { OrderDetailLayout } from "@/components/orders/order-detail-layout";
 import {
   getOrder,
   refreshOrderStatus,
@@ -280,362 +281,160 @@ function Page() {
     }
   }
 
-  return (
-    <DashboardShell role="customer" title="Order details">
-      {/* ── Header bar ─────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <Link
-          to="/customer/orders"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" /> Back to orders
-        </Link>
-        {order && canSyncAugmont && (
-          <Button variant="pillOutline" size="sm" onClick={handleRefresh} disabled={isRefreshing}>
-            <RefreshCcw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-            {isRefreshing ? "Refreshing…" : "Refresh status"}
-          </Button>
-        )}
-      </div>
+  if (isLoading) {
+    return (
+      <DashboardShell role="customer" title="Order details">
+        <p className="text-sm text-muted-foreground py-10 text-center">Loading order details…</p>
+      </DashboardShell>
+    );
+  }
 
-      {isLoading && (
-        <p className="text-sm text-muted-foreground py-10 text-center">Loading order…</p>
-      )}
-      {isError && (
+  if (isError || !order) {
+    return (
+      <DashboardShell role="customer" title="Order details">
         <p className="text-sm text-destructive py-10 text-center">Failed to load this order.</p>
-      )}
+      </DashboardShell>
+    );
+  }
 
-      {order && (
-        <div className="space-y-6">
-          <div className="grid lg:grid-cols-[13fr_7fr] gap-6 lg:gap-10 items-start">
-            {/* ── Left column (~65%) ─────────────────────────────────────── */}
-            <div className="space-y-6 min-w-0">
-              <Panel title="Product summary">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="h-16 w-16 shrink-0 rounded-md border border-line overflow-hidden bg-stone grid place-items-center">
-                    {thumb ? (
-                      <img
-                        src={thumb}
-                        alt={order.productName}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <Boxes className="h-6 w-6 text-muted-foreground" />
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs text-muted-foreground">Order #{order.id}</p>
-                    <p className="font-display text-lg text-ink truncate">{order.productName}</p>
-                    <p className="text-sm text-muted-foreground mt-0.5">
-                      SKU: {order.productSku} · {order.productWeight}g
-                    </p>
-                  </div>
-                  <div className="ml-auto text-right">
-                    <StatusDisplay order={order} isRefreshing={isRefreshing} />
-                    {order.status === "CONFIRMED" && order.augmontStatusSyncedAt && (
-                      <p className="text-[10px] text-muted-foreground mt-1">
-                        Synced {new Date(order.augmontStatusSyncedAt).toLocaleString()}
-                      </p>
-                    )}
-                  </div>
-                </div>
+  const cancelDialogNode = (
+    <Dialog
+      open={cancelStep !== "closed"}
+      onOpenChange={(open) => {
+        if (!open) setCancelStep("closed");
+      }}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Cancel order</DialogTitle>
+        </DialogHeader>
 
-                <OrderProgressStepper status={order.status} />
-
-                {order.status === "AUGMONT_FAILED" && order.failureReason && (
-                  <p className="text-sm text-destructive mt-4">
-                    Augmont error: {order.failureReason}
-                  </p>
-                )}
-              </Panel>
-
-              {canSyncAugmont && (
-                <Panel title="EMI schedule">
-                  {scheduleLoading && (
-                    <p className="text-sm text-muted-foreground py-8 text-center">
-                      Loading schedule…
-                    </p>
-                  )}
-                  {!scheduleLoading && (!schedule || schedule.orderemidetails.length === 0) && (
-                    <p className="text-sm text-muted-foreground py-8 text-center">
-                      {order.paymentTypeId === 4
-                        ? "This was a spot order — no EMI schedule."
-                        : "No EMI schedule found."}
-                    </p>
-                  )}
-                  {!scheduleLoading && schedule && schedule.orderemidetails.length > 0 && (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="py-3">Installment</TableHead>
-                          <TableHead className="py-3">Due date</TableHead>
-                          <TableHead className="py-3">Amount</TableHead>
-                          <TableHead className="py-3">Status</TableHead>
-                          <TableHead className="py-3 text-right">Receipt</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {schedule.orderemidetails.map((emi) => (
-                          <TableRow key={emi.emiId}>
-                            <TableCell className="py-4">{emi.paymentDescription}</TableCell>
-                            <TableCell className="py-4">
-                              {new Date(emi.dueDate).toLocaleDateString()}
-                            </TableCell>
-                            <TableCell className="py-4">{formatInr(emi.emiAmount)}</TableCell>
-                            <TableCell className="py-4 capitalize">
-                              {emi.orderemistatus?.statusName ?? "—"}
-                            </TableCell>
-                            <TableCell className="py-4 text-right">
-                              {emi.paymentRecievedDate ? (
-                                <Button
-                                  variant="pillOutline"
-                                  size="sm"
-                                  onClick={() =>
-                                    openReceipt(() => getOrderEmiReceipt(id, emi.emiId))
-                                  }
-                                >
-                                  <Receipt className="h-3.5 w-3.5" /> Receipt
-                                </Button>
-                              ) : (
-                                <span className="text-xs text-muted-foreground">—</span>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  )}
-                </Panel>
-              )}
-            </div>
-
-            {/* ── Right column (~35%) ────────────────────────────────────── */}
-            <div className="space-y-6">
-              <Panel title="Delivery address">
-                <p className="text-sm text-ink">{order.deliveryAddress}</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {order.deliveryCity}, {order.deliveryState} {order.deliveryPincode}
-                </p>
-              </Panel>
-
-              <Panel title="Payment summary">
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Plan</span>
-                    <span className="text-ink">{TENURE_LABEL[order.paymentTypeId] ?? "—"}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Order value</span>
-                    <span className="text-ink">
-                      {formatInr(order.finalOrderPrice ?? undefined)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">
-                      {order.paymentTypeId === 4 ? "Paid" : "Down payment"}
-                    </span>
-                    <span className="text-ink">{formatInr(order.initialPayment ?? undefined)}</span>
-                  </div>
-                  {order.monthlyAmount != null && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Monthly EMI</span>
-                      <span className="text-ink">{formatInr(order.monthlyAmount)}</span>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between pt-2 mt-1 border-t border-line">
-                    <span className="text-muted-foreground">Placed on</span>
-                    <span className="text-ink">
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Reference</span>
-                    <span className="text-ink text-xs">{order.merchantTransactionId}</span>
-                  </div>
-                  {canSyncAugmont && (
-                    <>
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Augmont order ID</span>
-                        <span className="text-ink text-xs">{order.augmontOrderId}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Augmont unique ID</span>
-                        <span className="text-ink text-xs">{order.augmontOrderUniqueId}</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </Panel>
-
-              {canSyncAugmont && (
-                <Panel title="Documents">
-                  <div className="divide-y divide-line">
-                    <button
-                      onClick={() => openReceipt(() => getOrderContractReceipt(id))}
-                      className="w-full flex items-center gap-3 py-3 text-sm text-ink hover:text-emerald-deep transition-colors"
-                    >
-                      <FileText className="h-4 w-4 text-muted-foreground" />
-                      Contract
-                    </button>
-                    <button
-                      onClick={() => openReceipt(() => getOrderProformaInvoiceReceipt(id))}
-                      className="w-full flex items-center gap-3 py-3 text-sm text-ink hover:text-emerald-deep transition-colors"
-                    >
-                      <FileText className="h-4 w-4 text-muted-foreground" />
-                      Proforma invoice
-                    </button>
-                  </div>
-                </Panel>
-              )}
-            </div>
-          </div>
-
-          {/* ── Cancel — secondary to the actions above, but still a clearly
-                 findable control, not a plain link that blends into the page ── */}
-          {order.status === "CONFIRMED" && (
-            <div className="flex items-center justify-between border border-line rounded-md px-5 py-4">
-              <p className="text-sm text-muted-foreground">
-                Cancelling stops future EMIs and refunds any eligible balance, minus applicable
-                charges.
+        {cancelStep === "quote" && (
+          <div className="space-y-4">
+            {quoteLoading && (
+              <p className="text-sm text-muted-foreground py-6 text-center">
+                Checking cancellation eligibility…
               </p>
-              <Button
-                variant="pillOutline"
-                size="sm"
-                onClick={() => setCancelStep("quote")}
-                className="shrink-0 ml-4 text-destructive border-destructive/40 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive"
-              >
-                <XCircle className="h-3.5 w-3.5" /> Cancel order
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
-
-      <Dialog
-        open={cancelStep !== "closed"}
-        onOpenChange={(open) => {
-          if (!open) setCancelStep("closed");
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Cancel order</DialogTitle>
-          </DialogHeader>
-
-          {cancelStep === "quote" && (
-            <div className="space-y-4">
-              {quoteLoading && (
-                <p className="text-sm text-muted-foreground py-6 text-center">
-                  Checking cancellation eligibility…
-                </p>
-              )}
-              {quoteError && (
-                <p className="text-sm text-destructive py-6 text-center">
-                  Couldn't fetch cancellation details. Please try again.
-                </p>
-              )}
-              {quote && (
-                <div className="bg-stone rounded-lg p-4 text-sm space-y-1.5">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Total paid so far</span>
-                    <span>₹{quote.totalAmountPaid}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Cancellation charges</span>
-                    <span>₹{quote.totalCancelationCharges}</span>
-                  </div>
-                  <div className="flex justify-between font-medium">
-                    <span>Payable to you</span>
-                    <span>₹{quote.payableToCustomer}</span>
-                  </div>
+            )}
+            {quoteError && (
+              <p className="text-sm text-destructive py-6 text-center">
+                Couldn't fetch cancellation details. Please try again.
+              </p>
+            )}
+            {quote && (
+              <div className="bg-stone rounded-lg p-4 text-sm space-y-1.5">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Total paid so far</span>
+                  <span>₹{quote.totalAmountPaid}</span>
                 </div>
-              )}
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Cancellation charges</span>
+                  <span>₹{quote.totalCancelationCharges}</span>
+                </div>
+                <div className="flex justify-between font-medium">
+                  <span>Payable to you</span>
+                  <span>₹{quote.payableToCustomer}</span>
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="pillOutline" onClick={() => setCancelStep("closed")}>
+                Back
+              </Button>
+              <Button variant="pill" disabled={!quote} onClick={() => setCancelStep("form")}>
+                Continue
+              </Button>
+            </DialogFooter>
+          </div>
+        )}
+
+        {cancelStep === "form" && (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleCancelSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="reason"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Reason for cancelling</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="customerBankName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bank name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="customerAccountNo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Account number</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="ifscCode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>IFSC code</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {cancelError && <p className="text-sm text-destructive">{cancelError}</p>}
               <DialogFooter>
-                <Button variant="pillOutline" onClick={() => setCancelStep("closed")}>
+                <Button type="button" variant="pillOutline" onClick={() => setCancelStep("quote")}>
                   Back
                 </Button>
-                <Button variant="pill" disabled={!quote} onClick={() => setCancelStep("form")}>
-                  Continue
+                <Button type="submit" variant="pill" disabled={isCancelling}>
+                  {isCancelling ? "Cancelling…" : "Confirm cancellation"}
                 </Button>
               </DialogFooter>
-            </div>
-          )}
+            </form>
+          </Form>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
 
-          {cancelStep === "form" && (
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleCancelSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="reason"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Reason for cancelling</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="customerBankName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bank name</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="customerAccountNo"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Account number</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="ifscCode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>IFSC code</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                {cancelError && <p className="text-sm text-destructive">{cancelError}</p>}
-                <DialogFooter>
-                  <Button
-                    type="button"
-                    variant="pillOutline"
-                    onClick={() => setCancelStep("quote")}
-                  >
-                    Back
-                  </Button>
-                  <Button type="submit" variant="pill" disabled={isCancelling}>
-                    {isCancelling ? "Cancelling…" : "Confirm cancellation"}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          )}
-        </DialogContent>
-      </Dialog>
-    </DashboardShell>
+  return (
+    <OrderDetailLayout
+      order={order}
+      role="customer"
+      isRefreshing={isRefreshing}
+      onRefreshStatus={handleRefresh}
+      product={product}
+      emiSchedule={schedule?.orderemidetails}
+      emiLoading={scheduleLoading}
+      onOpenContract={() => openReceipt(() => getOrderContractReceipt(id))}
+      onOpenProforma={() => openReceipt(() => getOrderProformaInvoiceReceipt(id))}
+      onOpenEmiReceipt={(instalmentNo) => openReceipt(() => getOrderEmiReceipt(id, instalmentNo))}
+      onCancelClick={() => setCancelStep("quote")}
+      cancelDialog={cancelDialogNode}
+    />
   );
 }

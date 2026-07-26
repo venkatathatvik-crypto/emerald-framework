@@ -9,6 +9,8 @@ import { getBranch, listAgents, deactivateAgent, reactivateAgent } from "@/lib/a
 import { CreateAgentDialog } from "@/components/partner/CreateAgentDialog";
 import { CreateBranchDialog } from "@/components/partner/CreateBranchDialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { BranchKPIStrip } from "@/components/branch/branch-kpi-strip";
+import { BranchDetailTabs } from "@/components/branch/branch-detail-tabs";
 import type { Agent } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -171,7 +173,7 @@ function Page() {
             title={branch.name}
             action={
               <Button size="sm" variant="pillOutline" onClick={() => setEditOpen(true)}>
-                Edit
+                Edit Branch
               </Button>
             }
           >
@@ -181,136 +183,132 @@ function Page() {
               </Badge>
               {branch.code && <Badge variant="outline">{branch.code}</Badge>}
             </div>
-            <div className="grid sm:grid-cols-3 gap-4 text-sm">
-              <div>
-                <p className="text-muted-foreground">Contact</p>
-                <p>{branch.contactEmail || "—"}</p>
-                <p>{branch.contactPhone || ""}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Location</p>
-                <p>{[branch.city, branch.state].filter(Boolean).join(", ") || "—"}</p>
-                <p>{branch.pincode || ""}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Commission rate</p>
-                <p>{branch.commissionRate != null ? `${branch.commissionRate}%` : "—"}</p>
-              </div>
-            </div>
+            <BranchKPIStrip branch={branch} agentCount={rawAgents?.length ?? 0} />
           </Panel>
 
-          <Panel
-            title="Agents"
-            action={
-              branch.active ? (
-                <Button variant="pill" onClick={() => setAddAgentOpen(true)}>
-                  Add Agent
-                </Button>
-              ) : undefined
+          <BranchDetailTabs
+            branch={branch}
+            agentsContent={
+              <Panel
+                title="Agents Roster"
+                action={
+                  branch.active ? (
+                    <Button variant="pill" onClick={() => setAddAgentOpen(true)}>
+                      Add Agent
+                    </Button>
+                  ) : undefined
+                }
+              >
+                {agentsError && (
+                  <p className="text-sm text-destructive py-6">
+                    Failed to load agents. Please try again.
+                  </p>
+                )}
+
+                {!agentsError && (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>
+                          <button
+                            onClick={() => toggleSort("name")}
+                            className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                          >
+                            <span>Name</span>
+                            {renderSortIcon("name")}
+                          </button>
+                        </TableHead>
+                        <TableHead>
+                          <button
+                            onClick={() => toggleSort("email")}
+                            className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                          >
+                            <span>Email</span>
+                            {renderSortIcon("email")}
+                          </button>
+                        </TableHead>
+                        <TableHead>
+                          <button
+                            onClick={() => toggleSort("mobile")}
+                            className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                          >
+                            <span>Mobile</span>
+                            {renderSortIcon("mobile")}
+                          </button>
+                        </TableHead>
+                        <TableHead>
+                          <button
+                            onClick={() => toggleSort("active")}
+                            className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
+                          >
+                            <span>Status</span>
+                            {renderSortIcon("active")}
+                          </button>
+                        </TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {agentsLoading && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={5}
+                            className="text-center text-muted-foreground py-10"
+                          >
+                            Loading agents…
+                          </TableCell>
+                        </TableRow>
+                      )}
+                      {!agentsLoading && (agents?.length ?? 0) === 0 && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={5}
+                            className="text-center text-muted-foreground py-10"
+                          >
+                            No agents yet.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                      {agents?.map((agent) => (
+                        <TableRow key={agent.id}>
+                          <TableCell>
+                            <p className="font-medium text-ink">
+                              {[agent.firstName, agent.lastName].filter(Boolean).join(" ") || "—"}
+                            </p>
+                          </TableCell>
+                          <TableCell>{agent.email || "—"}</TableCell>
+                          <TableCell>{agent.mobile || "—"}</TableCell>
+                          <TableCell>
+                            <StatusBadge status={agent.active ? "ACTIVE" : "DEACTIVATED"} />
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {agent.active ? (
+                              <Button
+                                size="sm"
+                                variant="pillDestructive"
+                                onClick={() => setDeactivatingAgent(agent)}
+                              >
+                                Deactivate
+                              </Button>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="pill"
+                                disabled={reactivatingId === agent.id}
+                                onClick={() => handleReactivateAgent(agent)}
+                              >
+                                {reactivatingId === agent.id ? "Reactivating…" : "Reactivate"}
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </Panel>
             }
-          >
-            {agentsError && (
-              <p className="text-sm text-destructive py-6">
-                Failed to load agents. Please try again.
-              </p>
-            )}
-
-            {!agentsError && (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>
-                      <button
-                        onClick={() => toggleSort("name")}
-                        className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
-                      >
-                        <span>Name</span>
-                        {renderSortIcon("name")}
-                      </button>
-                    </TableHead>
-                    <TableHead>
-                      <button
-                        onClick={() => toggleSort("email")}
-                        className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
-                      >
-                        <span>Email</span>
-                        {renderSortIcon("email")}
-                      </button>
-                    </TableHead>
-                    <TableHead>
-                      <button
-                        onClick={() => toggleSort("mobile")}
-                        className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
-                      >
-                        <span>Mobile</span>
-                        {renderSortIcon("mobile")}
-                      </button>
-                    </TableHead>
-                    <TableHead>
-                      <button
-                        onClick={() => toggleSort("active")}
-                        className="inline-flex items-center gap-1 font-semibold hover:text-foreground transition-colors cursor-pointer select-none"
-                      >
-                        <span>Status</span>
-                        {renderSortIcon("active")}
-                      </button>
-                    </TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {agentsLoading && (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-10">
-                        Loading agents…
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {!agentsLoading && (agents?.length ?? 0) === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-10">
-                        No agents yet.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {agents?.map((agent) => (
-                    <TableRow key={agent.id}>
-                      <TableCell>
-                        <p className="font-medium text-ink">
-                          {[agent.firstName, agent.lastName].filter(Boolean).join(" ") || "—"}
-                        </p>
-                      </TableCell>
-                      <TableCell>{agent.email || "—"}</TableCell>
-                      <TableCell>{agent.mobile || "—"}</TableCell>
-                      <TableCell>
-                        <StatusBadge status={agent.active ? "ACTIVE" : "DEACTIVATED"} />
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {agent.active ? (
-                          <Button
-                            size="sm"
-                            variant="pillDestructive"
-                            onClick={() => setDeactivatingAgent(agent)}
-                          >
-                            Deactivate
-                          </Button>
-                        ) : (
-                          <Button
-                            size="sm"
-                            variant="pill"
-                            disabled={reactivatingId === agent.id}
-                            onClick={() => handleReactivateAgent(agent)}
-                          >
-                            {reactivatingId === agent.id ? "Reactivating…" : "Reactivate"}
-                          </Button>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </Panel>
+          />
         </div>
       )}
 
