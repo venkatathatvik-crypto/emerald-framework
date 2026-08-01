@@ -4,10 +4,10 @@ import { useState } from "react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { listOrders, listPartners, getPartnerBranches } from "@/lib/api/admin";
+import { listOrders, listPartners, getPartnerBranches, getOrderReport } from "@/lib/api/admin";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { formatInr } from "@/lib/api/augmont";
-import { ArrowUpDown, ArrowUp, ArrowDown, Download } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, Download, FileSpreadsheet } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { exportToCsv } from "@/lib/csv-exporter";
@@ -45,6 +45,8 @@ function Page() {
   const [page, setPage] = useState(0);
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [reportBusy, setReportBusy] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
 
   const { data: partners } = useQuery({
     queryKey: ["admin", "partners", "all-for-filter"],
@@ -74,6 +76,27 @@ function Page() {
 
   if (!ready) {
     return null;
+  }
+
+  /**
+   * Augmont builds the file on their side and hands back a URL, so this opens
+   * a new tab rather than streaming bytes through us. Honours the date filters
+   * above; partner/branch aren't sent because Augmont has no concept of them.
+   */
+  async function downloadAugmontReport() {
+    setReportBusy(true);
+    setReportError(null);
+    try {
+      const report = await getOrderReport({
+        startDate: from || undefined,
+        endDate: to || undefined,
+      });
+      window.open(report.invoice, "_blank", "noopener,noreferrer");
+    } catch {
+      setReportError("Couldn't generate the report.");
+    } finally {
+      setReportBusy(false);
+    }
   }
 
   const rawOrders = data?.items ?? [];
@@ -213,6 +236,20 @@ function Page() {
             >
               <Download className="h-3.5 w-3.5 mr-1.5" /> Export CSV
             </Button>
+            {/* Distinct from "Export CSV" above: that exports the rows currently
+                on screen from our own database, this asks Augmont to build a
+                broker-wide file covering every order under our account —
+                including any not placed through this app. */}
+            <Button
+              variant="pillOutline"
+              size="sm"
+              disabled={reportBusy}
+              onClick={downloadAugmontReport}
+            >
+              <FileSpreadsheet className="h-3.5 w-3.5 mr-1.5" />
+              {reportBusy ? "Generating…" : "Augmont report"}
+            </Button>
+            {reportError && <span className="text-xs text-destructive">{reportError}</span>}
           </div>
         }
       >

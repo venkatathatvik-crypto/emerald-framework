@@ -4,18 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect, useRef, useState } from "react";
-import {
-  ArrowLeft,
-  RefreshCcw,
-  FileText,
-  Receipt,
-  XCircle,
-  Boxes,
-  CheckCircle2,
-  Circle,
-  AlertTriangle,
-  PackageX,
-} from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
@@ -31,10 +19,7 @@ import {
   cancelOrder,
 } from "@/lib/api/customer";
 import { getProductDetails, getProductThumbnail, formatInr } from "@/lib/api/augmont";
-import { OrderStatusBadge } from "@/components/OrderStatusBadge";
-import { Badge } from "@/components/ui/badge";
 import { ApiError } from "@/lib/api/types";
-import type { OrderResponse, OrderStatus } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -80,99 +65,6 @@ const TENURE_LABEL: Record<number, string> = {
   3: "9-month EMI",
   4: "Spot (pay in full)",
 };
-
-/**
- * Ordered → Confirmed are the only stages this app can actually attest to —
- * OrderStatus never advances past CONFIRMED in our own data, and Augmont
- * gives us no shipping/delivery signal today. Shipped/Delivered are shown
- * as real future stages (so the pattern is ready once that tracking
- * exists) but are never marked complete, rather than faking progress.
- */
-
-/**
- * CANCELLED/AUGMONT_FAILED/PENDING are our own authoritative local facts —
- * shown as-is. Only CONFIRMED is replaced with Augmont's own live status
- * text (auto-refreshed once on page load) — no fallback to "Confirmed"
- * once Augmont's own wording is what's supposed to be shown instead.
- */
-function StatusDisplay({ order, isRefreshing }: { order: OrderResponse; isRefreshing: boolean }) {
-  if (order.status !== "CONFIRMED") {
-    return <OrderStatusBadge status={order.status} />;
-  }
-  if (isRefreshing && !order.augmontStatusName) {
-    return <span className="text-sm text-muted-foreground">Checking with Augmont…</span>;
-  }
-  if (order.augmontStatusName) {
-    return (
-      <Badge variant="outline" className="capitalize">
-        {order.augmontStatusName}
-      </Badge>
-    );
-  }
-  return <span className="text-sm text-muted-foreground">Not synced yet</span>;
-}
-
-function OrderProgressStepper({ status }: { status: OrderStatus }) {
-  if (status === "CANCELLED") {
-    return (
-      <div className="flex items-center gap-2.5 text-destructive">
-        <PackageX className="h-5 w-5" />
-        <span className="text-sm font-medium">This order was cancelled</span>
-      </div>
-    );
-  }
-  if (status === "AUGMONT_FAILED") {
-    return (
-      <div className="flex items-center gap-2.5 text-gold">
-        <AlertTriangle className="h-5 w-5" />
-        <span className="text-sm font-medium">
-          Needs attention — couldn't be confirmed with our gold partner
-        </span>
-      </div>
-    );
-  }
-
-  const confirmed = status === "CONFIRMED";
-  const steps = [
-    { label: "Ordered", done: true, current: false },
-    { label: "Confirmed", done: confirmed, current: !confirmed },
-    { label: "Shipped", done: false, current: false },
-    { label: "Delivered", done: false, current: false },
-  ];
-
-  return (
-    <div>
-      <div className="flex items-center">
-        {steps.map((step, i) => (
-          <div key={step.label} className="flex items-center flex-1 last:flex-none">
-            <div className="flex flex-col items-center gap-1.5 shrink-0">
-              {step.done ? (
-                <CheckCircle2 className="h-6 w-6 text-emerald-deep" />
-              ) : step.current ? (
-                <Circle className="h-6 w-6 text-gold fill-gold/20" />
-              ) : (
-                <Circle className="h-6 w-6 text-line" />
-              )}
-              <span
-                className={`text-xs whitespace-nowrap ${step.done || step.current ? "text-ink font-medium" : "text-muted-foreground"}`}
-              >
-                {step.label}
-              </span>
-            </div>
-            {i < steps.length - 1 && (
-              <div
-                className={`h-0.5 flex-1 mx-2 mb-5 ${steps[i + 1].done ? "bg-emerald-deep" : "bg-line"}`}
-              />
-            )}
-          </div>
-        ))}
-      </div>
-      <p className="text-xs text-muted-foreground mt-3">
-        Shipping and delivery tracking isn't available yet.
-      </p>
-    </div>
-  );
-}
 
 function Page() {
   const { orderId } = Route.useParams();

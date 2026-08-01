@@ -1,7 +1,9 @@
 import { apiFetch } from "./client";
 import type {
+  AugmontBrokerDashboard,
   AugmontEmiSchedule,
   AugmontReceipt,
+  AugmontReport,
   Branch,
   ConvertLeadRequest,
   CustomerResponse,
@@ -197,6 +199,37 @@ export function getOrderProformaInvoiceReceipt(orderId: number): Promise<Augmont
 /** EMI receipt link for one installment of any order system-wide. */
 export function getOrderEmiReceipt(orderId: number, emiId: number): Promise<AugmontReceipt> {
   return apiFetch<AugmontReceipt>(`/api/v1/admin/orders/${orderId}/receipts/emi/${emiId}`);
+}
+
+// ── Augmont broker-wide data (admin only) ───────────────────────────────────
+// These cover the whole broker account across every partner and branch, which
+// is why they exist on the admin API only and have no partner/branch variant.
+
+/**
+ * Booked-order totals aggregated by Augmont itself. Counts every order booked
+ * under our broker account — not the same set as our own orders table, since
+ * orders placed outside this app still count here.
+ */
+export function getAugmontDashboard(): Promise<AugmontBrokerDashboard> {
+  return apiFetch<AugmontBrokerDashboard>("/api/v1/admin/dashboard/augmont");
+}
+
+export interface AugmontReportParams {
+  startDate?: string; // yyyy-MM-dd
+  endDate?: string;
+  statusId?: number; // orders only
+}
+
+/** Order export — returns a URL to a file Augmont generates, not the rows. */
+export function getOrderReport(params: AugmontReportParams = {}): Promise<AugmontReport> {
+  return apiFetch<AugmontReport>("/api/v1/admin/reports/orders", { query: { ...params } });
+}
+
+/** Customer export — returns a URL to a file Augmont generates, not the rows. */
+export function getCustomerReport(params: AugmontReportParams = {}): Promise<AugmontReport> {
+  return apiFetch<AugmontReport>("/api/v1/admin/reports/customers", {
+    query: { startDate: params.startDate, endDate: params.endDate },
+  });
 }
 
 export interface ListAuditLogsParams {

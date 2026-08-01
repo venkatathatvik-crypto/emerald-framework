@@ -444,6 +444,39 @@ export interface AugmontReceipt {
   url: string;
 }
 
+/**
+ * Matches entities/dto/augmont/AugmontBrokerDashboardResponse.java —
+ * GET /api/v1/admin/dashboard/augmont. Field names are Augmont's own,
+ * inconsistent casing included; weights arrive as strings, amounts as numbers.
+ */
+export interface AugmontBrokerDashboard {
+  todaysBooked: {
+    numberOfTodaysbookedOrder: number | null;
+    totalWeightOftodaysOrder: string | null;
+    totalAmountOftodaysOrder: number | null;
+  } | null;
+  lastMonthsBooked: {
+    numberOflastMonthBookedOrder: number | null;
+    totalWeightOflastMonthOrder: string | null;
+    totalAmountOflastMonthOrder: number | null;
+    fromDate: string | null;
+    toDate: string | null;
+  } | null;
+  tilldatebooked: {
+    numberOftillDateBookedOrder: number | null;
+    totalWeightOfTillDateOrder: string | null;
+    totalAmountOfTillDateOrder: number | null;
+  } | null;
+}
+
+/**
+ * Matches entities/dto/augmont/AugmontReportResponse.java — the admin export
+ * endpoints. `invoice` is a download URL regardless of what the report holds.
+ */
+export interface AugmontReport {
+  invoice: string;
+}
+
 /** Matches entities/dto/augmont/AugmontCancellationQuoteResponse.java — GET .../orders/{id}/cancellation-quote. */
 export interface AugmontCancellationQuote {
   cancellationCharges: string | null;

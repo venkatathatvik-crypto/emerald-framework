@@ -2,7 +2,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { DashboardShell, StatCard, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { listPartners, listCustomers, listLeads, getNewLeadCount } from "@/lib/api/admin";
+import {
+  listPartners,
+  listCustomers,
+  listLeads,
+  getNewLeadCount,
+  getAugmontDashboard,
+} from "@/lib/api/admin";
+import { formatInr } from "@/lib/api/augmont";
 import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/dashboard/admin")({
@@ -50,7 +57,28 @@ function Page() {
     enabled: ready,
   });
 
+  // Augmont's own booked-order aggregation. Treated as best-effort: a failure
+  // here shouldn't blank out the rest of the dashboard, so the cards fall back
+  // to an em-dash rather than the page erroring.
+  const {
+    data: augmont,
+    isLoading: augmontLoading,
+    isError: augmontError,
+  } = useQuery({
+    queryKey: ["admin", "dashboard", "augmont"],
+    queryFn: getAugmontDashboard,
+    enabled: ready,
+    retry: 1,
+  });
+
   if (!ready) return null;
+
+  const augmontUnavailable = augmontError || (!augmontLoading && !augmont);
+  /** "—" while loading or if Augmont is unreachable, so we never imply a real zero. */
+  const augmontValue = (value: string | number | null | undefined) =>
+    augmontLoading || augmontUnavailable || value == null ? "—" : String(value);
+  const augmontMoney = (value: number | null | undefined) =>
+    augmontLoading || augmontUnavailable || value == null ? "—" : formatInr(value);
 
   return (
     <DashboardShell role="admin" title="Company Overview">
@@ -75,6 +103,42 @@ function Page() {
           value={String(newLeadCount ?? 0)}
           sub="Awaiting review"
           accent
+        />
+
+        {/* Booked-order figures straight from Augmont's own aggregation — these
+            span the whole broker account, so they can include orders not placed
+            through this app. */}
+        <StatCard
+          label="Orders today"
+          value={augmontValue(augmont?.todaysBooked?.numberOfTodaysbookedOrder)}
+          sub={
+            augmontUnavailable
+              ? "Augmont unavailable"
+              : `${augmontMoney(augmont?.todaysBooked?.totalAmountOftodaysOrder)} booked`
+          }
+        />
+        <StatCard
+          label="Orders this month"
+          value={augmontValue(augmont?.lastMonthsBooked?.numberOflastMonthBookedOrder)}
+          sub={
+            augmontUnavailable
+              ? "Augmont unavailable"
+              : `${augmontMoney(augmont?.lastMonthsBooked?.totalAmountOflastMonthOrder)} booked`
+          }
+        />
+        <StatCard
+          label="Gold booked"
+          value={
+            augmont?.tilldatebooked?.totalWeightOfTillDateOrder && !augmontUnavailable
+              ? `${augmont.tilldatebooked.totalWeightOfTillDateOrder} g`
+              : "—"
+          }
+          sub="All-time, via Augmont"
+        />
+        <StatCard
+          label="Booked value"
+          value={augmontMoney(augmont?.tilldatebooked?.totalAmountOfTillDateOrder)}
+          sub={`All-time · ${augmontValue(augmont?.tilldatebooked?.numberOftillDateBookedOrder)} orders`}
         />
       </div>
 
