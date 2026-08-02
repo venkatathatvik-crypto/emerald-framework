@@ -75,6 +75,7 @@ function Page() {
   const enabled = ready && Number.isFinite(id);
 
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [refreshError, setRefreshError] = useState<string | null>(null);
   const [cancelStep, setCancelStep] = useState<"closed" | "quote" | "form">("closed");
   const [cancelError, setCancelError] = useState<string | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -138,11 +139,14 @@ function Page() {
 
   async function handleRefresh() {
     setIsRefreshing(true);
+    setRefreshError(null);
     try {
       await refreshOrderStatus(id);
       await queryClient.invalidateQueries({ queryKey: ["customer", "order", id] });
     } catch {
-      // status refresh failing isn't fatal — the page just keeps the last-known value
+      // Not fatal — the last-known status stays on screen — but say so rather
+      // than leaving the button looking like it silently did nothing.
+      setRefreshError("Couldn’t reach our gold partner. Showing the last known status.");
     } finally {
       setIsRefreshing(false);
     }
@@ -319,6 +323,7 @@ function Page() {
       role="customer"
       isRefreshing={isRefreshing}
       onRefreshStatus={handleRefresh}
+      refreshError={refreshError}
       product={product}
       emiSchedule={schedule?.orderemidetails}
       emiLoading={scheduleLoading}

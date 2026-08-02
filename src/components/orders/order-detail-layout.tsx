@@ -29,6 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+/** Keyed by Augmont's own paymentTypeId, which is what the order carries. */
 const TENURE_LABEL: Record<number, string> = {
   1: "3-month EMI",
   2: "6-month EMI",
@@ -41,6 +42,8 @@ interface OrderDetailLayoutProps {
   role: "customer" | "branch" | "partner" | "admin";
   isRefreshing: boolean;
   onRefreshStatus: () => void;
+  /** Surfaced when a status refresh fails, so it doesn't fail silently. */
+  refreshError?: string | null;
   product?: Record<string, unknown>;
   emiSchedule?: Record<string, unknown>[];
   emiLoading?: boolean;
@@ -57,6 +60,7 @@ export function OrderDetailLayout({
   role,
   isRefreshing,
   onRefreshStatus,
+  refreshError,
   product,
   emiSchedule,
   emiLoading,
@@ -135,6 +139,12 @@ export function OrderDetailLayout({
             </span>
           </div>
 
+          {refreshError && (
+            <p role="alert" className="text-xs text-destructive mb-4">
+              {refreshError}
+            </p>
+          )}
+
           {/* Stepper */}
           <OrderProgressionStepper
             status={order.status}
@@ -173,7 +183,7 @@ export function OrderDetailLayout({
                     <span>
                       Tenure:{" "}
                       <strong className="text-ink">
-                        {TENURE_LABEL[order.tenureMonths] || `${order.tenureMonths} Months`}
+                        {TENURE_LABEL[order.paymentTypeId] ?? "—"}
                       </strong>
                     </span>
                   </div>
@@ -272,7 +282,7 @@ export function OrderDetailLayout({
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Tenure</span>
-                  <span>{TENURE_LABEL[order.tenureMonths] || `${order.tenureMonths} Months`}</span>
+                  <span>{TENURE_LABEL[order.paymentTypeId] ?? "—"}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Augmont Order Ref</span>
@@ -308,12 +318,12 @@ export function OrderDetailLayout({
                     </div>
                   </div>
                 )}
-                {order.partnerName && (
+                {order.allianceCompanyName && (
                   <div className="flex items-center gap-2">
                     <CreditCard className="h-4 w-4 text-muted-foreground shrink-0" />
                     <div>
                       <p className="text-muted-foreground">Partner Alliance</p>
-                      <p className="font-medium text-ink">{order.partnerName}</p>
+                      <p className="font-medium text-ink">{order.allianceCompanyName}</p>
                     </div>
                   </div>
                 )}
