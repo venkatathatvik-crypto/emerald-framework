@@ -175,8 +175,8 @@ function Page() {
                       </TableCell>
                       <TableCell>{branch.agentCount ?? 0}</TableCell>
                       <TableCell className="text-right">
-                        <Badge variant={branch.isActive ? "default" : "destructive"}>
-                          {branch.isActive ? "Active" : "Deactivated"}
+                        <Badge variant={branch.active ? "default" : "destructive"}>
+                          {branch.active ? "Active" : "Deactivated"}
                         </Badge>
                       </TableCell>
                     </TableRow>

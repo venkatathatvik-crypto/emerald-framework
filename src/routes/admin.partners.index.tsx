@@ -6,6 +6,7 @@ import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
 import { listPartners, deactivatePartner, reactivatePartner } from "@/lib/api/admin";
 import type { PartnerResponse } from "@/lib/api/types";
+import { readSortValue } from "@/lib/sort";
 import { EditPartnerDialog } from "@/components/admin/EditPartnerDialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -87,8 +88,8 @@ function Page() {
 
   const partners = [...rawPartners].sort((a, b) => {
     if (!sortField) return 0;
-    let valA: unknown = (a as Record<string, unknown>)[sortField];
-    let valB: unknown = (b as Record<string, unknown>)[sortField];
+    let valA: unknown = readSortValue(a, sortField);
+    let valB: unknown = readSortValue(b, sortField);
 
     if (sortField === "location") {
       valA = [a.city, a.state].filter(Boolean).join(", ");

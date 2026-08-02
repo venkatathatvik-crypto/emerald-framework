@@ -112,9 +112,9 @@ function Page() {
           </div>
 
           <div className="flex gap-3 flex-wrap" data-reveal="rise-soft">
-            <Link to="#calculator" className="btn-gold shadow-lg shadow-gold/25">
+            <a href="#calculator" className="btn-gold shadow-lg shadow-gold/25">
               Start Investing <Sparkles className="h-4 w-4" />
-            </Link>
+            </a>
             <Link to="/gold-emi" className="btn-ghost">
               Learn about Gold EMI
             </Link>

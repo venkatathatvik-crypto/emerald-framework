@@ -12,6 +12,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { BranchKPIStrip } from "@/components/branch/branch-kpi-strip";
 import { BranchDetailTabs } from "@/components/branch/branch-detail-tabs";
 import type { Agent } from "@/lib/api/types";
+import { readSortValue } from "@/lib/sort";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -83,8 +84,8 @@ function Page() {
 
   const agents = [...(rawAgents ?? [])].sort((a, b) => {
     if (!sortField) return 0;
-    let valA: unknown = (a as Record<string, unknown>)[sortField];
-    let valB: unknown = (b as Record<string, unknown>)[sortField];
+    let valA: unknown = readSortValue(a, sortField);
+    let valB: unknown = readSortValue(b, sortField);
 
     if (sortField === "name") {
       valA = [a.firstName, a.lastName].filter(Boolean).join(" ");

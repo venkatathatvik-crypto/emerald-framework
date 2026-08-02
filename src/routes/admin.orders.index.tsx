@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingState, Spinner } from "@/components/ui/spinner";
 import { exportToCsv } from "@/lib/csv-exporter";
+import { readSortValue } from "@/lib/sort";
 import {
   Select,
   SelectContent,
@@ -104,8 +105,8 @@ function Page() {
 
   const orders = [...rawOrders].sort((a, b) => {
     if (!sortField) return 0;
-    const valA: unknown = (a as Record<string, unknown>)[sortField];
-    const valB: unknown = (b as Record<string, unknown>)[sortField];
+    const valA: unknown = readSortValue(a, sortField);
+    const valB: unknown = readSortValue(b, sortField);
 
     if (valA == null) return 1;
     if (valB == null) return -1;

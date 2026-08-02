@@ -23,6 +23,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # `vite build` transpiles without typechecking, so type errors used to
+      # ship silently — two of them turned out to be visible bugs (an order's
+      # tenure rendering as "undefined Months", and a branch always showing as
+      # Deactivated). Failing here stops that reaching the server.
+      - name: Typecheck
+        run: npm run typecheck
+
       - name: Build
         run: NITRO_PRESET=node-server npm run build
 

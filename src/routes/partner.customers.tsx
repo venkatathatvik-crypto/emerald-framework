@@ -5,6 +5,7 @@ import { useState } from "react";
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
 import { listCustomers, listBranches } from "@/lib/api/partner";
+import { readSortValue } from "@/lib/sort";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
@@ -69,8 +70,8 @@ function Page() {
 
   const customers = [...rawCustomers].sort((a, b) => {
     if (!sortField) return 0;
-    let valA: unknown = (a as Record<string, unknown>)[sortField];
-    let valB: unknown = (b as Record<string, unknown>)[sortField];
+    let valA: unknown = readSortValue(a, sortField);
+    let valB: unknown = readSortValue(b, sortField);
 
     if (sortField === "name") {
       valA = [a.firstName, a.lastName].filter(Boolean).join(" ");

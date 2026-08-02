@@ -19,7 +19,11 @@ import { formatInr, getProductThumbnail } from "@/lib/api/augmont";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
-import type { OrderResponse } from "@/lib/api/types";
+import type {
+  AugmontEmiSchedule,
+  AugmontProductDetail,
+  OrderResponse,
+} from "@/lib/api/types";
 import {
   Table,
   TableBody,
@@ -45,8 +49,8 @@ interface OrderDetailLayoutProps {
   onRefreshStatus: () => void;
   /** Surfaced when a status refresh fails, so it doesn't fail silently. */
   refreshError?: string | null;
-  product?: Record<string, unknown>;
-  emiSchedule?: Record<string, unknown>[];
+  product?: AugmontProductDetail;
+  emiSchedule?: AugmontEmiSchedule["orderemidetails"];
   emiLoading?: boolean;
   onOpenContract: () => void;
   onOpenProforma: () => void;
@@ -267,7 +271,7 @@ export function OrderDetailLayout({
             </Panel>
 
             {/* Audit History Timeline */}
-            <Panel>
+            <Panel title="Activity">
               <OrderAuditTimeline order={order} />
             </Panel>
           </div>

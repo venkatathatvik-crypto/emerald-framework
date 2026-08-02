@@ -86,13 +86,7 @@ export function BranchDetailTabs({ branch, agentsContent }: BranchDetailTabsProp
                 <Building className="h-4 w-4 text-primary" /> Branch Location
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                {[
-                  branch.addressLine1,
-                  branch.addressLine2,
-                  branch.city,
-                  branch.state,
-                  branch.pincode,
-                ]
+                {[branch.address, branch.city, branch.state, branch.pincode]
                   .filter(Boolean)
                   .join(", ") || "Address details not updated."}
               </p>

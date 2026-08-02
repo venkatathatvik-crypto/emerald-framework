@@ -4,10 +4,14 @@ import { useState } from "react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { listBranches, deactivateBranch, reactivateBranch } from "@/lib/api/partner";
+import { listBranches, deactivateBranch, reactivateBranch,
+  getBranchPerformance,
+} from "@/lib/api/partner";
+import { formatInr } from "@/lib/api/augmont";
 import { CreateBranchDialog } from "@/components/partner/CreateBranchDialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import type { Branch } from "@/lib/api/types";
+import { readSortValue } from "@/lib/sort";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -53,6 +57,81 @@ const ACTIVE_OPTIONS: { value: string; label: string }[] = [
 
 const PAGE_SIZE = 20;
 
+/**
+ * Order totals per branch, straight from the database aggregate. Deliberately
+ * read-only and above the management table: this answers "which branches are
+ * actually selling", which the branch list itself can't show.
+ *
+ * These count only orders placed through this app — a direct-signup customer
+ * belongs to no branch, so their orders appear in no row here.
+ */
+function BranchPerformancePanel() {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["partner", "branches", "performance"],
+    queryFn: () => getBranchPerformance(),
+  });
+
+  const rows = data ?? [];
+  const withOrders = rows.filter((r) => r.orderCount > 0);
+
+  return (
+    <Panel title="Branch performance" className="mb-6">
+      {isLoading && <LoadingState label="Loading performance…" />}
+      {isError && (
+        <p className="text-sm text-destructive py-6 text-center">
+          Couldn&apos;t load branch performance.
+        </p>
+      )}
+      {!isLoading && !isError && withOrders.length === 0 && (
+        <p className="text-sm text-muted-foreground py-6 text-center">
+          No orders have been placed at any branch yet.
+        </p>
+      )}
+      {!isLoading && !isError && withOrders.length > 0 && (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Branch</TableHead>
+              <TableHead className="text-right">Orders</TableHead>
+              <TableHead className="text-right">Confirmed</TableHead>
+              <TableHead className="text-right">Cancelled</TableHead>
+              <TableHead className="text-right">Gold booked</TableHead>
+              <TableHead className="text-right">Value</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {withOrders.map((row) => (
+              <TableRow key={row.branchId}>
+                <TableCell>
+                  <p className="font-medium text-ink">{row.branchName || "—"}</p>
+                  {row.branchCode && (
+                    <p className="text-xs text-muted-foreground">{row.branchCode}</p>
+                  )}
+                </TableCell>
+                <TableCell className="text-right">{row.orderCount}</TableCell>
+                <TableCell className="text-right">{row.confirmedCount}</TableCell>
+                <TableCell className="text-right">
+                  {row.cancelledCount > 0 ? (
+                    <span className="text-destructive">{row.cancelledCount}</span>
+                  ) : (
+                    <span className="text-muted-foreground">0</span>
+                  )}
+                </TableCell>
+                <TableCell className="text-right">
+                  {row.totalWeight != null ? `${row.totalWeight}g` : "—"}
+                </TableCell>
+                <TableCell className="text-right font-medium">
+                  {formatInr(row.totalValue)}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+    </Panel>
+  );
+}
+
 function Page() {
   const queryClient = useQueryClient();
   const { ready } = useRequireRole("ROLE_ALLIANCE");
@@ -88,8 +167,8 @@ function Page() {
 
   const branches = [...rawBranches].sort((a, b) => {
     if (!sortField) return 0;
-    let valA: unknown = (a as Record<string, unknown>)[sortField];
-    let valB: unknown = (b as Record<string, unknown>)[sortField];
+    let valA: unknown = readSortValue(a, sortField);
+    let valB: unknown = readSortValue(b, sortField);
 
     if (sortField === "location") {
       valA = [a.city, a.state].filter(Boolean).join(", ");
@@ -159,6 +238,8 @@ function Page() {
 
   return (
     <DashboardShell role="partner" title="Branches">
+      <BranchPerformancePanel />
+
       <Panel
         title="Branches"
         action={

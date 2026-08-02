@@ -45,8 +45,12 @@ export function OrderAuditTimeline({ order }: OrderAuditTimelineProps) {
     events.push({
       id: "cancelled",
       title: "Order Cancelled",
-      description: order.cancellationReason || "Cancellation requested and verified.",
-      timestamp: new Date().toLocaleString(),
+      // The customer's stated reason is passed straight to Augmont and never
+      // stored our side, and there's no cancelledAt column either — so neither
+      // the reason nor the real time can be shown here yet. Stamping
+      // Date.now() would just be a plausible-looking lie.
+      description: "Cancellation requested and verified.",
+      timestamp: "—",
       icon: ShieldCheck,
       status: "destructive",
     });

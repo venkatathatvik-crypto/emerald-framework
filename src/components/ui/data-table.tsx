@@ -22,6 +22,20 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Fallback renderer for a column with no accessor. A row value is `unknown`
+ * once read by a runtime key, and React will throw on objects, so anything
+ * that isn't already a primitive is rendered as blank rather than crashing
+ * the table. Columns needing richer output should supply an `accessor`.
+ */
+function renderCell(value: unknown): React.ReactNode {
+  if (value === null || value === undefined) return null;
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+  return null;
+}
+
 export interface Column<T> {
   key: string;
   header: string;
@@ -43,7 +57,7 @@ export interface DataTableProps<T> {
   className?: string;
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T extends Record<string, unknown> & { id?: React.Key }>({
   data,
   columns,
   isLoading = false,
@@ -227,7 +241,7 @@ export function DataTable<T extends Record<string, unknown>>({
                 >
                   {columns.map((col) => (
                     <TableCell key={col.key} className={col.className}>
-                      {col.accessor ? col.accessor(item) : item[col.key]}
+                      {col.accessor ? col.accessor(item) : renderCell(item[col.key])}
                     </TableCell>
                   ))}
                 </TableRow>

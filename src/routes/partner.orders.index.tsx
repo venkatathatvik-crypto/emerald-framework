@@ -7,6 +7,7 @@ import { useRequireRole } from "@/hooks/use-require-role";
 import { listOrders, listBranches } from "@/lib/api/partner";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { formatInr } from "@/lib/api/augmont";
+import { readSortValue } from "@/lib/sort";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -72,8 +73,8 @@ function Page() {
 
   const orders = [...rawOrders].sort((a, b) => {
     if (!sortField) return 0;
-    const valA: unknown = (a as Record<string, unknown>)[sortField];
-    const valB: unknown = (b as Record<string, unknown>)[sortField];
+    const valA: unknown = readSortValue(a, sortField);
+    const valB: unknown = readSortValue(b, sortField);
 
     if (valA == null) return 1;
     if (valB == null) return -1;

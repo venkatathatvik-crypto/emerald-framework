@@ -93,7 +93,10 @@ function toNumber(v: number | string | undefined): number {
 }
 
 /** Splits a tax-inclusive total into subtotal + GST, using the product's own gst% field. */
-function taxBreakdown(total: number | undefined, gstPercent: number | string | undefined) {
+function taxBreakdown(
+  total: number | string | undefined,
+  gstPercent: number | string | undefined,
+) {
   const totalNum = toNumber(total);
   const gst = toNumber(gstPercent);
   if (!totalNum || !gst) return { subtotal: totalNum, tax: 0, total: totalNum };

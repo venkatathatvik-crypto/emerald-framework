@@ -438,6 +438,23 @@ export interface AugmontEmiSchedule {
   product: { productName: string; sku: string } | null;
 }
 
+/**
+ * Matches entities/dto/partner/BranchPerformanceResponse.java —
+ * GET /api/v1/partner/branches/performance. Totals come from our own orders
+ * table, so they only count orders placed through this app.
+ */
+export interface BranchPerformance {
+  branchId: number;
+  branchName: string | null;
+  branchCode: string | null;
+  branchActive: boolean;
+  orderCount: number;
+  confirmedCount: number;
+  cancelledCount: number;
+  totalValue: number | null;
+  totalWeight: number | null;
+}
+
 /** Matches entities/dto/augmont/AugmontReceiptResponse.java — GET .../orders/{id}/receipts/*. */
 export interface AugmontReceipt {
   message: string;

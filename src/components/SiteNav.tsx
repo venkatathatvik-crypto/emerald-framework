@@ -3,6 +3,16 @@ import { useEffect, useRef, useState } from "react";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 
 // ─── Navigation Structure ───────────────────────────────────────────────────
+/**
+ * Type guard, not just a boolean: a plain `.includes("#")` leaves TypeScript
+ * still believing the in-page targets ("/about#csr") could reach Link's `to`,
+ * which only accepts real routes. Narrowing here lets each branch below be
+ * typed correctly.
+ */
+function isHashTarget(to: string): to is `${string}#${string}` {
+  return to.includes("#");
+}
+
 const NAV_GROUPS = [
   {
     label: "Company",
@@ -151,18 +161,11 @@ export function SiteNav() {
                 >
                   <div className="nav-dropdown-inner">
                     {group.items.map((item) => {
-                      const isHashLink = item.to.includes("#");
-                      const Component = isHashLink ? "a" : Link;
-                      const linkProps = isHashLink
-                        ? { href: item.to, onClick: () => setActiveGroup(null) }
-                        : { to: item.to, onClick: () => setActiveGroup(null) };
-
-                      return (
-                        <Component
-                          key={item.to}
-                          {...linkProps}
-                          className={`nav-dropdown-item ${pathname.startsWith(item.to.split("#")[0]) ? "nav-dropdown-item--active" : ""}`}
-                        >
+                      const isHashLink = isHashTarget(item.to);
+                      const className = `nav-dropdown-item ${pathname.startsWith(item.to.split("#")[0]) ? "nav-dropdown-item--active" : ""}`;
+                      const close = () => setActiveGroup(null);
+                      const body = (
+                        <>
                           <span className="nav-dropdown-item-accent" />
                           <div>
                             <p className="nav-dropdown-item-label">{item.label}</p>
@@ -171,7 +174,21 @@ export function SiteNav() {
                           {!isHashLink && (
                             <ArrowUpRight className="nav-dropdown-item-arrow h-3.5 w-3.5" />
                           )}
-                        </Component>
+                        </>
+                      );
+
+                      // Branch on the element rather than picking a component
+                      // dynamically: a hash target is a plain anchor, and Link
+                      // takes `to` (a typed route) not `href`, so the two prop
+                      // shapes can't be unified behind one <Component/>.
+                      return isHashLink ? (
+                        <a key={item.to} href={item.to} onClick={close} className={className}>
+                          {body}
+                        </a>
+                      ) : (
+                        <Link key={item.to} to={item.to} onClick={close} className={className}>
+                          {body}
+                        </Link>
                       );
                     })}
                   </div>
@@ -271,21 +288,21 @@ export function SiteNav() {
               >
                 <div className="pb-4 pl-4 flex flex-col gap-1">
                   {group.items.map((item) => {
-                    const isHashLink = item.to.includes("#");
-                    const Component = isHashLink ? "a" : Link;
-                    const linkProps = isHashLink ? { href: item.to } : { to: item.to };
+                    const isHashLink = isHashTarget(item.to);
+                    const className =
+                      "py-2.5 px-3 rounded-xl text-base text-muted-foreground hover:text-ink hover:bg-stone transition-all duration-200 flex items-center justify-between group";
 
-                    return (
-                      <Component
-                        key={item.to}
-                        {...linkProps}
-                        className="py-2.5 px-3 rounded-xl text-base text-muted-foreground hover:text-ink hover:bg-stone transition-all duration-200 flex items-center justify-between group"
-                      >
+                    // Same reason as the desktop dropdown above: `href` and
+                    // `to` belong to different elements, so branch explicitly.
+                    return isHashLink ? (
+                      <a key={item.to} href={item.to} className={className}>
                         <span>{item.label}</span>
-                        {!isHashLink && (
-                          <ArrowUpRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-60 transition-opacity" />
-                        )}
-                      </Component>
+                      </a>
+                    ) : (
+                      <Link key={item.to} to={item.to} className={className}>
+                        <span>{item.label}</span>
+                        <ArrowUpRight className="h-3.5 w-3.5 opacity-0 group-hover:opacity-60 transition-opacity" />
+                      </Link>
                     );
                   })}
                 </div>

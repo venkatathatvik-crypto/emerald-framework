@@ -63,13 +63,26 @@ export async function getAugmontCities(stateId: number): Promise<AugmontCity[]> 
 }
 
 /**
+ * Augmont paginates with `from`/`to`, and it is **1-indexed**: `from=0` makes
+ * every paginated endpoint return `{"message":"something went wrong"}` (their
+ * generic 500), while `from=1` works. Nothing in their docs says so — it was
+ * found by probing live. Omitting the pair entirely is not a way out either:
+ * Augmont then silently serves only the first 10 rows, which is why the shop
+ * showed 10 of 46 pendants.
+ *
+ * Every list call below therefore sends an explicit 1-based window, and reads
+ * the real total from the response's own `count`.
+ */
+const PAGE_START = 1;
+/** Augmont caps nothing server-side; this is just a sane ceiling per request. */
+const PAGE_MAX = 200;
+
+/**
  * Looks up one category by id on the separate, richer sub-categories
- * endpoint — confirmed live that `?id=` reliably returns an exact match,
- * unlike the bulk list (no query params), whose pagination is unreliable
- * (only ~10 of 47 categories ever came back, no working page/size param
- * found). The only thing this is for is `subCategoryImg`, a real image URL
- * some categories have that products themselves never do — never use this
- * as a substitute for getProductsBySubCategory (its nested `products` omit
+ * endpoint — confirmed live that `?id=` reliably returns an exact match.
+ * The only thing this is for is `subCategoryImg`, a real image URL some
+ * categories have that products themselves never do — never use this as a
+ * substitute for getProductsBySubCategory (its nested `products` omit
  * pricing entirely).
  */
 export async function getSubCategoryImage(subCategoryId: number): Promise<string | undefined> {
@@ -85,18 +98,41 @@ export async function getSubCategoryImage(subCategoryId: number): Promise<string
 export interface ListProductsParams {
   subCategoryId: number;
   search?: string;
+  /** 1-based. Defaults to the whole first page — see PAGE_START above. */
+  from?: number;
+  to?: number;
+}
+
+export interface ProductsPage {
+  items: AugmontProductListItem[];
+  /** Augmont's own total for the category, independent of the window asked for. */
+  total: number;
+}
+
+/**
+ * A page of products, plus the category's true total so callers can tell
+ * whether more exist. Prefer this over the flat helper when showing a count.
+ */
+export async function getProductsPage(params: ListProductsParams): Promise<ProductsPage> {
+  const res = await apiFetch<AugmontListEnvelope<AugmontProductListItem>>(
+    "/api/v1/augmont/products",
+    {
+      query: {
+        subCategoryId: params.subCategoryId,
+        search: params.search,
+        from: params.from ?? PAGE_START,
+        to: params.to ?? PAGE_MAX,
+      },
+    },
+  );
+  const items = res.data ?? [];
+  return { items, total: res.count ?? items.length };
 }
 
 export async function getProductsBySubCategory(
   params: ListProductsParams,
 ): Promise<AugmontProductListItem[]> {
-  const res = await apiFetch<AugmontListEnvelope<AugmontProductListItem>>(
-    "/api/v1/augmont/products",
-    {
-      query: { subCategoryId: params.subCategoryId, search: params.search },
-    },
-  );
-  return res.data ?? [];
+  return (await getProductsPage(params)).items;
 }
 
 export function getProductDetails(id: number): Promise<AugmontProductDetail> {
@@ -111,7 +147,7 @@ export function getProductDetails(id: number): Promise<AugmontProductDetail> {
 // "no image set" placeholder), which is truthy in JS, so it must be
 // explicitly excluded rather than relying on a plain truthiness check.
 
-function toNumber(v: number | string | undefined): number | null {
+function toNumber(v: number | string | null | undefined): number | null {
   if (v === undefined || v === null) return null;
   const n = typeof v === "number" ? v : parseFloat(v);
   return Number.isFinite(n) ? n : null;
@@ -128,7 +164,7 @@ export function getProductPriceTier(
   return product.productPrice && product.productPrice.length > 0 ? product.productPrice[0] : null;
 }
 
-export function formatInr(value: number | string | undefined): string {
+export function formatInr(value: number | string | null | undefined): string {
   const n = toNumber(value);
   if (n === null) return "—";
   return new Intl.NumberFormat("en-IN", {

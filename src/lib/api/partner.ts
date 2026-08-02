@@ -1,5 +1,6 @@
 import { apiFetch } from "./client";
 import type {
+  BranchPerformance,
   Agent,
   AgentCreateRequest,
   AugmontEmiSchedule,
@@ -33,6 +34,20 @@ export function listBranches(params: ListBranchesParams = {}): Promise<Paged<Bra
       page: params.page ?? 0,
       size: params.size ?? 20,
     },
+  });
+}
+
+export interface BranchPerformanceParams {
+  from?: string; // yyyy-MM-dd
+  to?: string;
+}
+
+/** Order totals per branch across the partner network, newest-value first. */
+export function getBranchPerformance(
+  params: BranchPerformanceParams = {},
+): Promise<BranchPerformance[]> {
+  return apiFetch<BranchPerformance[]>("/api/v1/partner/branches/performance", {
+    query: { from: params.from, to: params.to },
   });
 }
 

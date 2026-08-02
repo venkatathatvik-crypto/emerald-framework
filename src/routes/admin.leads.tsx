@@ -6,6 +6,7 @@ import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
 import { listLeads, deleteLead, updateLeadStatus } from "@/lib/api/admin";
 import type { LeadStatus, PartnerLead } from "@/lib/api/types";
+import { readSortValue } from "@/lib/sort";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -97,8 +98,8 @@ function Page() {
 
   const leads = [...rawLeads].sort((a, b) => {
     if (!sortField) return 0;
-    const valA: unknown = (a as Record<string, unknown>)[sortField];
-    const valB: unknown = (b as Record<string, unknown>)[sortField];
+    const valA: unknown = readSortValue(a, sortField);
+    const valB: unknown = readSortValue(b, sortField);
 
     if (valA == null) return 1;
     if (valB == null) return -1;

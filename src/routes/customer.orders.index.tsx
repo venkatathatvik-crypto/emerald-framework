@@ -21,6 +21,7 @@ import {
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { formatInr } from "@/lib/api/augmont";
 import type { OrderResponse, OrderStatus } from "@/lib/api/types";
+import { readSortValue } from "@/lib/sort";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -119,8 +120,8 @@ function Page() {
 
   const orders = [...rawOrders].sort((a, b) => {
     if (!sortField) return 0;
-    const valA: unknown = (a as Record<string, unknown>)[sortField];
-    const valB: unknown = (b as Record<string, unknown>)[sortField];
+    const valA: unknown = readSortValue(a, sortField);
+    const valB: unknown = readSortValue(b, sortField);
 
     if (valA == null) return 1;
     if (valB == null) return -1;
