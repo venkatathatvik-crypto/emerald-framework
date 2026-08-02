@@ -1658,3 +1658,90 @@
     opacity: 0;
   }
 }
+
+/* ── Emerald loader animations ─────────────────────────────────────────────
+   Recreated from docs/Emerald Loading Spinner (standalone).html. The original
+   was a frame-driven render harness (a JS clock fed every value); these are the
+   same motions expressed as CSS so nothing has to tick on the main thread.
+   Timings keep the source's 4s loop. */
+
+@keyframes emerald-spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Source pulsed each orbiting dot on a sine, staggered by index. */
+@keyframes emerald-spinner-particle {
+  0%,
+  100% {
+    transform: scale(0.62);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes emerald-spinner-gem {
+  0%,
+  100% {
+    transform: scale(0.955);
+  }
+  50% {
+    transform: scale(1.045);
+  }
+}
+
+@keyframes emerald-bar-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(7px);
+  }
+  75% {
+    transform: translateY(-7px);
+  }
+}
+
+/* Diagonal sheen crossing the ingot — source swept it on a 3s ease-in-out. */
+@keyframes emerald-bar-shimmer {
+  0% {
+    left: -30%;
+    top: 130%;
+  }
+  100% {
+    left: 130%;
+    top: -30%;
+  }
+}
+
+@keyframes emerald-caption-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes emerald-progress-sweep {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-emerald-loader] *,
+  [data-emerald-loader] {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

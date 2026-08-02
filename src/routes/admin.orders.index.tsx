@@ -10,6 +10,7 @@ import { formatInr } from "@/lib/api/augmont";
 import { ArrowUpDown, ArrowUp, ArrowDown, Download, FileSpreadsheet } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { LoadingState, Spinner } from "@/components/ui/spinner";
 import { exportToCsv } from "@/lib/csv-exporter";
 import {
   Select,
@@ -246,7 +247,11 @@ function Page() {
               disabled={reportBusy}
               onClick={downloadAugmontReport}
             >
-              <FileSpreadsheet className="h-3.5 w-3.5 mr-1.5" />
+              {reportBusy ? (
+                <Spinner size={14} className="mr-1.5" label="" />
+              ) : (
+                <FileSpreadsheet className="h-3.5 w-3.5 mr-1.5" />
+              )}
               {reportBusy ? "Generating…" : "Augmont report"}
             </Button>
             {reportError && <span className="text-xs text-destructive">{reportError}</span>}
@@ -339,7 +344,7 @@ function Page() {
               {isLoading && (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center text-muted-foreground py-10">
-                    Loading orders…
+                    <LoadingState label="Loading orders…" />
                   </TableCell>
                 </TableRow>
               )}

@@ -9,6 +9,7 @@ import { getPartner, getPartnerBranches } from "@/lib/api/admin";
 import { EditPartnerDialog } from "@/components/admin/EditPartnerDialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { LoadingState } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -70,7 +71,7 @@ function Page() {
       </Link>
 
       {partnerLoading && (
-        <p className="text-sm text-muted-foreground py-10 text-center">Loading partner…</p>
+        <LoadingState label="Loading partner…" />
       )}
       {partnerError && (
         <p className="text-sm text-destructive py-10 text-center">Failed to load this partner.</p>
@@ -143,7 +144,7 @@ function Page() {
                   {branchesLoading && (
                     <TableRow>
                       <TableCell colSpan={6} className="text-center text-muted-foreground py-10">
-                        Loading branches…
+                        <LoadingState label="Loading branches…" />
                       </TableCell>
                     </TableRow>
                   )}

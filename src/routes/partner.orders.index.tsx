@@ -10,6 +10,7 @@ import { formatInr } from "@/lib/api/augmont";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { LoadingState } from "@/components/ui/spinner";
 import {
   Select,
   SelectContent,
@@ -237,7 +238,7 @@ function Page() {
               {isLoading && (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center text-muted-foreground py-10">
-                    Loading orders…
+                    <LoadingState label="Loading orders…" />
                   </TableCell>
                 </TableRow>
               )}

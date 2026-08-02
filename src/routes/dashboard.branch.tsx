@@ -9,6 +9,7 @@ import {
 } from "@/lib/api/branch";
 import { ReferralCodeCard } from "@/components/ReferralCodeCard";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
+import { LoadingState } from "@/components/ui/spinner";
 import { formatInr } from "@/lib/api/augmont";
 
 export const Route = createFileRoute("/dashboard/branch")({
@@ -82,7 +83,7 @@ function Page() {
         }
       >
         {ordersLoading && (
-          <p className="text-sm text-muted-foreground py-10 text-center">Loading orders…</p>
+          <LoadingState label="Loading orders…" />
         )}
         {!ordersLoading && recentOrders.length === 0 && (
           <p className="text-sm text-muted-foreground py-10 text-center">

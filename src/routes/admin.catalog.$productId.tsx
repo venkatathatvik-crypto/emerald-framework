@@ -12,6 +12,7 @@ import {
   formatInr,
 } from "@/lib/api/augmont";
 import { Badge } from "@/components/ui/badge";
+import { FullPageLoader } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -63,7 +64,7 @@ function Page() {
       </Link>
 
       {isLoading && (
-        <p className="text-sm text-muted-foreground py-10 text-center">Loading product…</p>
+        <FullPageLoader />
       )}
       {isError && (
         <p className="text-sm text-destructive py-10 text-center">Failed to load this product.</p>

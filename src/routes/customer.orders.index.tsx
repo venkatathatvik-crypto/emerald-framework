@@ -24,6 +24,7 @@ import type { OrderResponse, OrderStatus } from "@/lib/api/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LoadingState } from "@/components/ui/spinner";
 import {
   Select,
   SelectContent,
@@ -271,7 +272,7 @@ function Page() {
               {isLoading && (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center text-muted-foreground py-10">
-                    Loading orders…
+                    <LoadingState label="Loading orders…" />
                   </TableCell>
                 </TableRow>
               )}

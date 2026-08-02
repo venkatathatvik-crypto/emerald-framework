@@ -9,6 +9,7 @@ import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { formatInr } from "@/lib/api/augmont";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { LoadingState } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -94,7 +95,7 @@ function Page() {
               {isLoading && (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-muted-foreground py-10">
-                    Loading orders…
+                    <LoadingState label="Loading orders…" />
                   </TableCell>
                 </TableRow>
               )}

@@ -38,6 +38,7 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { ConvertLeadDialog } from "@/components/admin/ConvertLeadDialog";
+import { LoadingState } from "@/components/ui/spinner";
 
 export const Route = createFileRoute("/admin/leads")({
   head: () => ({ meta: [{ title: "Partner Leads — Admin" }] }),
@@ -272,7 +273,7 @@ function Page() {
               {isLoading && (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center text-muted-foreground py-10">
-                    Loading leads…
+                    <LoadingState label="Loading leads…" />
                   </TableCell>
                 </TableRow>
               )}

@@ -28,6 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { LoadingState, Spinner } from "@/components/ui/spinner";
 
 /** Keyed by Augmont's own paymentTypeId, which is what the order carries. */
 const TENURE_LABEL: Record<number, string> = {
@@ -105,9 +106,11 @@ export function OrderDetailLayout({
                 disabled={isRefreshing}
                 onClick={onRefreshStatus}
               >
-                <RefreshCcw
-                  className={`h-3.5 w-3.5 mr-1.5 ${isRefreshing ? "animate-spin" : ""}`}
-                />
+                {isRefreshing ? (
+                  <Spinner size={14} className="mr-1.5" label="" />
+                ) : (
+                  <RefreshCcw className="h-3.5 w-3.5 mr-1.5" />
+                )}
                 {isRefreshing ? "Checking…" : "Refresh status"}
               </Button>
               <Button variant="pillOutline" size="sm" onClick={onOpenContract}>
@@ -197,9 +200,7 @@ export function OrderDetailLayout({
             {/* EMI Repayment Schedule */}
             <Panel title="EMI Repayment Schedule">
               {emiLoading ? (
-                <p className="text-xs text-muted-foreground py-4 text-center">
-                  Loading EMI schedule…
-                </p>
+                <LoadingState label="Loading EMI schedule…" />
               ) : emiSchedule && emiSchedule.length > 0 ? (
                 <Table>
                   <TableHeader>

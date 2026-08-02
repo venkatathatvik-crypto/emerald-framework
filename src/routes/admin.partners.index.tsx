@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { LoadingState } from "@/components/ui/spinner";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import {
   Select,
@@ -262,7 +263,7 @@ function Page() {
               {isLoading && (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center text-muted-foreground py-10">
-                    Loading partners…
+                    <LoadingState label="Loading partners…" />
                   </TableCell>
                 </TableRow>
               )}

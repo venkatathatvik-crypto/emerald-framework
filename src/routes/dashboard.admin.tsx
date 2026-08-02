@@ -11,6 +11,7 @@ import {
 } from "@/lib/api/admin";
 import { formatInr } from "@/lib/api/augmont";
 import { Badge } from "@/components/ui/badge";
+import { LoadingState } from "@/components/ui/spinner";
 
 export const Route = createFileRoute("/dashboard/admin")({
   head: () => ({ meta: [{ title: "Admin Dashboard — 2+ Fortune Alliances" }] }),
@@ -152,7 +153,7 @@ function Page() {
           }
         >
           {leadsLoading && (
-            <p className="text-sm text-muted-foreground py-10 text-center">Loading leads…</p>
+            <LoadingState label="Loading leads…" />
           )}
           {!leadsLoading && !recentLeads?.items.length && (
             <p className="text-sm text-muted-foreground py-10 text-center">No leads yet.</p>
@@ -184,7 +185,7 @@ function Page() {
           }
         >
           {recentPartnersLoading && (
-            <p className="text-sm text-muted-foreground py-10 text-center">Loading partners…</p>
+            <LoadingState label="Loading partners…" />
           )}
           {!recentPartnersLoading && !recentPartners?.items.length && (
             <p className="text-sm text-muted-foreground py-10 text-center">

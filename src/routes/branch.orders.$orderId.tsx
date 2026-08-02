@@ -17,6 +17,7 @@ import {
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { formatInr } from "@/lib/api/augmont";
 import { Button } from "@/components/ui/button";
+import { FullPageLoader } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -90,7 +91,7 @@ function Page() {
   if (isLoading) {
     return (
       <DashboardShell role="branch" title="Order details">
-        <p className="text-sm text-muted-foreground py-10 text-center">Loading order details…</p>
+        <FullPageLoader />
       </DashboardShell>
     );
   }

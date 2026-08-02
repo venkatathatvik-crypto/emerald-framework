@@ -15,6 +15,7 @@ import type { Agent } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { LoadingState } from "@/components/ui/spinner";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import {
   Table,
@@ -161,7 +162,7 @@ function Page() {
       </Link>
 
       {branchLoading && (
-        <p className="text-sm text-muted-foreground py-10 text-center">Loading branch…</p>
+        <LoadingState label="Loading branch…" />
       )}
       {branchError && (
         <p className="text-sm text-destructive py-10 text-center">Failed to load this branch.</p>
@@ -255,7 +256,7 @@ function Page() {
                             colSpan={5}
                             className="text-center text-muted-foreground py-10"
                           >
-                            Loading agents…
+                            <LoadingState label="Loading agents…" />
                           </TableCell>
                         </TableRow>
                       )}

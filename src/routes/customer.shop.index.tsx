@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
+import { LoadingState } from "@/components/ui/spinner";
 
 export const Route = createFileRoute("/customer/shop/")({
   head: () => ({ meta: [{ title: "Shop — 2+ Fortune Alliances" }] }),
@@ -114,7 +115,7 @@ function Page() {
         )}
 
         {!isError && (productsLoading || categoriesLoading) && (
-          <p className="text-sm text-muted-foreground py-10 text-center">Loading products…</p>
+          <LoadingState label="Loading products…" />
         )}
 
         {!isError && !productsLoading && !categoriesLoading && filtered.length === 0 && (

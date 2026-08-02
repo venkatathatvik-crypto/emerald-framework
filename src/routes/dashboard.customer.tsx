@@ -6,6 +6,7 @@ import { useRequireRole } from "@/hooks/use-require-role";
 import { useAuth } from "@/lib/auth-context";
 import { listMyOrders } from "@/lib/api/customer";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
+import { LoadingState } from "@/components/ui/spinner";
 import { formatInr } from "@/lib/api/augmont";
 
 export const Route = createFileRoute("/dashboard/customer")({
@@ -96,7 +97,7 @@ function Page() {
         }
       >
         {isLoading && (
-          <p className="text-sm text-muted-foreground py-10 text-center">Loading orders…</p>
+          <LoadingState label="Loading orders…" />
         )}
         {!isLoading && recentOrders.length === 0 && (
           <p className="text-sm text-muted-foreground py-10 text-center">

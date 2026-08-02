@@ -15,6 +15,7 @@ import { formatInr } from "@/lib/api/augmont";
 import { exportToCsv } from "@/lib/csv-exporter";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LoadingState } from "@/components/ui/spinner";
 import {
   PieChart,
   Pie,
@@ -191,7 +192,7 @@ function Page() {
           }
         >
           {ordersLoading && (
-            <p className="text-sm text-muted-foreground py-10 text-center">Loading orders…</p>
+            <LoadingState label="Loading orders…" />
           )}
           {!ordersLoading && recentOrders.length === 0 && (
             <p className="text-sm text-muted-foreground py-10 text-center">No orders yet.</p>

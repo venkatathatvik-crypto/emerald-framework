@@ -45,6 +45,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { FullPageLoader, Spinner } from "@/components/ui/spinner";
 
 export const Route = createFileRoute("/customer/orders/$orderId")({
   head: () => ({ meta: [{ title: "Order details" }] }),
@@ -180,7 +181,7 @@ function Page() {
   if (isLoading) {
     return (
       <DashboardShell role="customer" title="Order details">
-        <p className="text-sm text-muted-foreground py-10 text-center">Loading order details…</p>
+        <FullPageLoader />
       </DashboardShell>
     );
   }
@@ -307,6 +308,7 @@ function Page() {
                   Back
                 </Button>
                 <Button type="submit" variant="pill" disabled={isCancelling}>
+                  {isCancelling && <Spinner size={14} className="mr-1.5" label="" />}
                   {isCancelling ? "Cancelling…" : "Confirm cancellation"}
                 </Button>
               </DialogFooter>
