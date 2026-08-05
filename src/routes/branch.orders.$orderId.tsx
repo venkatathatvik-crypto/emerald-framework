@@ -34,6 +34,14 @@ import {
 /** Augmont paymentTypeId 4 — a spot order has no instalments to collect against. */
 const SPOT_PAYMENT_TYPE_ID = 4;
 
+/**
+ * Collection is only offered on a live EMI order: a cancelled one is finished,
+ * and PENDING/AUGMONT_FAILED never reached Augmont so have no instalment ids.
+ */
+function canCollectEmiOn(order: { paymentTypeId: number; status: string }): boolean {
+  return order.status === "CONFIRMED" && order.paymentTypeId !== SPOT_PAYMENT_TYPE_ID;
+}
+
 export const Route = createFileRoute("/branch/orders/$orderId")({
   head: () => ({ meta: [{ title: "Order details — Branch" }] }),
   component: Page,
@@ -111,6 +119,8 @@ function Page() {
     );
   }
 
+  const canCollectEmi = canCollectEmiOn(order);
+
   return (
     <OrderDetailLayout
       order={order}
@@ -124,7 +134,7 @@ function Page() {
       onOpenProforma={() => openReceipt(() => getOrderProformaInvoiceReceipt(id))}
       onOpenEmiReceipt={(instalmentNo) => openReceipt(() => getOrderEmiReceipt(id, instalmentNo))}
       emiCollection={
-        order.paymentTypeId !== SPOT_PAYMENT_TYPE_ID ? (
+        canCollectEmi ? (
           <EmiCollectionPanel
             orderId={id}
             schedule={schedule?.orderemidetails}
