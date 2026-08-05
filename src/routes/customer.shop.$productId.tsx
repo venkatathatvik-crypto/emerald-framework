@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
-import { ArrowLeft, Boxes, CheckCircle2, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Boxes, CheckCircle2, AlertTriangle, ShoppingBag } from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
@@ -17,6 +17,7 @@ import {
   formatInr,
 } from "@/lib/api/augmont";
 import { placeOrder } from "@/lib/api/customer";
+import { addLine } from "@/lib/cart";
 import { ApiError } from "@/lib/api/types";
 import type { AugmontProductPriceTier, PlaceOrderRequest, OrderResponse } from "@/lib/api/types";
 import { Badge } from "@/components/ui/badge";
@@ -130,6 +131,7 @@ function Page() {
   const [tenure, setTenure] = useState<Tenure>("spot");
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [placedOrder, setPlacedOrder] = useState<OrderResponse | null>(null);
+  const [addedToCart, setAddedToCart] = useState(false);
 
   const {
     data: product,
@@ -167,6 +169,29 @@ function Page() {
 
   if (!ready) {
     return null;
+  }
+
+  /**
+   * Adds the currently-selected tenure to the basket. Identity and address are
+   * collected once at checkout instead, so nothing on the form is needed here.
+   */
+  function handleAddToCart() {
+    if (!product) return;
+    const tier = getProductPriceTier(product);
+    const price = pricingFor(tier, tenure);
+    addLine({
+      augmontProductId: product.id,
+      productName: product.productName,
+      productSku: product.sku,
+      productWeight: product.weight,
+      paymentTypeId: TENURE_TO_PAYMENT_TYPE_ID[tenure],
+      finalOrderPrice: toNumber(tier?.finalProductPrice),
+      initialPayment: toNumber(price.dueToday),
+      monthlyAmount: price.monthly != null ? toNumber(price.monthly) : undefined,
+      thumbnail: thumb,
+    });
+    setAddedToCart(true);
+    window.setTimeout(() => setAddedToCart(false), 2000);
   }
 
   async function onSubmit(values: BuyFormValues) {
@@ -523,6 +548,20 @@ function Page() {
                     disabled={form.formState.isSubmitting}
                   >
                     {form.formState.isSubmitting ? "Placing order…" : "Place order"}
+                  </Button>
+
+                  {/* Deliberately type="button": adding to the basket must not
+                      submit the identity/address form, which isn't needed until
+                      checkout. */}
+                  <Button
+                    type="button"
+                    variant="pillOutline"
+                    className="w-full justify-center h-11 mt-3"
+                    disabled={form.formState.isSubmitting}
+                    onClick={handleAddToCart}
+                  >
+                    <ShoppingBag className="h-4 w-4 mr-1.5" />
+                    {addedToCart ? "Added to basket" : "Add to basket"}
                   </Button>
                 </Panel>
               </div>

@@ -34,6 +34,7 @@ import { Route as DashboardPartnerRouteImport } from './routes/dashboard.partner
 import { Route as DashboardCustomerRouteImport } from './routes/dashboard.customer'
 import { Route as DashboardBranchRouteImport } from './routes/dashboard.branch'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
+import { Route as CustomerCartRouteImport } from './routes/customer.cart'
 import { Route as BranchCustomersRouteImport } from './routes/branch.customers'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
@@ -182,6 +183,11 @@ const DashboardAdminRoute = DashboardAdminRouteImport.update({
   path: '/dashboard/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CustomerCartRoute = CustomerCartRouteImport.update({
+  id: '/customer/cart',
+  path: '/customer/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BranchCustomersRoute = BranchCustomersRouteImport.update({
   id: '/branch/customers',
   path: '/branch/customers',
@@ -315,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/branch/customers': typeof BranchCustomersRoute
+  '/customer/cart': typeof CustomerCartRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/branch': typeof DashboardBranchRoute
   '/dashboard/customer': typeof DashboardCustomerRoute
@@ -364,6 +371,7 @@ export interface FileRoutesByTo {
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/branch/customers': typeof BranchCustomersRoute
+  '/customer/cart': typeof CustomerCartRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/branch': typeof DashboardBranchRoute
   '/dashboard/customer': typeof DashboardCustomerRoute
@@ -414,6 +422,7 @@ export interface FileRoutesById {
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/branch/customers': typeof BranchCustomersRoute
+  '/customer/cart': typeof CustomerCartRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/branch': typeof DashboardBranchRoute
   '/dashboard/customer': typeof DashboardCustomerRoute
@@ -465,6 +474,7 @@ export interface FileRouteTypes {
     | '/admin/customers'
     | '/admin/leads'
     | '/branch/customers'
+    | '/customer/cart'
     | '/dashboard/admin'
     | '/dashboard/branch'
     | '/dashboard/customer'
@@ -514,6 +524,7 @@ export interface FileRouteTypes {
     | '/admin/customers'
     | '/admin/leads'
     | '/branch/customers'
+    | '/customer/cart'
     | '/dashboard/admin'
     | '/dashboard/branch'
     | '/dashboard/customer'
@@ -563,6 +574,7 @@ export interface FileRouteTypes {
     | '/admin/customers'
     | '/admin/leads'
     | '/branch/customers'
+    | '/customer/cart'
     | '/dashboard/admin'
     | '/dashboard/branch'
     | '/dashboard/customer'
@@ -613,6 +625,7 @@ export interface RootRouteChildren {
   AdminCustomersRoute: typeof AdminCustomersRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   BranchCustomersRoute: typeof BranchCustomersRoute
+  CustomerCartRoute: typeof CustomerCartRoute
   DashboardAdminRoute: typeof DashboardAdminRoute
   DashboardBranchRoute: typeof DashboardBranchRoute
   DashboardCustomerRoute: typeof DashboardCustomerRoute
@@ -819,6 +832,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/customer/cart': {
+      id: '/customer/cart'
+      path: '/customer/cart'
+      fullPath: '/customer/cart'
+      preLoaderRoute: typeof CustomerCartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/branch/customers': {
       id: '/branch/customers'
       path: '/branch/customers'
@@ -997,6 +1017,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminCustomersRoute: AdminCustomersRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   BranchCustomersRoute: BranchCustomersRoute,
+  CustomerCartRoute: CustomerCartRoute,
   DashboardAdminRoute: DashboardAdminRoute,
   DashboardBranchRoute: DashboardBranchRoute,
   DashboardCustomerRoute: DashboardCustomerRoute,

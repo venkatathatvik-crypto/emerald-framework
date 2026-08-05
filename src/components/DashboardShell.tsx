@@ -17,10 +17,12 @@ import {
   Sparkles,
   PlusCircle,
   ShieldAlert,
+  ShoppingBag,
 } from "lucide-react";
 
 import { useAuth } from "@/lib/auth-context";
 import { getNewLeadCount } from "@/lib/api/admin";
+import { useCartCount, setCartScope } from "@/lib/cart";
 import { NotificationDrawer } from "@/components/notifications/notification-drawer";
 import { CommandPalette } from "@/components/command-palette";
 import { SessionTimeoutModal } from "@/components/SessionTimeoutModal";
@@ -31,6 +33,7 @@ const NAV: Record<Role, { to: string; label: string; Icon: typeof LayoutDashboar
   customer: [
     { to: "/dashboard/customer", label: "Overview", Icon: LayoutDashboard },
     { to: "/customer/shop", label: "Shop", Icon: BadgePercent },
+    { to: "/customer/cart", label: "Basket", Icon: ShoppingBag },
     { to: "/customer/orders", label: "My Orders", Icon: Truck },
   ],
   partner: [
@@ -105,6 +108,13 @@ export function DashboardShell({
     refetchInterval: 60_000,
   });
 
+  // Scope the basket to the signed-in customer, so a shared browser can't carry
+  // one person's basket into the next session.
+  const cartCount = useCartCount();
+  useEffect(() => {
+    setCartScope(user?.uuid);
+  }, [user?.uuid]);
+
   async function handleSignOut() {
     await logout();
     navigate({ to: "/login" });
@@ -152,6 +162,11 @@ export function DashboardShell({
               {n.label === "Leads" && !!newLeadCount && (
                 <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-gold/20 text-gold">
                   {newLeadCount}
+                </span>
+              )}
+              {n.label === "Basket" && cartCount > 0 && (
+                <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-gold/20 text-gold">
+                  {cartCount}
                 </span>
               )}
             </Link>
