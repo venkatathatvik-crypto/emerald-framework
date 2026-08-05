@@ -325,15 +325,12 @@ export function OrderDetailLayout({
                       </p>
                     </div>
                   </div>
-                  {order.augmontLogisticPartnerId != null && (
+                  {order.augmontLogisticName && (
                     <div className="flex items-start gap-2">
                       <Package className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
                       <div>
                         <p className="text-muted-foreground">Courier</p>
-                        {/* Augmont exposes only a numeric partner id — no carrier name anywhere in their API. */}
-                        <p className="font-medium text-ink">
-                          Partner #{order.augmontLogisticPartnerId}
-                        </p>
+                        <p className="font-medium text-ink">{order.augmontLogisticName}</p>
                       </div>
                     </div>
                   )}

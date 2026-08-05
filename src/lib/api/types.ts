@@ -414,10 +414,10 @@ export interface OrderResponse {
   /** Augmont's own live status label — only populated after an explicit status refresh, not kept in sync automatically. */
   augmontStatusName: string | null;
   augmontStatusSyncedAt: string | null;
-  /** Courier tracking/AWB number; null until Augmont marks the order dispatched. */
+  /** Courier AWB number; null until Augmont marks the order dispatched. */
   augmontTrackingId: string | null;
-  /** Augmont's internal courier id — their API exposes no carrier name, only this. */
-  augmontLogisticPartnerId: number | null;
+  /** Carrier name, e.g. "Bluedart"; null until dispatch. */
+  augmontLogisticName: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -429,7 +429,12 @@ export interface EmiQuote {
   emiIds: number[];
   /** Augmont's figure for the selected instalments — always shown in preference to a local sum. */
   amount: number;
-  balanceAfterPayment: number | null;
+  /**
+   * Total still owed on the order. Confirmed live that Augmont does not vary
+   * this with the instalments quoted for, so it is the current outstanding —
+   * not what remains after this collection.
+   */
+  outstandingBalance: number | null;
   paymentMode: string | null;
 }
 

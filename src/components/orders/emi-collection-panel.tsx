@@ -168,10 +168,10 @@ export function EmiCollectionPanel({
                   {formatInr(quote.amount)}
                 </span>
               </div>
-              {quote.balanceAfterPayment != null && (
+              {quote.outstandingBalance != null && (
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">Balance after payment</span>
-                  <span>{formatInr(quote.balanceAfterPayment)}</span>
+                  <span className="text-muted-foreground">Outstanding on this order</span>
+                  <span>{formatInr(quote.outstandingBalance)}</span>
                 </div>
               )}
             </div>
