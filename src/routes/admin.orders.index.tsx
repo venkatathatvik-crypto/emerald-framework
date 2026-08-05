@@ -4,10 +4,23 @@ import { useState } from "react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { listOrders, listPartners, getPartnerBranches, getOrderReport } from "@/lib/api/admin";
+import {
+  listOrders,
+  listPartners,
+  getPartnerBranches,
+  getOrderReport,
+  getEmiReport,
+} from "@/lib/api/admin";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { formatInr } from "@/lib/api/augmont";
-import { ArrowUpDown, ArrowUp, ArrowDown, Download, FileSpreadsheet } from "lucide-react";
+import {
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Download,
+  FileSpreadsheet,
+  CalendarClock,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoadingState, Spinner } from "@/components/ui/spinner";
@@ -47,7 +60,8 @@ function Page() {
   const [page, setPage] = useState(0);
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
-  const [reportBusy, setReportBusy] = useState(false);
+  /** Which Augmont export is being generated, if any — one at a time. */
+  const [reportBusy, setReportBusy] = useState<"orders" | "emi" | null>(null);
   const [reportError, setReportError] = useState<string | null>(null);
 
   const { data: partners } = useQuery({
@@ -85,19 +99,17 @@ function Page() {
    * a new tab rather than streaming bytes through us. Honours the date filters
    * above; partner/branch aren't sent because Augmont has no concept of them.
    */
-  async function downloadAugmontReport() {
-    setReportBusy(true);
+  async function downloadAugmontReport(kind: "orders" | "emi") {
+    setReportBusy(kind);
     setReportError(null);
     try {
-      const report = await getOrderReport({
-        startDate: from || undefined,
-        endDate: to || undefined,
-      });
+      const params = { startDate: from || undefined, endDate: to || undefined };
+      const report = kind === "orders" ? await getOrderReport(params) : await getEmiReport(params);
       window.open(report.invoice, "_blank", "noopener,noreferrer");
     } catch {
       setReportError("Couldn't generate the report.");
     } finally {
-      setReportBusy(false);
+      setReportBusy(null);
     }
   }
 
@@ -245,15 +257,30 @@ function Page() {
             <Button
               variant="pillOutline"
               size="sm"
-              disabled={reportBusy}
-              onClick={downloadAugmontReport}
+              disabled={reportBusy !== null}
+              onClick={() => downloadAugmontReport("orders")}
             >
-              {reportBusy ? (
+              {reportBusy === "orders" ? (
                 <Spinner size={14} className="mr-1.5" label="" />
               ) : (
                 <FileSpreadsheet className="h-3.5 w-3.5 mr-1.5" />
               )}
-              {reportBusy ? "Generating…" : "Augmont report"}
+              {reportBusy === "orders" ? "Generating…" : "Augmont report"}
+            </Button>
+            {/* Instalment-level export: every EMI due, paid and outstanding across
+                the broker account, which the order report above doesn't break out. */}
+            <Button
+              variant="pillOutline"
+              size="sm"
+              disabled={reportBusy !== null}
+              onClick={() => downloadAugmontReport("emi")}
+            >
+              {reportBusy === "emi" ? (
+                <Spinner size={14} className="mr-1.5" label="" />
+              ) : (
+                <CalendarClock className="h-3.5 w-3.5 mr-1.5" />
+              )}
+              {reportBusy === "emi" ? "Generating…" : "EMI report"}
             </Button>
             {reportError && <span className="text-xs text-destructive">{reportError}</span>}
           </div>

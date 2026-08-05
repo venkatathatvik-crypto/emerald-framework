@@ -5,8 +5,11 @@ import type {
   AugmontReceipt,
   Branch,
   CustomerResponse,
+  EmiPayment,
+  EmiQuote,
   OrderResponse,
   Paged,
+  RecordEmiPaymentRequest,
 } from "./types";
 
 /** The caller's own branch — including its referral code, for sharing with walk-in customers. */
@@ -72,6 +75,31 @@ export function getOrderProformaInvoiceReceipt(orderId: number): Promise<Augmont
 export function getOrderEmiReceipt(orderId: number, emiId: number): Promise<AugmontReceipt> {
   return apiFetch<AugmontReceipt>(`/api/v1/branch/orders/${orderId}/receipts/emi/${emiId}`);
 }
+
+
+// ── EMI instalment collection ──────────────────────────────────────────────
+
+/** What Augmont says the selected instalments cost. Charges nothing. */
+export function quoteEmiPayment(orderId: number, body: RecordEmiPaymentRequest): Promise<EmiQuote> {
+  return apiFetch<EmiQuote>(`/api/v1/branch/orders/${orderId}/emi-payments/quote`, {
+    method: "POST",
+    body,
+  });
+}
+
+/** Records a cash collection against the order and marks it paid at Augmont. */
+export function recordEmiPayment(orderId: number, body: RecordEmiPaymentRequest): Promise<EmiPayment> {
+  return apiFetch<EmiPayment>(`/api/v1/branch/orders/${orderId}/emi-payments`, {
+    method: "POST",
+    body,
+  });
+}
+
+/** Collections already recorded against the order. */
+export function listEmiPayments(orderId: number): Promise<EmiPayment[]> {
+  return apiFetch<EmiPayment[]>(`/api/v1/branch/orders/${orderId}/emi-payments`);
+}
+
 
 export interface ListBranchCustomersParams {
   q?: string;

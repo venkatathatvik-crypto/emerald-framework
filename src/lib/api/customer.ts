@@ -6,11 +6,22 @@ import type {
   BackendUser,
   CancelOrderRequest,
   CustomerRegisterStartInput,
+  KycStatus,
   OrderResponse,
   OrderStatus,
   Paged,
   PlaceOrderRequest,
 } from "./types";
+
+/**
+ * Where the signed-in customer stands against the PAN threshold.
+ *
+ * Totals come from our own orders table — Augmont exposes no per-customer
+ * cumulative figure — so this counts purchases through this platform only.
+ */
+export function getMyKycStatus(): Promise<KycStatus> {
+  return apiFetch<KycStatus>("/api/v1/customer/kyc-status");
+}
 
 /** Step 1 — creates (or resumes) a pending account and emails an OTP. */
 export function startCustomerRegistration(req: CustomerRegisterStartInput): Promise<void> {

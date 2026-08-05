@@ -414,8 +414,77 @@ export interface OrderResponse {
   /** Augmont's own live status label — only populated after an explicit status refresh, not kept in sync automatically. */
   augmontStatusName: string | null;
   augmontStatusSyncedAt: string | null;
+  /** Courier tracking/AWB number; null until Augmont marks the order dispatched. */
+  augmontTrackingId: string | null;
+  /** Augmont's internal courier id — their API exposes no carrier name, only this. */
+  augmontLogisticPartnerId: number | null;
   createdAt: string;
   updatedAt: string;
+}
+
+// ── EMI instalment collection ──────────────────────────────────────────────
+
+/** Matches entities/dto/order/EmiQuoteResponse.java — POST .../orders/{id}/emi-payments/quote. */
+export interface EmiQuote {
+  emiIds: number[];
+  /** Augmont's figure for the selected instalments — always shown in preference to a local sum. */
+  amount: number;
+  balanceAfterPayment: number | null;
+  paymentMode: string | null;
+}
+
+/** Matches entities/dto/order/EmiPaymentResponse.java — a recorded collection. */
+export interface EmiPayment {
+  id: number;
+  orderId: number;
+  /** Comma-joined Augmont instalment ids this collection settled. */
+  augmontEmiIds: string | null;
+  amount: number;
+  paymentMode: string | null;
+  collectionReference: string | null;
+  merchantTransactionId: string | null;
+  recordedByUserId: number | null;
+  recordedByName: string | null;
+  createdAt: string;
+}
+
+/**
+ * Body for POST .../orders/{id}/emi-payments and its /quote sibling.
+ * No amount is sent — the backend takes Augmont's quoted figure, so a client
+ * cannot under- or over-state what was collected.
+ */
+export interface RecordEmiPaymentRequest {
+  emiIds: number[];
+  collectionReference?: string;
+}
+
+/**
+ * Matches entities/dto/order/KycStatusResponse.java. Totals come from our own
+ * orders table — Augmont exposes no per-customer cumulative figure — so this
+ * counts spend through this platform only.
+ */
+export interface KycStatus {
+  lifetimeSpend: number;
+  panThreshold: number;
+  remainingBeforeThreshold: number;
+  thresholdCrossed: boolean;
+  enforcementEnabled: boolean;
+}
+
+/**
+ * Matches entities/dto/order/OrderRefundResponse.java — GET /admin/orders/{id}/refund.
+ * `found` is false when Augmont hasn't raised the refund yet, which is normal
+ * shortly after a cancellation and is not an error.
+ */
+export interface OrderRefund {
+  found: boolean;
+  refundId: number | null;
+  refundStatus: string | null;
+  transactionId: string | null;
+  totalAmountPaid: number | null;
+  cancellationCharges: number | null;
+  payableToCustomer: number | null;
+  cancelDate: string | null;
 }
 
 // ── Order detail: status refresh, EMI schedule, receipts, cancellation ─────

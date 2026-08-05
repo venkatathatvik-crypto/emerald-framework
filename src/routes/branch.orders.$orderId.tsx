@@ -6,6 +6,7 @@ import { ArrowLeft, RefreshCcw, FileText, Receipt } from "lucide-react";
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
 import { OrderDetailLayout } from "@/components/orders/order-detail-layout";
+import { EmiCollectionPanel } from "@/components/orders/emi-collection-panel";
 import {
   getOrder,
   refreshOrderStatus,
@@ -13,6 +14,9 @@ import {
   getOrderContractReceipt,
   getOrderProformaInvoiceReceipt,
   getOrderEmiReceipt,
+  quoteEmiPayment,
+  recordEmiPayment,
+  listEmiPayments,
 } from "@/lib/api/branch";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { formatInr } from "@/lib/api/augmont";
@@ -26,6 +30,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+/** Augmont paymentTypeId 4 — a spot order has no instalments to collect against. */
+const SPOT_PAYMENT_TYPE_ID = 4;
 
 export const Route = createFileRoute("/branch/orders/$orderId")({
   head: () => ({ meta: [{ title: "Order details — Branch" }] }),
@@ -116,6 +123,18 @@ function Page() {
       onOpenContract={() => openReceipt(() => getOrderContractReceipt(id))}
       onOpenProforma={() => openReceipt(() => getOrderProformaInvoiceReceipt(id))}
       onOpenEmiReceipt={(instalmentNo) => openReceipt(() => getOrderEmiReceipt(id, instalmentNo))}
+      emiCollection={
+        order.paymentTypeId !== SPOT_PAYMENT_TYPE_ID ? (
+          <EmiCollectionPanel
+            orderId={id}
+            schedule={schedule?.orderemidetails}
+            api={{ quote: quoteEmiPayment, record: recordEmiPayment, list: listEmiPayments }}
+            onRecorded={() =>
+              queryClient.invalidateQueries({ queryKey: ["branch", "order", id, "emi-schedule"] })
+            }
+          />
+        ) : undefined
+      }
     />
   );
 }

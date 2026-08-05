@@ -11,6 +11,8 @@ import {
   User,
   CreditCard,
   CheckCircle2,
+  Truck,
+  Package,
 } from "lucide-react";
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { OrderProgressionStepper } from "./order-progression-stepper";
@@ -58,6 +60,10 @@ interface OrderDetailLayoutProps {
   onCancelClick?: () => void;
   cancelDialog?: React.ReactNode;
   backUrl?: string;
+  /** Slot below the EMI schedule — the record-collection panel, for roles that may take cash. */
+  emiCollection?: React.ReactNode;
+  /** Slot in the sidebar — the refund view, admin only. */
+  refundPanel?: React.ReactNode;
 }
 
 export function OrderDetailLayout({
@@ -75,6 +81,8 @@ export function OrderDetailLayout({
   onCancelClick,
   cancelDialog,
   backUrl,
+  emiCollection,
+  refundPanel,
 }: OrderDetailLayoutProps) {
   const thumb = product ? getProductThumbnail(product) : null;
   const isConfirmed = order.status === "CONFIRMED";
@@ -270,6 +278,8 @@ export function OrderDetailLayout({
               )}
             </Panel>
 
+            {emiCollection}
+
             {/* Audit History Timeline */}
             <Panel title="Activity">
               <OrderAuditTimeline order={order} />
@@ -301,6 +311,44 @@ export function OrderDetailLayout({
                 </div>
               </div>
             </Panel>
+
+            {/* Shipment tracking — only once Augmont has handed the parcel to a courier. */}
+            {order.augmontTrackingId && (
+              <Panel title="Shipment">
+                <div className="space-y-3 text-xs">
+                  <div className="flex items-start gap-2">
+                    <Truck className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                    <div className="min-w-0">
+                      <p className="text-muted-foreground">Tracking number</p>
+                      <p className="font-mono font-medium text-ink break-all">
+                        {order.augmontTrackingId}
+                      </p>
+                    </div>
+                  </div>
+                  {order.augmontLogisticPartnerId != null && (
+                    <div className="flex items-start gap-2">
+                      <Package className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-muted-foreground">Courier</p>
+                        {/* Augmont exposes only a numeric partner id — no carrier name anywhere in their API. */}
+                        <p className="font-medium text-ink">
+                          Partner #{order.augmontLogisticPartnerId}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  <p className="text-[11px] text-muted-foreground pt-1 border-t border-line">
+                    Updated on the last status refresh
+                    {order.augmontStatusSyncedAt
+                      ? ` (${new Date(order.augmontStatusSyncedAt).toLocaleString()})`
+                      : ""}
+                    .
+                  </p>
+                </div>
+              </Panel>
+            )}
+
+            {refundPanel}
 
             {/* Customer / Branch Attribution Context */}
             <Panel title="Attribution Context">

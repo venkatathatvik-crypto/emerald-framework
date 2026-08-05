@@ -1,13 +1,22 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
-import { Boxes, Trash2, Minus, Plus, CheckCircle2, AlertTriangle } from "lucide-react";
+import {
+  Boxes,
+  Trash2,
+  Minus,
+  Plus,
+  CheckCircle2,
+  AlertTriangle,
+  ShieldAlert,
+} from "lucide-react";
 
 import { DashboardShell, Panel } from "@/components/DashboardShell";
 import { useRequireRole } from "@/hooks/use-require-role";
-import { placeOrder } from "@/lib/api/customer";
+import { placeOrder, getMyKycStatus } from "@/lib/api/customer";
 import { formatInr } from "@/lib/api/augmont";
 import { useAugmontStates, useAugmontCities } from "@/hooks/use-location-data";
 import { ApiError } from "@/lib/api/types";
@@ -80,6 +89,14 @@ function Page() {
   const { ready } = useRequireRole("ROLE_CUSTOMER");
   const navigate = useNavigate();
   const cart = useCart();
+
+  // Fails soft: if this errors the checkout still works, it just loses the notice.
+  const { data: kycStatus } = useQuery({
+    queryKey: ["customer", "kyc-status"],
+    queryFn: getMyKycStatus,
+    enabled: ready,
+    staleTime: 60_000,
+  });
 
   const [isPlacing, setIsPlacing] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
@@ -234,6 +251,14 @@ function Page() {
   const dueToday = cartDueToday(cart);
   const totalValue = cartTotalValue(cart);
 
+  // Purely informational: PAN is mandatory on every order regardless, so this
+  // explains the requirement rather than gating anything in the UI.
+  const projectedSpend = (kycStatus?.lifetimeSpend ?? 0) + totalValue;
+  const crossesThreshold =
+    kycStatus != null &&
+    kycStatus.enforcementEnabled &&
+    projectedSpend >= kycStatus.panThreshold;
+
   return (
     <DashboardShell role="customer" title="Your basket">
       <div className="grid lg:grid-cols-[13fr_7fr] gap-6 lg:gap-10 items-start">
@@ -332,6 +357,20 @@ function Page() {
             <form id="checkout-form" onSubmit={form.handleSubmit(onCheckout)} noValidate>
               <div className="space-y-6">
                 <Panel title="Identity verification">
+                  {crossesThreshold && kycStatus && (
+                    <div
+                      className="mb-4 flex items-start gap-2.5 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2.5"
+                      aria-live="polite"
+                    >
+                      <ShieldAlert className="h-4 w-4 text-amber-700 shrink-0 mt-0.5" />
+                      <p className="text-xs text-ink">
+                        This purchase takes your total with us past{" "}
+                        <strong>{formatInr(kycStatus.panThreshold)}</strong>, so PAN details are
+                        required by law. You have bought {formatInr(kycStatus.lifetimeSpend)} so
+                        far.
+                      </p>
+                    </div>
+                  )}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}

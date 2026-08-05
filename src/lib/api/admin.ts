@@ -7,9 +7,13 @@ import type {
   Branch,
   ConvertLeadRequest,
   CustomerResponse,
+  EmiPayment,
+  EmiQuote,
   LeadStatus,
+  OrderRefund,
   OrderResponse,
   Paged,
+  RecordEmiPaymentRequest,
   PartnerLead,
   PartnerResponse,
   PartnerUpdateRequest,
@@ -214,6 +218,36 @@ export function getAugmontDashboard(): Promise<AugmontBrokerDashboard> {
   return apiFetch<AugmontBrokerDashboard>("/api/v1/admin/dashboard/augmont");
 }
 
+
+// ── EMI instalment collection ──────────────────────────────────────────────
+
+/** What Augmont says the selected instalments cost. Charges nothing. */
+export function quoteEmiPayment(orderId: number, body: RecordEmiPaymentRequest): Promise<EmiQuote> {
+  return apiFetch<EmiQuote>(`/api/v1/admin/orders/${orderId}/emi-payments/quote`, {
+    method: "POST",
+    body,
+  });
+}
+
+/** Records a cash collection against the order and marks it paid at Augmont. */
+export function recordEmiPayment(orderId: number, body: RecordEmiPaymentRequest): Promise<EmiPayment> {
+  return apiFetch<EmiPayment>(`/api/v1/admin/orders/${orderId}/emi-payments`, {
+    method: "POST",
+    body,
+  });
+}
+
+/** Collections already recorded against the order. */
+export function listEmiPayments(orderId: number): Promise<EmiPayment[]> {
+  return apiFetch<EmiPayment[]>(`/api/v1/admin/orders/${orderId}/emi-payments`);
+}
+
+
+/** Refund standing on a cancelled order. Admin-only. */
+export function getOrderRefund(orderId: number): Promise<OrderRefund> {
+  return apiFetch<OrderRefund>(`/api/v1/admin/orders/${orderId}/refund`);
+}
+
 export interface AugmontReportParams {
   startDate?: string; // yyyy-MM-dd
   endDate?: string;
@@ -228,6 +262,13 @@ export function getOrderReport(params: AugmontReportParams = {}): Promise<Augmon
 /** Customer export — returns a URL to a file Augmont generates, not the rows. */
 export function getCustomerReport(params: AugmontReportParams = {}): Promise<AugmontReport> {
   return apiFetch<AugmontReport>("/api/v1/admin/reports/customers", {
+    query: { startDate: params.startDate, endDate: params.endDate },
+  });
+}
+
+/** Instalment export — returns a URL to a file Augmont generates, not the rows. */
+export function getEmiReport(params: AugmontReportParams = {}): Promise<AugmontReport> {
+  return apiFetch<AugmontReport>("/api/v1/admin/reports/emi", {
     query: { startDate: params.startDate, endDate: params.endDate },
   });
 }
