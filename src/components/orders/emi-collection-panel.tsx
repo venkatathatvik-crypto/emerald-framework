@@ -122,24 +122,32 @@ export function EmiCollectionPanel({
         <div className="space-y-4">
           <div className="space-y-2">
             {unpaid.map((row) => (
-              <label
+              // Deliberately not a <label> wrapper: the checkbox renders its own
+              // focusable control, and a wrapping label forwards the click to it
+              // a second time — so the row toggled twice and appeared dead.
+              // The text is tied to the box by htmlFor instead.
+              <div
                 key={row.emiId}
-                className="flex items-center gap-3 rounded-lg border border-line px-3 py-2 cursor-pointer hover:bg-stone/50"
+                className="flex items-center gap-3 rounded-lg border border-line px-3 py-2 hover:bg-stone/50"
               >
                 <Checkbox
+                  id={`emi-${orderId}-${row.emiId}`}
                   checked={selected.includes(row.emiId)}
                   onCheckedChange={() => toggle(row.emiId)}
                   disabled={busy}
                   aria-label={`Instalment ${row.emiId}`}
                 />
-                <span className="text-xs font-medium text-ink flex-1">
+                <label
+                  htmlFor={`emi-${orderId}-${row.emiId}`}
+                  className="text-xs font-medium text-ink flex-1 cursor-pointer"
+                >
                   Instalment #{row.emiId}
-                </span>
+                </label>
                 <span className="text-xs text-muted-foreground">
                   Due {row.dueDate ? new Date(row.dueDate).toLocaleDateString() : "—"}
                 </span>
                 <span className="text-xs font-medium">{formatInr(row.emiAmount)}</span>
-              </label>
+              </div>
             ))}
           </div>
 
