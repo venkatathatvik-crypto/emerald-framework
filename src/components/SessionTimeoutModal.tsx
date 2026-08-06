@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Clock, ShieldAlert, LogOut, RefreshCw } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
-import { refreshAuthToken, logoutApi } from "@/lib/api/auth";
+import { refreshAuthToken } from "@/lib/api/auth";
 import { toast } from "sonner";
 
 // 14 minutes warning (840 seconds), 60 seconds countdown = 15 minutes total JWT expiry
@@ -11,7 +12,8 @@ const INACTIVITY_WARNING_MS = 14 * 60 * 1000;
 const COUNTDOWN_SECONDS = 60;
 
 export function SessionTimeoutModal() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [showWarning, setShowWarning] = useState(false);
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -21,14 +23,17 @@ export function SessionTimeoutModal() {
 
   const handleLogout = useCallback(async () => {
     try {
-      await logoutApi();
+      await logout();
     } catch {
-      // ignore
+      // ignore — the session is going away regardless
     } finally {
       toast.info("Session expired due to inactivity. Please log in again.");
-      window.location.href = "/login";
+      // Router navigation, not window.location: the app is served under a base
+      // path (/gold-emi-app), and a raw location assignment drops it and lands
+      // on nginx's 404 instead of the login page.
+      navigate({ to: "/login" });
     }
-  }, []);
+  }, [logout, navigate]);
 
   const resetActivityTimer = useCallback(() => {
     if (showWarning) return; // Don't reset if modal is already open
