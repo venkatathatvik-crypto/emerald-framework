@@ -42,11 +42,11 @@ function Page() {
             <div className="flex gap-3 items-start text-base">
               <MapPin className="h-5 w-5 text-emerald-deep shrink-0 mt-1" />
               <p>
-                504, 5th Floor, Nami Shree Infratech,
+                FLAT NO 102, 1<sup>ST</sup> FLOOR, STERLING HOUSE,
                 <br />
-                T19 Towers, MG Road, Rani Ganj,
+                1-8-308/5/1 PAIGAH COLONY, PATIGADDA ROAD NO 1,
                 <br />
-                Hyderabad — 500003
+                BEGUMPET, HYDERABAD — 500016, TELANGANA
               </p>
             </div>
           </div>

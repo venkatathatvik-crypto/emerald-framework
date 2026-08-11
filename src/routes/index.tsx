@@ -152,7 +152,9 @@ const QUICK_LINKS = [
 
 const COMPANY_INFO = {
   name: "2 Plus Fortune Alliances Pvt Ltd",
-  address: "504, 5th Floor, Nami Shree Infratech, T19 Towers, MG Road, Hyderabad — 500003",
+  // Plain string — rendered inside a <span>, so no markup (hence "1ST", not a <sup>).
+  address:
+    "FLAT NO 102, 1ST FLOOR, STERLING HOUSE, 1-8-308/5/1 PAIGAH COLONY, PATIGADDA ROAD NO 1, BEGUMPET, HYDERABAD — 500016, TELANGANA",
   phone: "+91 9966 16 1616",
   email: "partnerships@2fapl.com",
   cin: "U74900TG2022PTC123456",
@@ -652,9 +654,11 @@ function Home() {
                   <div>
                     <p className="text-paper/40 eyebrow mb-2">Headquarters</p>
                     <p>
-                      504, 5th Floor, Nami Shree Infratech,
+                      FLAT NO 102, 1<sup>ST</sup> FLOOR, STERLING HOUSE,
                       <br />
-                      T19 Towers, MG Road, Hyderabad — 500003
+                      1-8-308/5/1 PAIGAH COLONY, PATIGADDA ROAD NO 1,
+                      <br />
+                      BEGUMPET, HYDERABAD — 500016, TELANGANA
                     </p>
                   </div>
                   <div>
