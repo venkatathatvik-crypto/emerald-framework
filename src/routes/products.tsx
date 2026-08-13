@@ -81,13 +81,13 @@ const CATEGORIES = [
 
 const UPCOMING = [
   ["01", "Copper Utensils", "Health & wellness range — bottles, cookware, serveware."],
-  ["02", "Stainless Steel Kitchenware", "Premium SS cookware and storage."],
+  ["02", "Stainless Steel", "Premium SS products"],
   ["03", "E-bikes & E-loaders", "Rural mobility and last-mile EV solutions."],
-  ["04", "Solar Solutions (Expanded)", "Rooftop, agri-pumps, micro-grids."],
+  ["04", "Portable Solar Products", "Lanterns, Torches and Fans"],
   ["05", "FMCG", "Pulses, grains, spices and masalas."],
   [
     "06",
-    "Education Tools",
+    "Software Education Tools",
     "Classes 6–12 (CBSE / ICSE / State Board) + engineering learning kits.",
   ],
 ];

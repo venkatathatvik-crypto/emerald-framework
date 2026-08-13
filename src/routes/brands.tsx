@@ -9,12 +9,12 @@ export const Route = createFileRoute("/brands")({
       {
         name: "description",
         content:
-          "Our network of manufacturing brands and financial partners — eighteen strategic alliances across India.",
+          "Our network of manufacturing brands and financial partners — 18+ strategic alliances across India.",
       },
       { property: "og:title", content: "Brands & Partners — 2+ Fortune Alliances" },
       {
         property: "og:description",
-        content: "Eighteen strategic alliances. One distribution fabric.",
+        content: "18+ strategic alliances. One distribution fabric.",
       },
     ],
   }),
@@ -94,7 +94,7 @@ function Page() {
         eyebrow="Brands & Partners"
         title={
           <>
-            Eighteen alliances. <em className="text-emerald-deep">One fabric.</em>
+            18+ alliances, <em className="text-emerald-deep">one fabric!</em>
           </>
         }
         lede="Manufacturers, MFIs, NBFCs, cooperatives and foundations — woven into a single distribution network that reaches further, faster, and more accountably than any single channel could alone."
