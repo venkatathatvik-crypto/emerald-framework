@@ -52,7 +52,7 @@ const PARTNER_BRANDS = [
   "Suyoga Co-op",
   "Chhaya Foundation",
   "Gnanashale",
-  "Anandam Finance",
+  "Shecommerz",
   "Jeevan Abhivriddhi",
 ];
 

@@ -177,9 +177,12 @@ function Page() {
           </p>
           <h2
             data-reveal="rise"
-            className="font-display text-5xl md:text-7xl max-w-4xl leading-[0.98] mb-16"
+            className="font-display text-5xl md:text-7xl max-w-5xl leading-[0.98] mb-16"
           >
-            Expanding reach. <em className="text-emerald-deep">Enriching lives.</em>
+            Expanding reach. <em className="text-emerald-deep">Enriching lives.</em>{" "}
+            <span className="font-sans text-xl md:text-2xl text-emerald-soft font-normal tracking-wide block md:inline-block md:ml-4 mt-2 md:mt-0 align-middle">
+              [upcoming add-ons]
+            </span>
           </h2>
           <div className="grid md:grid-cols-2 gap-px bg-line">
             {[

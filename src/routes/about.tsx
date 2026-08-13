@@ -118,7 +118,7 @@ function About() {
               className="bg-paper p-10 md:p-12 min-h-[24rem] flex flex-col"
             >
               <p className="eyebrow mb-10">{x.eyebrow}</p>
-              <p className="font-display text-3xl md:text-4xl text-ink leading-[1.1] mt-auto">
+              <p className="font-sans text-lg md:text-xl text-muted-foreground leading-relaxed mt-auto">
                 {x.body}
               </p>
             </article>

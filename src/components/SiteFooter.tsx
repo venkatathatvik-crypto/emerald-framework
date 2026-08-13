@@ -158,7 +158,7 @@ export function SiteFooter() {
 
         <div className="pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs text-paper/60">
           <p>
-            © {new Date().getFullYear()} 2 Plus Fortune Alliances Pvt. Ltd. — CIN withheld.
+            © {new Date().getFullYear()} 2 Plus Fortune Alliances Pvt. Ltd.
             Hyderabad, India.
           </p>
           <img

@@ -38,7 +38,7 @@ const PARTNERS = [
   "Suyoga Co-op Society",
   "Chhaya Foundation",
   "Gnanashale Co-op Society",
-  "Anandam Finance",
+  "Shecommerz",
   "Jeevan Abhivriddhi Benefit Nidhi",
 ];
 
@@ -195,8 +195,8 @@ function Page() {
             <p className="eyebrow text-gold" data-reveal="rise-soft">
               Financial partners
             </p>
-            <h2 data-reveal="rise" className="font-display text-5xl md:text-6xl leading-[1.02]">
-              The institutions that <em className="text-gold">deliver the last mile.</em>
+            <h2 data-reveal="rise" className="font-display text-3xl md:text-4xl leading-[1.1] max-w-4xl">
+              The institutions those who provided opportunity to <em className="text-gold">2+ Fortune Alliances</em> for being their preferred last mile delivery partner.
             </h2>
           </div>
 
