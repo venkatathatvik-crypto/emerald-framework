@@ -274,6 +274,15 @@ export interface AugmontProductPriceTier {
   initialPaymentThree?: number | string;
   initialPaymentSix?: number | string;
   initialPaymentNine?: number | string;
+  /**
+   * Total payable for each EMI tenure, INCLUDING the forward cost Augmont adds
+   * for paying over time (3% / 5% / 7%) and the correspondingly higher GST.
+   * These are NOT finalProductPrice — that is the spot price, and using it for
+   * an EMI order understates the total by ~958 (3mo) to ~2,236 (9mo).
+   */
+  forwordCostForThreeMonth?: number | string;
+  forwordCostForSixMonth?: number | string;
+  forwordCostForNineMonth?: number | string;
   /** Percentage down payment required, e.g. 20 (confirmed against a live response). */
   productInitialPaymentPer?: number | string;
   /** GST percentage applied on top, e.g. 3 (confirmed against a live response). */

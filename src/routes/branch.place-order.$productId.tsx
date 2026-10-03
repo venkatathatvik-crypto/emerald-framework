@@ -65,27 +65,38 @@ const TENURE_TO_PAYMENT_TYPE_ID: Record<Tenure, number> = {
 };
 
 function pricingFor(tier: AugmontProductPriceTier | null, tenure: Tenure) {
-  if (!tier) return { dueToday: undefined, monthly: undefined, months: 0 };
+  if (!tier) return { dueToday: undefined, monthly: undefined, months: 0, total: undefined };
+  // `total` must come from the tenure-specific forward cost, never from
+  // finalProductPrice — that is the SPOT price, and EMI costs more because
+  // Augmont adds a carrying charge for paying over time.
   switch (tenure) {
     case "spot":
-      return { dueToday: tier.finalProductPrice, monthly: undefined, months: 0 };
+      return {
+        dueToday: tier.finalProductPrice,
+        monthly: undefined,
+        months: 0,
+        total: tier.finalProductPrice,
+      };
     case "three":
       return {
         dueToday: tier.initialPaymentThree,
         monthly: tier.paymentAmountPerMonthThree,
         months: 3,
+        total: tier.forwordCostForThreeMonth ?? tier.finalProductPrice,
       };
     case "six":
       return {
         dueToday: tier.initialPaymentSix,
         monthly: tier.paymentAmountPerMonthSix,
         months: 6,
+        total: tier.forwordCostForSixMonth ?? tier.finalProductPrice,
       };
     case "nine":
       return {
         dueToday: tier.initialPaymentNine,
         monthly: tier.paymentAmountPerMonthNine,
         months: 9,
+        total: tier.forwordCostForNineMonth ?? tier.finalProductPrice,
       };
   }
 }
@@ -198,7 +209,7 @@ function Page() {
       productWeight: product.weight,
       paymentTypeId: TENURE_TO_PAYMENT_TYPE_ID[tenure],
       quantity: 1,
-      finalOrderPrice: toNumber(tier?.finalProductPrice),
+      finalOrderPrice: toNumber(price.total),
       initialPayment: toNumber(price.dueToday),
       monthlyAmount: price.monthly != null ? toNumber(price.monthly) : undefined,
       panCardNumber: values.panCardNumber,
