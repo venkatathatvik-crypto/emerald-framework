@@ -67,7 +67,10 @@ function Page() {
     setError(null);
     setCreated(null);
 
-    const form = new FormData(e.currentTarget);
+    // Held in a local: React nulls out currentTarget once the handler yields,
+    // so reaching for it after the await throws.
+    const formEl = e.currentTarget;
+    const form = new FormData(formEl);
     const email = String(form.get("email") ?? "").trim();
     const firstName = String(form.get("firstName") ?? "").trim();
     const lastName = String(form.get("lastName") ?? "").trim();
@@ -76,7 +79,7 @@ function Page() {
     try {
       await createAdmin(username, password, { email, firstName, lastName });
       setCreated(email);
-      e.currentTarget.reset();
+      formEl.reset();
       setAdmins(await listAdmins(username, password));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not create the admin.");
