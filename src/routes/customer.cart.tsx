@@ -254,10 +254,7 @@ function Page() {
   // Purely informational: PAN is mandatory on every order regardless, so this
   // explains the requirement rather than gating anything in the UI.
   const projectedSpend = (kycStatus?.lifetimeSpend ?? 0) + totalValue;
-  const crossesThreshold =
-    kycStatus != null &&
-    kycStatus.enforcementEnabled &&
-    projectedSpend >= kycStatus.panThreshold;
+  const crossesThreshold = kycStatus != null && projectedSpend >= kycStatus.panThreshold;
 
   return (
     <DashboardShell role="customer" title="Your basket">

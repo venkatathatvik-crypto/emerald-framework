@@ -482,7 +482,6 @@ export interface KycStatus {
   panThreshold: number;
   remainingBeforeThreshold: number;
   thresholdCrossed: boolean;
-  enforcementEnabled: boolean;
 }
 
 /**
