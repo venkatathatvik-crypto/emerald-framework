@@ -6,6 +6,11 @@ interface RequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
   query?: Record<string, string | number | boolean | undefined | null>;
+  /**
+   * Extra headers. Only the superadmin page uses this, to send HTTP Basic — that
+   * chain cannot use the cookie because there may be no admin account yet.
+   */
+  headers?: Record<string, string>;
 }
 
 function buildUrl(path: string, query?: RequestOptions["query"]): string {

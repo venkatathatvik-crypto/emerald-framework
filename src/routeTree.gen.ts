@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SuperadminRouteImport } from './routes/superadmin'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -58,6 +59,11 @@ import { Route as AdminPartnersPartnerIdRouteImport } from './routes/admin.partn
 import { Route as AdminOrdersOrderIdRouteImport } from './routes/admin.orders.$orderId'
 import { Route as AdminCatalogProductIdRouteImport } from './routes/admin.catalog.$productId'
 
+const SuperadminRoute = SuperadminRouteImport.update({
+  id: '/superadmin',
+  path: '/superadmin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -317,6 +323,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/superadmin': typeof SuperadminRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -367,6 +374,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/superadmin': typeof SuperadminRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -418,6 +426,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/superadmin': typeof SuperadminRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -470,6 +479,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/superadmin'
     | '/admin/audit-logs'
     | '/admin/customers'
     | '/admin/leads'
@@ -520,6 +530,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/superadmin'
     | '/admin/audit-logs'
     | '/admin/customers'
     | '/admin/leads'
@@ -570,6 +581,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/superadmin'
     | '/admin/audit-logs'
     | '/admin/customers'
     | '/admin/leads'
@@ -621,6 +633,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SuperadminRoute: typeof SuperadminRoute
   AdminAuditLogsRoute: typeof AdminAuditLogsRoute
   AdminCustomersRoute: typeof AdminCustomersRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
@@ -657,6 +670,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/superadmin': {
+      id: '/superadmin'
+      path: '/superadmin'
+      fullPath: '/superadmin'
+      preLoaderRoute: typeof SuperadminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -1013,6 +1033,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SuperadminRoute: SuperadminRoute,
   AdminAuditLogsRoute: AdminAuditLogsRoute,
   AdminCustomersRoute: AdminCustomersRoute,
   AdminLeadsRoute: AdminLeadsRoute,
