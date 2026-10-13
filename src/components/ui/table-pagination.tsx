@@ -1,7 +1,14 @@
 import { Button } from "@/components/ui/button";
 
-/** Rows per page, everywhere. Server queries ask for this many. */
+/** Rows per page for tables. Server queries ask for this many. */
 export const PAGE_SIZE = 10;
+
+/**
+ * Cards per page for the product grids. Eight rather than ten because the grid
+ * is four columns at xl and two at sm — eight fills whole rows at both, where
+ * ten leaves a half-empty last row.
+ */
+export const GRID_PAGE_SIZE = 8;
 
 interface TablePaginationProps {
   /** Zero-based, matching the API's own page numbering. */

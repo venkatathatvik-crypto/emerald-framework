@@ -1,4 +1,4 @@
-import { TablePagination, paginate } from "@/components/ui/table-pagination";
+import { TablePagination, paginate, GRID_PAGE_SIZE } from "@/components/ui/table-pagination";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -88,6 +88,7 @@ function Page() {
   const { pageRows: pagedProducts, page: safePage, totalPages, totalItems } = paginate(
     filtered,
     page,
+    GRID_PAGE_SIZE,
   );
 
   return (
@@ -151,7 +152,7 @@ function Page() {
                     })
                   }
                 >
-                  <div className="aspect-square bg-stone flex items-center justify-center overflow-hidden">
+                  <div className="aspect-[4/3] bg-stone flex items-center justify-center overflow-hidden">
                     {thumb ? (
                       <img
                         src={thumb}
@@ -162,13 +163,13 @@ function Page() {
                       <Boxes className="h-10 w-10 text-muted-foreground" />
                     )}
                   </div>
-                  <CardContent className="p-4 space-y-1.5">
+                  <CardContent className="p-3 space-y-1">
                     <p className="font-medium text-ink text-sm line-clamp-2">
                       {product.productName}
                     </p>
                     <p className="text-xs text-muted-foreground">{product.weight}g</p>
-                    <div className="flex items-center justify-between pt-1">
-                      <span className="font-display text-lg">
+                    <div className="flex items-center justify-between pt-0.5">
+                      <span className="font-display text-base">
                         {formatInr(tier?.finalProductPrice)}
                       </span>
                       {product.isEmiAvailable && (
