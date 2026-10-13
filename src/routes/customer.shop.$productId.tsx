@@ -23,7 +23,7 @@ import type { AugmontProductPriceTier, PlaceOrderRequest, OrderResponse } from "
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FullPageLoader } from "@/components/ui/spinner";
+import { LoadingState } from "@/components/ui/spinner";
 import {
   Form,
   FormField,
@@ -299,7 +299,7 @@ function Page() {
       </Link>
 
       {isLoading && (
-        <FullPageLoader />
+        <LoadingState label="Loading product…" />
       )}
       {isError && (
         <p className="text-sm text-destructive py-10 text-center">Failed to load this product.</p>

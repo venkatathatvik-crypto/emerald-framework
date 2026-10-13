@@ -21,7 +21,7 @@ import {
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { formatInr } from "@/lib/api/augmont";
 import { Button } from "@/components/ui/button";
-import { FullPageLoader } from "@/components/ui/spinner";
+import { LoadingState } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -106,7 +106,7 @@ function Page() {
   if (isLoading) {
     return (
       <DashboardShell role="branch" title="Order details">
-        <FullPageLoader />
+        <LoadingState label="Loading order…" />
       </DashboardShell>
     );
   }

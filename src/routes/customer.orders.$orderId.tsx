@@ -45,7 +45,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FullPageLoader, Spinner } from "@/components/ui/spinner";
+import { LoadingState, Spinner } from "@/components/ui/spinner";
 
 export const Route = createFileRoute("/customer/orders/$orderId")({
   head: () => ({ meta: [{ title: "Order details" }] }),
@@ -181,7 +181,7 @@ function Page() {
   if (isLoading) {
     return (
       <DashboardShell role="customer" title="Order details">
-        <FullPageLoader />
+        <LoadingState label="Loading order…" />
       </DashboardShell>
     );
   }
