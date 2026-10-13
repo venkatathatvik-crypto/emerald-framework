@@ -1,3 +1,4 @@
+import { TablePagination, paginate } from "@/components/ui/table-pagination";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -36,12 +37,19 @@ function Page() {
 
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(0);
 
   const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: ["augmont", "shop-categories"],
     queryFn: getShopCategories,
     enabled: ready,
   });
+
+  // A new category or search term starts again at page one; staying on page 4
+  // of the previous category would show an empty grid.
+  useEffect(() => {
+    setPage(0);
+  }, [categoryId, search]);
 
   useEffect(() => {
     if (categoryId === null && categories && categories.length > 0) {
@@ -72,6 +80,14 @@ function Page() {
 
   const filtered = (products ?? []).filter(
     (p) => !search || p.productName.toLowerCase().includes(search.toLowerCase()),
+  );
+
+
+  // The grid shows one page. `filtered` stays the source for the empty
+  // state and the count, so those still describe the whole category.
+  const { pageRows: pagedProducts, page: safePage, totalPages, totalItems } = paginate(
+    filtered,
+    page,
   );
 
   return (
@@ -121,7 +137,7 @@ function Page() {
 
         {!isError && !productsLoading && filtered.length > 0 && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filtered.map((product) => {
+            {pagedProducts.map((product) => {
               const tier = getProductPriceTier(product);
               const thumb = getProductThumbnail(product, categoryImage);
               return (
@@ -167,6 +183,13 @@ function Page() {
             })}
           </div>
         )}
+
+        <TablePagination
+          page={safePage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          onPageChange={setPage}
+        />
       </Panel>
     </DashboardShell>
   );
