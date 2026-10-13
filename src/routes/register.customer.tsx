@@ -1,3 +1,4 @@
+import { checkEmail } from "@/lib/validation";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AuthShell, AuthField } from "@/components/AuthShell";
 import {
@@ -58,6 +59,10 @@ function Page() {
 
     const errors: FieldErrors = {};
     if (!values.email) errors.email = "Email is required";
+    else {
+      const emailProblem = checkEmail(values.email);
+      if (emailProblem) errors.email = emailProblem;
+    }
     if (!values.firstName) errors.firstName = "First name is required";
     if (values.mobile && !/^[6-9]\d{9}$/.test(values.mobile)) {
       errors.mobile = "Enter a valid 10-digit Indian mobile number";

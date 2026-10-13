@@ -1,3 +1,4 @@
+import { checkEmail } from "@/lib/validation";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AuthShell, AuthField } from "@/components/AuthShell";
 import { forgotPassword } from "@/lib/api/auth";
@@ -10,7 +11,6 @@ export const Route = createFileRoute("/forgot-password")({
   component: Page,
 });
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function Page() {
   const [sent, setSent] = useState(false);
@@ -28,8 +28,9 @@ function Page() {
       setFieldError("Email is required");
       return;
     }
-    if (!EMAIL_RE.test(email)) {
-      setFieldError("Enter a valid email address");
+    const emailProblem = checkEmail(email);
+    if (emailProblem) {
+      setFieldError(emailProblem);
       return;
     }
 

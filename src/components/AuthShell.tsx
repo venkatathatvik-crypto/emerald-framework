@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { HTMLAttributes, ReactNode } from "react";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export function AuthShell({
   eyebrow,
@@ -95,27 +97,52 @@ export function AuthField({
   inputMode?: HTMLAttributes<HTMLInputElement>["inputMode"];
   maxLength?: number;
 }) {
+  // Password fields get a reveal toggle. The field stays uncontrolled — every
+  // page here reads its values through FormData — so this swaps the input's
+  // type and never touches its value.
+  const isPassword = type === "password";
+  const [revealed, setRevealed] = useState(false);
+
   return (
     <div>
       <label htmlFor={name} className="eyebrow block mb-2 text-[0.65rem]">
         {label}
         {required && " *"}
       </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        required={required}
-        placeholder={placeholder}
-        aria-invalid={!!error}
-        inputMode={inputMode}
-        maxLength={maxLength}
-        className={`w-full bg-paper border px-4 py-3 rounded-sm focus:outline-none transition-colors ${
-          error
-            ? "border-destructive focus:border-destructive"
-            : "border-line focus:border-emerald-deep"
-        }`}
-      />
+      <div className="relative">
+        <input
+          id={name}
+          name={name}
+          type={isPassword && revealed ? "text" : type}
+          required={required}
+          placeholder={placeholder}
+          aria-invalid={!!error}
+          inputMode={inputMode}
+          maxLength={maxLength}
+          className={`w-full bg-paper border px-4 py-3 rounded-sm focus:outline-none transition-colors ${
+            isPassword ? "pr-12" : ""
+          } ${
+            error
+              ? "border-destructive focus:border-destructive"
+              : "border-line focus:border-emerald-deep"
+          }`}
+        />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setRevealed((v) => !v)}
+            // Outside the tab order on purpose: keyboard users move label →
+            // field → next field, and a toggle in between is an obstacle. It
+            // stays reachable by pointer and is announced to screen readers.
+            tabIndex={-1}
+            aria-label={revealed ? "Hide password" : "Show password"}
+            aria-pressed={revealed}
+            className="absolute inset-y-0 right-0 flex items-center px-4 text-muted-foreground hover:text-ink transition-colors"
+          >
+            {revealed ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        )}
+      </div>
       {error && (
         <p className="mt-1.5 text-xs text-destructive" role="alert">
           {error}

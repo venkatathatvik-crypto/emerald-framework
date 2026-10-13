@@ -1,3 +1,4 @@
+import { checkPassword } from "@/lib/validation";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AuthShell, AuthField } from "@/components/AuthShell";
 import { validateResetToken, resetPassword } from "@/lib/api/auth";
@@ -66,7 +67,8 @@ function Page() {
     const confirm = String(formData.get("confirm") ?? "");
 
     const errors: FieldErrors = {};
-    if (password.length < 8) errors.password = "Password must be at least 8 characters";
+    const passwordProblem = checkPassword(password);
+    if (passwordProblem) errors.password = passwordProblem;
     if (confirm !== password) errors.confirm = "Passwords do not match";
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
@@ -138,7 +140,11 @@ function Page() {
           Set a new <em className="text-emerald-deep">password.</em>
         </>
       }
-      subtitle={email ? `Setting a new password for ${email}.` : "Use at least 8 characters."}
+      subtitle={
+        email
+          ? `Setting a new password for ${email}.`
+          : "At least 8 characters, with an uppercase letter, a lowercase letter and a number."
+      }
     >
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
         <AuthField
