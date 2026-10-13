@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Clock, ShieldAlert, LogOut, RefreshCw } from "lucide-react";
+import { Clock, ShieldAlert, LogOut } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { refreshAuthToken } from "@/lib/api/auth";
@@ -17,11 +18,13 @@ export function SessionTimeoutModal() {
   const [showWarning, setShowWarning] = useState(false);
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const warningTimerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleLogout = useCallback(async () => {
+    setIsLoggingOut(true);
     try {
       await logout();
     } catch {
@@ -131,10 +134,15 @@ export function SessionTimeoutModal() {
           <Button
             type="button"
             variant="outline"
+            disabled={isLoggingOut}
             onClick={handleLogout}
             className="w-full sm:w-auto text-xs"
           >
-            <LogOut className="mr-1.5 h-3.5 w-3.5" /> Log Out Now
+            {isLoggingOut ? (
+              <><Spinner size={14} className="mr-1.5" label="" /> Signing out…</>
+            ) : (
+              <><LogOut className="mr-1.5 h-3.5 w-3.5" /> Log Out Now</>
+            )}
           </Button>
 
           <Button
@@ -146,11 +154,11 @@ export function SessionTimeoutModal() {
           >
             {isRefreshing ? (
               <>
-                <RefreshCw className="mr-1.5 h-3.5 w-3.5 animate-spin" /> Renewing...
+                <Spinner size={14} className="mr-1.5" label="" /> Renewing…
               </>
             ) : (
               <>
-                <RefreshCw className="mr-1.5 h-3.5 w-3.5" /> Stay Logged In
+                Stay Logged In
               </>
             )}
           </Button>

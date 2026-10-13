@@ -2,6 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Spinner } from "@/components/ui/spinner";
 import {
   LayoutDashboard,
   Truck,
@@ -115,9 +116,20 @@ export function DashboardShell({
     setCartScope(user?.uuid);
   }, [user?.uuid]);
 
+  const [signingOut, setSigningOut] = useState(false);
+
   async function handleSignOut() {
-    await logout();
-    navigate({ to: "/login" });
+    // Guarded: on a slow connection the request can take seconds, and without
+    // this the button stays live and fires logout again on every click.
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await logout();
+    } finally {
+      // logout() clears the local user even if the request failed, so leaving
+      // is always the right outcome.
+      navigate({ to: "/login" });
+    }
   }
 
   return (
@@ -181,9 +193,15 @@ export function DashboardShell({
           </Link>
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper"
+            disabled={signingOut}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <LogOut className="h-4 w-4" /> Sign out
+            {signingOut ? (
+              <Spinner size={16} label="" />
+            ) : (
+              <LogOut className="h-4 w-4" />
+            )}
+            {signingOut ? "Signing out…" : "Sign out"}
           </button>
         </div>
       </aside>
