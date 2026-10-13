@@ -1,3 +1,4 @@
+import { TablePagination, paginate } from "@/components/ui/table-pagination";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -30,6 +31,7 @@ function Page() {
 
   const id = Number(partnerId);
   const [editOpen, setEditOpen] = useState(false);
+  const [page, setPage] = useState(0);
 
   const enabled = ready && Number.isFinite(id);
 
@@ -59,6 +61,14 @@ function Page() {
   }
 
   const branchItems = branches?.items ?? [];
+
+  // One page of rows for the table. Counts, empty states and CSV exports
+  // keep using branchItems, so they still describe the whole result set.
+  const { pageRows: pagedBranches, page: safePage, totalPages, totalItems } = paginate(
+    branchItems,
+    page,
+  );
+
   const totalAgents = branchItems.reduce((sum, b) => sum + (b.agentCount ?? 0), 0);
 
   return (
@@ -155,7 +165,7 @@ function Page() {
                       </TableCell>
                     </TableRow>
                   )}
-                  {branchItems.map((branch) => (
+                  {pagedBranches.map((branch) => (
                     <TableRow key={branch.id}>
                       <TableCell>
                         <p className="font-medium text-ink">{branch.name}</p>
@@ -184,6 +194,12 @@ function Page() {
                 </TableBody>
               </Table>
             )}
+            <TablePagination
+              page={safePage}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              onPageChange={setPage}
+            />
           </Panel>
         </div>
       )}

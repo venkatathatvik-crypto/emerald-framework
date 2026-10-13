@@ -1,3 +1,4 @@
+import { TablePagination, PAGE_SIZE } from "@/components/ui/table-pagination";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -52,7 +53,6 @@ const ACTIVE_OPTIONS: { value: string; label: string }[] = [
   { value: "false", label: "Deactivated" },
 ];
 
-const PAGE_SIZE = 20;
 
 function Page() {
   const queryClient = useQueryClient();
@@ -338,30 +338,14 @@ function Page() {
           </Table>
         )}
 
-        {data && data.totalPages > 1 && (
-          <div className="flex items-center justify-between pt-4 text-sm text-muted-foreground">
-            <span>
-              Page {data.page + 1} of {data.totalPages} · {data.totalItems} total
-            </span>
-            <div className="flex gap-2">
-              <Button
-                variant="pillOutline"
-                size="sm"
-                disabled={data.page === 0}
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="pillOutline"
-                size="sm"
-                disabled={data.last}
-                onClick={() => setPage((p) => p + 1)}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+        {data && (
+          <TablePagination
+            page={data.page}
+            totalPages={data.totalPages}
+            totalItems={data.totalItems}
+            isLast={data.last}
+            onPageChange={setPage}
+          />
         )}
       </Panel>
 

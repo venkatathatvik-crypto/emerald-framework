@@ -1,3 +1,4 @@
+import { TablePagination, paginate } from "@/components/ui/table-pagination";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -55,6 +56,7 @@ function Page() {
   const [reactivatingId, setReactivatingId] = useState<number | null>(null);
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [page, setPage] = useState(0);
 
   const enabled = ready && Number.isFinite(id);
 
@@ -106,6 +108,14 @@ function Page() {
     if (strA > strB) return sortDir === "asc" ? 1 : -1;
     return 0;
   });
+
+
+  // One page of rows for the table. Counts, empty states and CSV exports
+  // keep using agents, so they still describe the whole result set.
+  const { pageRows: pagedAgents, page: safePage, totalPages, totalItems } = paginate(
+    agents,
+    page,
+  );
 
   const toggleSort = (field: string) => {
     if (sortField === field) {
@@ -271,7 +281,7 @@ function Page() {
                           </TableCell>
                         </TableRow>
                       )}
-                      {agents?.map((agent) => (
+                      {pagedAgents.map((agent) => (
                         <TableRow key={agent.id}>
                           <TableCell>
                             <p className="font-medium text-ink">
@@ -308,6 +318,12 @@ function Page() {
                     </TableBody>
                   </Table>
                 )}
+                <TablePagination
+                  page={safePage}
+                  totalPages={totalPages}
+                  totalItems={totalItems}
+                  onPageChange={setPage}
+                />
               </Panel>
             }
           />

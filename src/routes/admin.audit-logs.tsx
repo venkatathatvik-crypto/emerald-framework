@@ -1,3 +1,4 @@
+import { TablePagination, paginate } from "@/components/ui/table-pagination";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -80,6 +81,7 @@ function Page() {
   >("timestamp");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [exportConfirmOpen, setExportConfirmOpen] = useState(false);
+  const [page, setPage] = useState(0);
 
   const {
     data: apiData,
@@ -159,6 +161,14 @@ function Page() {
       const comp = valA.localeCompare(valB);
       return sortDir === "asc" ? comp : -comp;
     });
+
+
+  // One page of rows for the table. Counts, empty states and CSV exports
+  // keep using filteredLogs, so they still describe the whole result set.
+  const { pageRows: pagedLogs, page: safePage, totalPages, totalItems } = paginate(
+    filteredLogs,
+    page,
+  );
 
   const getCategoryBadge = (cat: AuditLogEntry["category"]) => {
     switch (cat) {
@@ -350,7 +360,7 @@ function Page() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredLogs.map((log) => (
+                pagedLogs.map((log) => (
                   <TableRow key={log.id}>
                     <TableCell>
                       <p className="font-mono text-xs font-semibold text-ink">{log.id}</p>
@@ -389,6 +399,12 @@ function Page() {
               )}
             </TableBody>
           </Table>
+          <TablePagination
+            page={safePage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            onPageChange={setPage}
+          />
         </Panel>
       </div>
 
