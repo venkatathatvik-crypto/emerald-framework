@@ -270,10 +270,11 @@ function Page() {
             required
             error={fieldErrors.password}
           />
-          <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" className="accent-emerald-deep" /> Remember me
-            </label>
+          {/* "Remember me" used to sit here. It was never wired to anything — no
+              name, no state, and the API has no such concept — so it promised
+              something the app did not do. Refresh tokens already last 7 days,
+              which is the behaviour it appeared to offer. */}
+          <div className="flex items-center justify-end text-sm">
             <Link to="/forgot-password" className="link-underline text-sm">
               Forgot password?
             </Link>
