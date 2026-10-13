@@ -4,6 +4,14 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@/components/ui/spinner";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  PanelLeftClose,
+  PanelLeftOpen,
   LayoutDashboard,
   Truck,
   BadgePercent,
@@ -29,6 +37,9 @@ import { CommandPalette } from "@/components/command-palette";
 import { SessionTimeoutModal } from "@/components/SessionTimeoutModal";
 
 export type Role = "customer" | "partner" | "branch" | "admin";
+
+/** Remembers the collapsed sidebar per browser. */
+const SIDEBAR_KEY = "goldemi.sidebar.collapsed";
 
 const NAV: Record<Role, { to: string; label: string; Icon: typeof LayoutDashboard }[]> = {
   customer: [
@@ -70,6 +81,29 @@ export function DashboardShell({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+
+  // Read after mount, never during render: this is server-rendered, and reading
+  // localStorage while rendering would make the server and client markup differ.
+  useEffect(() => {
+    try {
+      setCollapsed(localStorage.getItem(SIDEBAR_KEY) === "1");
+    } catch {
+      // private mode or blocked storage — stay expanded
+    }
+  }, []);
+
+  function toggleCollapsed() {
+    setCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(SIDEBAR_KEY, next ? "1" : "0");
+      } catch {
+        // not fatal; the choice just will not survive a reload
+      }
+      return next;
+    });
+  }
   const [notifOpen, setNotifOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
 
@@ -138,72 +172,139 @@ export function DashboardShell({
           (lg:static lg:h-full), so it's simply always exactly one viewport tall; no sticky
           trickery needed since main content scrolls in its own pane below, not the page.
           Overlay/fixed on mobile as before. */}
+      {/* Collapsed state applies from lg up; below that the sidebar is an overlay
+          that is either open or off-screen, where a narrow rail makes no sense. */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-72 bg-ink text-paper flex flex-col transition-transform duration-300 lg:translate-x-0 lg:static lg:h-full ${open ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed inset-y-0 left-0 z-40 w-72 bg-ink text-paper flex flex-col transition-all duration-300 lg:translate-x-0 lg:static lg:h-full ${
+          collapsed ? "lg:w-20" : "lg:w-72"
+        } ${open ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <Link
-          to="/"
-          className="flex items-center gap-2.5 px-6 h-16 border-b border-paper/10 shrink-0"
-        >
-          <span className="grid place-items-center h-8 w-8 rounded-full bg-paper text-emerald-deep font-display">
-            2
-          </span>
-          <span className="font-display text-lg">
-            <span className="text-gold">+</span>FAPL
-          </span>
-          <span className="ml-auto text-[10px] uppercase tracking-widest text-paper/40">
-            {role}
-          </span>
-        </Link>
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          {NAV[role].map((n, i) => (
-            <Link
-              key={i}
-              to={n.to}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper transition-colors"
-              activeProps={{ className: "bg-paper/5 text-paper" }}
-              activeOptions={{ exact: i === 0 }}
-            >
-              <n.Icon className="h-4 w-4" />
-              {n.label}
-              {i === 0 && (
-                <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-gold/20 text-gold">
-                  Live
-                </span>
-              )}
-              {n.label === "Leads" && !!newLeadCount && (
-                <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-gold/20 text-gold">
-                  {newLeadCount}
-                </span>
-              )}
-              {n.label === "Basket" && cartCount > 0 && (
-                <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-gold/20 text-gold">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-          ))}
-        </nav>
-        <div className="border-t border-paper/10 p-4 shrink-0">
+        <TooltipProvider delayDuration={0}>
           <Link
-            to="/profile"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper"
+            to="/"
+            className={`flex items-center gap-2.5 h-16 border-b border-paper/10 shrink-0 ${
+              collapsed ? "px-6 lg:px-0 lg:justify-center" : "px-6"
+            }`}
           >
-            <Settings className="h-4 w-4" /> Profile
+            <span className="grid place-items-center h-8 w-8 rounded-full bg-paper text-emerald-deep font-display shrink-0">
+              2
+            </span>
+            <span className={`font-display text-lg ${collapsed ? "lg:hidden" : ""}`}>
+              <span className="text-gold">+</span>FAPL
+            </span>
+            <span
+              className={`ml-auto text-[10px] uppercase tracking-widest text-paper/40 ${
+                collapsed ? "lg:hidden" : ""
+              }`}
+            >
+              {role}
+            </span>
           </Link>
-          <button
-            onClick={handleSignOut}
-            disabled={signingOut}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {signingOut ? (
-              <Spinner size={16} label="" />
-            ) : (
-              <LogOut className="h-4 w-4" />
-            )}
-            {signingOut ? "Signing out…" : "Sign out"}
-          </button>
-        </div>
+
+          <nav className="flex-1 p-4 space-y-1 overflow-y-auto overflow-x-hidden">
+            {NAV[role].map((n, i) => {
+              const badge =
+                i === 0
+                  ? "Live"
+                  : n.label === "Leads" && newLeadCount
+                    ? String(newLeadCount)
+                    : n.label === "Basket" && cartCount > 0
+                      ? String(cartCount)
+                      : null;
+
+              const link = (
+                <Link
+                  to={n.to}
+                  className={`flex items-center gap-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper transition-colors ${
+                    collapsed ? "px-3 lg:px-0 lg:justify-center" : "px-3"
+                  }`}
+                  activeProps={{ className: "bg-paper/5 text-paper" }}
+                  activeOptions={{ exact: i === 0 }}
+                >
+                  <n.Icon className="h-4 w-4 shrink-0" />
+                  <span className={collapsed ? "lg:hidden" : ""}>{n.label}</span>
+                  {badge && (
+                    <span
+                      className={`ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-gold/20 text-gold ${
+                        collapsed ? "lg:hidden" : ""
+                      }`}
+                    >
+                      {badge}
+                    </span>
+                  )}
+                </Link>
+              );
+
+              // Collapsed, the icon is all there is — the tooltip is what names it.
+              return collapsed ? (
+                <Tooltip key={i}>
+                  <TooltipTrigger asChild>{link}</TooltipTrigger>
+                  <TooltipContent side="right">
+                    {n.label}
+                    {badge ? ` · ${badge}` : ""}
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <div key={i}>{link}</div>
+              );
+            })}
+          </nav>
+
+          <div className="border-t border-paper/10 p-4 shrink-0">
+            {(() => {
+              const profile = (
+                <Link
+                  to="/profile"
+                  className={`flex items-center gap-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper ${
+                    collapsed ? "px-3 lg:px-0 lg:justify-center" : "px-3"
+                  }`}
+                >
+                  <Settings className="h-4 w-4 shrink-0" />
+                  <span className={collapsed ? "lg:hidden" : ""}>Profile</span>
+                </Link>
+              );
+              return collapsed ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>{profile}</TooltipTrigger>
+                  <TooltipContent side="right">Profile</TooltipContent>
+                </Tooltip>
+              ) : (
+                profile
+              );
+            })()}
+
+            {(() => {
+              const signOut = (
+                <button
+                  onClick={handleSignOut}
+                  disabled={signingOut}
+                  className={`w-full flex items-center gap-3 py-2.5 rounded-md text-sm text-paper/70 hover:bg-paper/5 hover:text-paper disabled:opacity-60 disabled:cursor-not-allowed ${
+                    collapsed ? "px-3 lg:px-0 lg:justify-center" : "px-3"
+                  }`}
+                >
+                  {signingOut ? (
+                    <Spinner size={16} label="" />
+                  ) : (
+                    <LogOut className="h-4 w-4 shrink-0" />
+                  )}
+                  <span className={collapsed ? "lg:hidden" : ""}>
+                    {signingOut ? "Signing out…" : "Sign out"}
+                  </span>
+                </button>
+              );
+              return collapsed ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>{signOut}</TooltipTrigger>
+                  <TooltipContent side="right">
+                    {signingOut ? "Signing out…" : "Sign out"}
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                signOut
+              );
+            })()}
+          </div>
+        </TooltipProvider>
       </aside>
 
       {open && (
@@ -217,6 +318,18 @@ export function DashboardShell({
         <header className="sticky top-0 z-20 bg-paper/85 backdrop-blur border-b border-line h-16 flex items-center gap-4 px-4 md:px-8">
           <button onClick={() => setOpen(!open)} className="lg:hidden text-sm">
             ☰
+          </button>
+          <button
+            onClick={toggleCollapsed}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-pressed={collapsed}
+            className="hidden lg:grid place-items-center h-8 w-8 rounded-md text-muted-foreground hover:bg-stone hover:text-ink transition-colors"
+          >
+            {collapsed ? (
+              <PanelLeftOpen className="h-4 w-4" />
+            ) : (
+              <PanelLeftClose className="h-4 w-4" />
+            )}
           </button>
           <nav className="hidden md:flex items-center text-xs text-muted-foreground gap-2">
             <span>{role.charAt(0).toUpperCase() + role.slice(1)}</span>
